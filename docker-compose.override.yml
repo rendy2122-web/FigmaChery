@@ -4,11 +4,10 @@
 
 services:
   app:
-    build:
-      target: builder  # Use the builder stage (has all dev deps)
+    build: .
     command: >
       sh -c "
-        npx prisma migrate deploy &&
+        node node_modules/prisma/build/index.js migrate deploy &&
         npx tsx src/lib/db/seed.ts &&
         npm run dev
       "
