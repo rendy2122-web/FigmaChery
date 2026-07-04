@@ -1,0 +1,43 @@
+# docker-compose.override.yml
+# Automatically merged with docker-compose.yml during local development.
+# Run with: docker compose up
+
+services:
+  app:
+    build:
+      target: builder  # Use the builder stage (has all dev deps)
+    command: >
+      sh -c "
+        npx prisma migrate deploy &&
+        npx tsx src/lib/db/seed.ts &&
+        npm run dev
+      "
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=file:/app/prisma/dev.db
+      - AUTH_SECRET=${AUTH_SECRET:-dev-secret-change-in-production}
+      - AUTH_URL=${AUTH_URL:-http://localhost:3000}
+    volumes:
+      # Mount source for hot reload
+      - ./src:/app/src:delegated
+      - ./public:/app/public:delegated
+      - ./prisma:/app/prisma:delegated
+      - ./next.config.ts:/app/next.config.ts:ro
+      - ./tsconfig.json:/app/tsconfig.json:ro
+      - ./postcss.config.mjs:/app/postcss.config.mjs:ro
+      - ./eslint.config.mjs:/app/eslint.config.mjs:ro
+      - ./components.json:/app/components.json:ro
+      # Anonymous volume so node_modules from the image aren't overridden
+      - /app/node_modules
+      # Persist Next.js cache for faster rebuilds
+      - next_cache:/app/.next
+      # Persist uploads across dev restarts
+      - uploads:/app/public/uploads
+    ports:
+      - "${PORT:-3000}:3000"
+
+volumes:
+  next_cache:
+    driver: local
+  uploads:
+    driver: local

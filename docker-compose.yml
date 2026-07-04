@@ -1,0 +1,21 @@
+services:
+  app:
+    image: ${GHCR_IMAGE:-ghcr.io/your-org/figmachery}:latest
+    container_name: figmachery-app
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/prisma/data/prod.db
+      - AUTH_SECRET=${AUTH_SECRET}
+      - AUTH_URL=${AUTH_URL}
+    volumes:
+      - sqlite_data:/app/prisma/data
+      - uploads:/app/public/uploads
+
+volumes:
+  sqlite_data:
+    driver: local
+  uploads:
+    driver: local
