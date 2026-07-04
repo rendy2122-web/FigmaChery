@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { ArticleForm } from "@/components/cms/article-form";
+import db from "@/lib/db";
 
 export default async function NewArticlePage() {
   const session = await auth();
@@ -8,6 +9,9 @@ export default async function NewArticlePage() {
   if (!session?.user) {
     redirect("/login");
   }
+
+  // Get categories from database
+  const categories = db.prepare("SELECT * FROM categories ORDER BY name").all();
 
   return (
     <div className="space-y-6">
@@ -20,7 +24,7 @@ export default async function NewArticlePage() {
       </div>
 
       {/* Article Form */}
-      <ArticleForm />
+      <ArticleForm categories={categories} />
     </div>
   );
 }

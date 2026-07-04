@@ -6,7 +6,7 @@ import db from "@/lib/db";
 export default async function EditCarPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const session = await auth();
 
@@ -14,8 +14,10 @@ export default async function EditCarPage({
     redirect("/login");
   }
 
+  const { id } = await params;
+
   // Get car data
-  const car = db.prepare("SELECT * FROM cars WHERE id = ?").get(params.id) as any;
+  const car = db.prepare("SELECT * FROM cars WHERE id = ?").get(id) as any;
 
   if (!car) {
     redirect("/dashboard/cars");

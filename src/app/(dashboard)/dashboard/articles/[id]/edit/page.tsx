@@ -6,7 +6,7 @@ import db from "@/lib/db";
 export default async function EditArticlePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const session = await auth();
 
@@ -14,8 +14,11 @@ export default async function EditArticlePage({
     redirect("/login");
   }
 
-  // Get article data
-  const article = db.prepare("SELECT * FROM articles WHERE id = ?").get(params.id) as any;
+  const { id } = await params;
+
+  // Get article and categories data
+  const article = db.prepare("SELECT * FROM articles WHERE id = ?").get(id) as any;
+  const categories = db.prepare("SELECT * FROM categories ORDER BY name").all();
 
   if (!article) {
     redirect("/dashboard/articles");
@@ -32,7 +35,7 @@ export default async function EditArticlePage({
       </div>
 
       {/* Article Form */}
-      <ArticleForm article={article} />
+      <ArticleForm article={article} categories={categories} />
     </div>
   );
 }

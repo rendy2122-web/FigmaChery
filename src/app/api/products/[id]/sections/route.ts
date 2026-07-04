@@ -7,14 +7,15 @@ export const runtime = "nodejs";
 // GET product sections
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const sections = db.prepare(`
       SELECT * FROM product_sections 
       WHERE car_id = ? 
       ORDER BY sort_order ASC
-    `).all(params.id);
+    `).all(id);
 
     return NextResponse.json(sections);
   } catch (error) {
@@ -26,9 +27,10 @@ export async function GET(
 // PUT update product sections (admin only)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -38,7 +40,7 @@ export async function PUT(
     const now = new Date().toISOString();
 
     // Delete existing sections
-    db.prepare("DELETE FROM product_sections WHERE car_id = ?").run(params.id);
+    db.prepare("DELETE FROM product_sections WHERE car_id = ?").run(id);
 
     // Insert new sections
     const stmt = db.prepare(`
@@ -47,10 +49,10 @@ export async function PUT(
     `);
 
     sections.forEach((section: any, index: number) => {
-      const id = section.id || `ps-${Date.now()}-${index}`;
+      const sectionId = section.id || `ps-${Date.now()}-${index}`;
       stmt.run(
+        sectionId,
         id,
-        params.id,
         section.section_type,
         section.title || null,
         section.subtitle || null,
@@ -70,4 +72,4 @@ export async function PUT(
     console.error("Error updating product sections:", error);
     return NextResponse.json({ error: "Failed to update product sections" }, { status: 500 });
   }
-}
+}

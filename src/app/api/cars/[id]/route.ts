@@ -5,23 +5,24 @@ import db from "@/lib/db";
 // GET single car
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const car = db.prepare("SELECT * FROM cars WHERE id = ?").get(params.id) as any;
+    const { id } = await params;
+    const car = db.prepare("SELECT * FROM cars WHERE id = ?").get(id) as any;
 
     if (!car) {
       return NextResponse.json({ error: "Car not found" }, { status: 404 });
     }
 
     // Get car images
-    const images = db.prepare("SELECT * FROM car_images WHERE car_id = ? ORDER BY sort_order").all(params.id);
+    const images = db.prepare("SELECT * FROM car_images WHERE car_id = ? ORDER BY sort_order").all(id);
 
     // Get car specs
-    const specs = db.prepare("SELECT * FROM car_specs WHERE car_id = ? ORDER BY sort_order").all(params.id);
+    const specs = db.prepare("SELECT * FROM car_specs WHERE car_id = ? ORDER BY sort_order").all(id);
 
     // Get car features
-    const features = db.prepare("SELECT * FROM car_features WHERE car_id = ? ORDER BY sort_order").all(params.id);
+    const features = db.prepare("SELECT * FROM car_features WHERE car_id = ? ORDER BY sort_order").all(id);
 
     return NextResponse.json({
       ...car,
@@ -38,9 +39,10 @@ export async function GET(
 // PUT update car
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -55,7 +57,7 @@ export async function PUT(
       SET name = ?, slug = ?, subtitle = ?, description = ?, price_from = ?, 
           status = ?, featured = ?, sort_order = ?, thumbnail = ?, updated_at = ?
       WHERE id = ?
-    `).run(name, slug, subtitle, description, priceFrom, status || "draft", featured ? 1 : 0, sortOrder || 0, thumbnail || null, now, params.id);
+    `).run(name, slug, subtitle, description, priceFrom, status || "draft", featured ? 1 : 0, sortOrder || 0, thumbnail || null, now, id);
 
     if (result.changes === 0) {
       return NextResponse.json({ error: "Car not found" }, { status: 404 });
@@ -71,15 +73,16 @@ export async function PUT(
 // DELETE car
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const result = db.prepare("DELETE FROM cars WHERE id = ?").run(params.id);
+    const result = db.prepare("DELETE FROM cars WHERE id = ?").run(id);
 
     if (result.changes === 0) {
       return NextResponse.json({ error: "Car not found" }, { status: 404 });
@@ -90,4 +93,4 @@ export async function DELETE(
     console.error("Error deleting car:", error);
     return NextResponse.json({ error: "Failed to delete car" }, { status: 500 });
   }
-}
+}

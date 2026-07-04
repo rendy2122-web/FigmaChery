@@ -5,10 +5,11 @@ import db from "@/lib/db";
 // GET single article
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const article = db.prepare("SELECT * FROM articles WHERE id = ?").get(params.id) as any;
+    const { id } = await params;
+    const article = db.prepare("SELECT * FROM articles WHERE id = ?").get(id) as any;
 
     if (!article) {
       return NextResponse.json({ error: "Article not found" }, { status: 404 });
@@ -24,9 +25,10 @@ export async function GET(
 // PUT update article
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -41,7 +43,7 @@ export async function PUT(
       SET title = ?, slug = ?, excerpt = ?, content = ?, featured_image = ?, category_id = ?, 
           status = ?, published_at = ?, scheduled_at = ?, updated_at = ?
       WHERE id = ?
-    `).run(title, slug, excerpt, content, featuredImage || null, categoryId || null, status, publishedAt || null, scheduledAt || null, now, params.id);
+    `).run(title, slug, excerpt, content, featuredImage || null, categoryId || null, status, publishedAt || null, scheduledAt || null, now, id);
 
     if (result.changes === 0) {
       return NextResponse.json({ error: "Article not found" }, { status: 404 });
@@ -57,15 +59,16 @@ export async function PUT(
 // DELETE article
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const result = db.prepare("DELETE FROM articles WHERE id = ?").run(params.id);
+    const result = db.prepare("DELETE FROM articles WHERE id = ?").run(id);
 
     if (result.changes === 0) {
       return NextResponse.json({ error: "Article not found" }, { status: 404 });
@@ -76,4 +79,4 @@ export async function DELETE(
     console.error("Error deleting article:", error);
     return NextResponse.json({ error: "Failed to delete article" }, { status: 500 });
   }
-}
+}

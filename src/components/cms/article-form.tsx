@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
-import db from "@/lib/db";
 
 interface ArticleFormData {
   title: string;
@@ -21,16 +20,16 @@ interface ArticleFormData {
 
 interface ArticleFormProps {
   article?: any;
+  categories: any[];
   onSuccess?: () => void;
 }
 
-export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
+export function ArticleForm({ article, categories = [], onSuccess }: ArticleFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(article?.featured_image || "");
-  const [categories, setCategories] = useState<any[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState<ArticleFormData>({
@@ -44,12 +43,6 @@ export function ArticleForm({ article, onSuccess }: ArticleFormProps) {
     publishedAt: article?.published_at || "",
     scheduledAt: article?.scheduled_at || "",
   });
-
-  useEffect(() => {
-    // Load categories
-    const cats = db.prepare("SELECT * FROM categories ORDER BY name").all();
-    setCategories(cats);
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

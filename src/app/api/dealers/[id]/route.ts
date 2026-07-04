@@ -5,10 +5,11 @@ import db from "@/lib/db";
 // GET single dealer
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const dealer = db.prepare("SELECT * FROM dealers WHERE id = ?").get(params.id) as any;
+    const { id } = await params;
+    const dealer = db.prepare("SELECT * FROM dealers WHERE id = ?").get(id) as any;
 
     if (!dealer) {
       return NextResponse.json({ error: "Dealer not found" }, { status: 404 });
@@ -49,9 +50,10 @@ export async function POST(request: NextRequest) {
 // PUT update dealer
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -66,7 +68,7 @@ export async function PUT(
       SET name = ?, city = ?, address = ?, phone = ?, email = ?, whatsapp = ?, 
           maps_embed = ?, status = ?, sort_order = ?, image = ?, updated_at = ?
       WHERE id = ?
-    `).run(name, city, address, phone, email || null, whatsapp, mapsEmbed || null, status || "active", sortOrder || 0, image || null, now, params.id);
+    `).run(name, city, address, phone, email || null, whatsapp, mapsEmbed || null, status || "active", sortOrder || 0, image || null, now, id);
 
     if (result.changes === 0) {
       return NextResponse.json({ error: "Dealer not found" }, { status: 404 });
@@ -82,15 +84,16 @@ export async function PUT(
 // DELETE dealer
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const result = db.prepare("DELETE FROM dealers WHERE id = ?").run(params.id);
+    const result = db.prepare("DELETE FROM dealers WHERE id = ?").run(id);
 
     if (result.changes === 0) {
       return NextResponse.json({ error: "Dealer not found" }, { status: 404 });
@@ -101,4 +104,4 @@ export async function DELETE(
     console.error("Error deleting dealer:", error);
     return NextResponse.json({ error: "Failed to delete dealer" }, { status: 500 });
   }
-}
+}

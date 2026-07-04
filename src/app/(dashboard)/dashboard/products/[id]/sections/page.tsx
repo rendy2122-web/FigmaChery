@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,8 +32,9 @@ const SECTION_TYPES = [
 export default function ProductSectionsPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = use(params);
   const router = useRouter();
   const [sections, setSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,7 +48,7 @@ export default function ProductSectionsPage({
 
   const fetchSections = async () => {
     try {
-      const res = await fetch(`/api/products/${params.id}/sections`);
+      const res = await fetch(`/api/products/${id}/sections`);
       const data = await res.json();
       if (Array.isArray(data)) {
         setSections(data);
@@ -116,7 +117,7 @@ export default function ProductSectionsPage({
     setError("");
 
     try {
-      const res = await fetch(`/api/products/${params.id}/sections`, {
+      const res = await fetch(`/api/products/${id}/sections`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(sections),

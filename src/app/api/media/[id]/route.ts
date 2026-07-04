@@ -6,12 +6,13 @@ export const runtime = "nodejs";
 // GET single media
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { default: db } = await import("@/lib/db");
 
-    const media = db.prepare("SELECT * FROM media WHERE id = ?").get(params.id) as any;
+    const media = db.prepare("SELECT * FROM media WHERE id = ?").get(id) as any;
 
     if (!media) {
       return NextResponse.json({ error: "Media not found" }, { status: 404 });
@@ -27,9 +28,10 @@ export async function GET(
 // DELETE media
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -40,7 +42,7 @@ export async function DELETE(
     const path = (await import("path")).default;
     
     // Get media info
-    const media = db.prepare("SELECT * FROM media WHERE id = ?").get(params.id) as any;
+    const media = db.prepare("SELECT * FROM media WHERE id = ?").get(id) as any;
 
     if (!media) {
       return NextResponse.json({ error: "Media not found" }, { status: 404 });
@@ -55,7 +57,7 @@ export async function DELETE(
     }
 
     // Delete from database
-    db.prepare("DELETE FROM media WHERE id = ?").run(params.id);
+    db.prepare("DELETE FROM media WHERE id = ?").run(id);
 
     return NextResponse.json({ message: "Media deleted successfully" });
   } catch (error) {

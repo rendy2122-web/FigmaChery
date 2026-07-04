@@ -6,7 +6,7 @@ import db from "@/lib/db";
 export default async function EditDealerPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const session = await auth();
 
@@ -14,8 +14,10 @@ export default async function EditDealerPage({
     redirect("/login");
   }
 
+  const { id } = await params;
+
   // Get dealer data
-  const dealer = db.prepare("SELECT * FROM dealers WHERE id = ?").get(params.id) as any;
+  const dealer = db.prepare("SELECT * FROM dealers WHERE id = ?").get(id) as any;
 
   if (!dealer) {
     redirect("/dashboard/dealers");
