@@ -52,17 +52,37 @@ async function seed() {
   settingStmt.run("setting-7", "youtube_url", "https://youtube.com/cheryindonesia", "text", "social");
   console.log("✓ Created default settings");
 
-  // Seed cars
+  // Delete existing data in correct order (respecting foreign keys)
+  console.log("  Clearing existing car data...");
+  db.prepare("DELETE FROM car_images").run();
+  db.prepare("DELETE FROM car_specs").run();
+  db.prepare("DELETE FROM product_sections").run();
+  db.prepare("DELETE FROM promotions").run();
+  db.prepare("DELETE FROM cars").run();
+
+  // Seed cars - separated by type (BEV, CSH, ICE)
   const carStmt = db.prepare(`
-    INSERT OR IGNORE INTO cars (id, name, slug, subtitle, description, price_from, status, featured, sort_order)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO cars (id, name, slug, subtitle, description, price_from, type, status, featured, sort_order)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
-  carStmt.run("car-1", "CHERY Q", "chery-q", "COMPACT SUV", "Temukan standar baru berkendara dengan kombinasi desain futuristik, performa tangguh, dan integrasi teknologi cerdas.", "329.800.000", "published", 1, 1);
-  carStmt.run("car-2", "CHERY J6", "chery-j6", "BEV · CSH · ICE", "Temukan standar baru berkendara dengan kombinasi desain futuristik, performa tangguh, dan integrasi teknologi cerdas.", "739.900.000", "published", 1, 2);
-  carStmt.run("car-3", "CHERY E5", "chery-e5", "BEV · CSH · ICE", "Temukan standar baru berkendara dengan kombinasi desain futuristik, performa tangguh, dan integrasi teknologi cerdas.", "739.900.000", "published", 1, 3);
-  carStmt.run("car-4", "CHERY C5 CSH", "chery-c5-csh", "BEV · CSH · ICE", "Temukan standar baru berkendara dengan kombinasi desain futuristik, performa tangguh, dan integrasi teknologi cerdas.", "739.900.000", "published", 1, 4);
-  console.log("✓ Created 4 cars (CHERY Q, J6, E5, C5 CSH)");
+  // CHERY Q - ICE
+  carStmt.run("car-1", "CHERY Q", "chery-q", "COMPACT SUV", "Temukan standar baru berkendara dengan kombinasi desain futuristik, performa tangguh, dan integrasi teknologi cerdas.", "329.800.000", "ICE", "published", 1, 1);
+
+  // CHERY J6 - separated by type
+  carStmt.run("car-2", "CHERY J6 BEV", "chery-j6-bev", "ELECTRIC", "Nikmati pengalaman berkendara 100% listrik dengan teknologi terkini dan nol emisi.", "739.900.000", "BEV", "published", 1, 2);
+  carStmt.run("car-3", "CHERY J6 CSH", "chery-j6-csh", "CHARGED SUSTAINABLE HYBRID", "Teknologi hybrid cerdas yang menggabungkan efisiensi dan performa optimal.", "689.900.000", "CSH", "published", 1, 3);
+  carStmt.run("car-4", "CHERY J6 ICE", "chery-j6-ice", "INTERNAL COMBUSTION ENGINE", "Performa tangguh dengan mesin bensin yang efisien dan responsif.", "599.900.000", "ICE", "published", 1, 4);
+
+  // CHERY E5 - separated by type
+  carStmt.run("car-5", "CHERY E5 BEV", "chery-e5-bev", "ELECTRIC", "Sedan elektrik premium dengan jangkauan jauh dan kenyamanan luar biasa.", "799.900.000", "BEV", "published", 1, 5);
+  carStmt.run("car-6", "CHERY E5 CSH", "chery-e5-csh", "CHARGED SUSTAINABLE HYBRID", "Sedan hybrid dengan efisiensi bahan bakar maksimal dan emisi rendah.", "749.900.000", "CSH", "published", 1, 6);
+  carStmt.run("car-7", "CHERY E5 ICE", "chery-e5-ice", "INTERNAL COMBUSTION ENGINE", "Sedan bensin yang nyaman dan ekonomis untuk keluarga.", "659.900.000", "ICE", "published", 1, 7);
+
+  // CHERY C5 CSH
+  carStmt.run("car-8", "CHERY C5 CSH", "chery-c5-csh", "CHARGED SUSTAINABLE HYBRID", "Kombinasi sempurna antara desain elegan dan teknologi hybrid ramah lingkungan.", "739.900.000", "CSH", "published", 1, 8);
+
+  console.log("✓ Created 8 cars (CHERY Q, J6 BEV/CSH/ICE, E5 BEV/CSH/ICE, C5 CSH)");
 
   // Seed car images
   const carImageStmt = db.prepare(`
@@ -70,10 +90,14 @@ async function seed() {
     VALUES (?, ?, ?, ?, ?)
   `);
 
-  carImageStmt.run("car-img-1", "car-1", "/figma/car-q.png", "CHERY Q", 1);
-  carImageStmt.run("car-img-2", "car-2", "/figma/car-j6.png", "CHERY J6", 1);
-  carImageStmt.run("car-img-3", "car-3", "/figma/car-e5.png", "CHERY E5", 1);
-  carImageStmt.run("car-img-4", "car-4", "/figma/car-c5.png", "CHERY C5 CSH", 1);
+  carImageStmt.run("car-img-1", "car-1", "/figma/car-q.png", "CHERY Q ICE", 1);
+  carImageStmt.run("car-img-2", "car-2", "/figma/car-j6.png", "CHERY J6 BEV", 1);
+  carImageStmt.run("car-img-3", "car-3", "/figma/car-j6.png", "CHERY J6 CSH", 1);
+  carImageStmt.run("car-img-4", "car-4", "/figma/car-j6.png", "CHERY J6 ICE", 1);
+  carImageStmt.run("car-img-5", "car-5", "/figma/car-e5.png", "CHERY E5 BEV", 1);
+  carImageStmt.run("car-img-6", "car-6", "/figma/car-e5.png", "CHERY E5 CSH", 1);
+  carImageStmt.run("car-img-7", "car-7", "/figma/car-e5.png", "CHERY E5 ICE", 1);
+  carImageStmt.run("car-img-8", "car-8", "/figma/car-c5.png", "CHERY C5 CSH", 1);
   console.log("✓ Created car images");
 
   // Seed car specs
@@ -88,12 +112,12 @@ async function seed() {
     { label: "Dimensions (L x W x H) (mm.)", value: "4195 x 1811 x 1568" },
   ];
 
-  specs.forEach((spec, idx) => {
-    carSpecStmt.run(`spec-1-${idx}`, "car-1", spec.label, spec.value, idx);
-    carSpecStmt.run(`spec-2-${idx}`, "car-2", spec.label, spec.value, idx);
-    carSpecStmt.run(`spec-3-${idx}`, "car-3", spec.label, spec.value, idx);
-    carSpecStmt.run(`spec-4-${idx}`, "car-4", spec.label, spec.value, idx);
-  });
+  // Add specs for all 8 cars
+  for (let i = 1; i <= 8; i++) {
+    specs.forEach((spec, idx) => {
+      carSpecStmt.run(`spec-${i}-${idx}`, `car-${i}`, spec.label, spec.value, idx);
+    });
+  }
   console.log("✓ Created car specs");
 
   // Seed product sections for car-1 (Tiggo Cross CSH)

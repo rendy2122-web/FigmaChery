@@ -12,6 +12,7 @@ interface CarFormData {
   subtitle: string;
   description: string;
   priceFrom: string;
+  type: string;
   status: string;
   featured: boolean;
   sortOrder: number;
@@ -37,6 +38,7 @@ export function CarForm({ car, onSuccess }: CarFormProps) {
     subtitle: car?.subtitle || "",
     description: car?.description || "",
     priceFrom: car?.price_from || "",
+    type: car?.type || "ICE",
     status: car?.status || "draft",
     featured: car?.featured || false,
     sortOrder: car?.sort_order || 0,
@@ -208,7 +210,21 @@ export function CarForm({ car, onSuccess }: CarFormProps) {
           />
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+         <div className="grid gap-6 md:grid-cols-2">
+          <div className="space-y-2">
+            <label htmlFor="type" className="block text-sm font-medium text-gray-700">Tipe Mobil *</label>
+            <select
+              id="type"
+              value={formData.type}
+              onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+              className="h-[52px] w-full rounded-lg border-2 border-gray-200 bg-white px-4 text-sm focus:border-brand-deep focus:outline-none"
+            >
+              <option value="BEV">BEV (Battery Electric Vehicle)</option>
+              <option value="CSH">CSH (Charged Sustainable Hybrid)</option>
+              <option value="ICE">ICE (Internal Combustion Engine)</option>
+            </select>
+          </div>
+
           <div className="space-y-2">
             <label htmlFor="priceFrom" className="block text-sm font-medium text-gray-700">Harga Mulai</label>
             <input
@@ -219,7 +235,9 @@ export function CarForm({ car, onSuccess }: CarFormProps) {
               className="h-[52px] w-full rounded-lg border-2 border-gray-200 bg-white px-4 text-sm focus:border-brand-deep focus:outline-none"
             />
           </div>
+        </div>
 
+        <div className="grid gap-6 md:grid-cols-2">
           <div className="space-y-2">
             <label htmlFor="sortOrder" className="block text-sm font-medium text-gray-700">Urutan</label>
             <input

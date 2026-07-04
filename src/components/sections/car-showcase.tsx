@@ -6,6 +6,9 @@ import Image from "next/image";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/layout/container";
+import { CarFilterTabs } from "@/components/sections/car-filter-tabs";
+
+type CarType = "ALL" | "BEV" | "CSH" | "ICE";
 
 type Model = {
   id: string;
@@ -13,6 +16,7 @@ type Model = {
   subtitle: string;
   watermark: string;
   image: string;
+  type: string;
 };
 
 const defaultModels: Model[] = [
@@ -22,6 +26,7 @@ const defaultModels: Model[] = [
     subtitle: "COMPACT SUV",
     watermark: "CHERY Q",
     image: "/figma/car-q.png",
+    type: "ICE",
   },
 ];
 
@@ -34,9 +39,12 @@ const defaultSpecs = [
 export function CarShowcase() {
   const [models, setModels] = useState<Model[]>(defaultModels);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [activeFilter, setActiveFilter] = useState<CarType>("ALL");
 
   useEffect(() => {
-    fetch("/api/cars")
+    const url = activeFilter === "ALL" ? "/api/cars" : `/api/cars?type=${activeFilter}`;
+
+    fetch(url)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
@@ -47,17 +55,32 @@ export function CarShowcase() {
             subtitle: car.subtitle || "CSH",
             watermark: car.name.toUpperCase(),
             image: car.thumbnail || "/figma/car-q.png",
+            type: car.type || "ICE",
           }));
           setModels(mapped);
+          setActiveIndex(0); // Reset to first car when filter changes
         }
       })
       .catch(console.error);
-  }, []);
+  }, [activeFilter]);
 
   const model = models[activeIndex];
 
   const goTo = (index: number) => {
     setActiveIndex((index + models.length) % models.length);
+  };
+
+  const getTypeBadgeColor = (type: string) => {
+    switch (type) {
+      case "BEV":
+        return "bg-green-100 text-green-800";
+      case "CSH":
+        return "bg-blue-100 text-blue-800";
+      case "ICE":
+        return "bg-gray-100 text-gray-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
   };
 
   return (
@@ -66,23 +89,6 @@ export function CarShowcase() {
       aria-labelledby="car-showcase-heading"
       className="relative bg-muted py-section-y"
     >
-      <button
-        type="button"
-        aria-label="Previous model"
-        onClick={() => goTo(activeIndex - 1)}
-        className="absolute top-1/2 left-2 z-10 flex size-8 -translate-y-1/2 items-center justify-center text-muted-foreground/50 transition-colors hover:text-muted-foreground sm:left-4"
-      >
-        <ChevronLeftIcon className="size-6" aria-hidden="true" />
-      </button>
-      <button
-        type="button"
-        aria-label="Next model"
-        onClick={() => goTo(activeIndex + 1)}
-        className="absolute top-1/2 right-2 z-10 flex size-8 -translate-y-1/2 items-center justify-center text-muted-foreground/50 transition-colors hover:text-muted-foreground sm:right-4"
-      >
-        <ChevronRightIcon className="size-6" aria-hidden="true" />
-      </button>
-
       <Container className="flex flex-col items-center gap-8 text-center">
         <div className="flex flex-col items-center gap-3">
           <span className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
@@ -92,19 +98,35 @@ export function CarShowcase() {
             id="car-showcase-heading"
             className="text-h1 font-heading font-bold text-foreground"
           >
-            {model.name}
+            Pilih Kendaraan Impian Anda
           </h2>
-          <span className="text-sm font-semibold uppercase tracking-wide text-brand-deep">
-            {model.subtitle}
-          </span>
           <p className="text-body-lg max-w-xl text-muted-foreground">
             Temukan standar baru berkendara dengan kombinasi desain
             futuristik, performa tangguh, dan integrasi teknologi cerdas.
           </p>
         </div>
 
+        <CarFilterTabs onFilterChange={setActiveFilter} activeFilter={activeFilter} />
+
         <div className="flex w-full flex-col items-center gap-8">
           <div className="relative flex w-full items-center justify-center overflow-hidden py-8">
+            <button
+              type="button"
+              aria-label="Previous model"
+              onClick={() => goTo(activeIndex - 1)}
+              className="absolute top-1/2 left-2 z-10 flex size-8 -translate-y-1/2 items-center justify-center text-muted-foreground/50 transition-colors hover:text-muted-foreground sm:left-4"
+            >
+              <ChevronLeftIcon className="size-6" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              aria-label="Next model"
+              onClick={() => goTo(activeIndex + 1)}
+              className="absolute top-1/2 right-2 z-10 flex size-8 -translate-y-1/2 items-center justify-center text-muted-foreground/50 transition-colors hover:text-muted-foreground sm:right-4"
+            >
+              <ChevronRightIcon className="size-6" aria-hidden="true" />
+            </button>
+
             <span
               aria-hidden="true"
               className="pointer-events-none absolute top-[25%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-[8vw] leading-none font-heading font-bold whitespace-nowrap text-foreground/5 select-none"
@@ -128,13 +150,19 @@ export function CarShowcase() {
                 type="button"
                 onClick={() => goTo(i)}
                 aria-current={i === activeIndex ? "true" : undefined}
-                className={
-                  i === activeIndex
-                    ? "rounded-full bg-brand-deep px-6 py-3 text-sm font-medium text-white transition-colors"
-                    : "rounded-full border border-border bg-background px-6 py-3 text-sm font-medium text-foreground/70 transition-colors hover:border-foreground/30"
-                }
+                className={`
+                  flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-all duration-200
+                  ${
+                    i === activeIndex
+                      ? "bg-brand-deep text-white shadow-md"
+                      : "bg-white text-gray-700 border-2 border-gray-200 hover:border-brand-deep hover:text-brand-deep"
+                  }
+                `}
               >
-                {m.name}
+                <span>{m.name}</span>
+                <span className={`text-xs px-2 py-0.5 rounded-full ${getTypeBadgeColor(m.type)}`}>
+                  {m.type}
+                </span>
               </button>
             ))}
           </div>

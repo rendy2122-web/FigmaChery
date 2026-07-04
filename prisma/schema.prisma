@@ -24,6 +24,7 @@ model Car {
   subtitle    String?
   description String?
   priceFrom   String?
+  type        String    @default("ICE") // BEV, CSH, or ICE
   status      String    @default("draft") // draft or published
   featured    Boolean   @default(false)
   sortOrder   Int       @default(0)
@@ -37,7 +38,7 @@ model Car {
   promotions  Promotion[]
 
   @@index([slug])
-  @@index([status, featured])
+  @@index([status, featured, type])
   @@index([sortOrder])
   @@index([deletedAt])
 }

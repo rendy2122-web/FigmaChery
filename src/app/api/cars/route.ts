@@ -6,16 +6,29 @@ import { randomUUID } from "crypto";
 // GET all cars - with caching
 export const revalidate = 3600; // ISR: 1 hour
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const cars = db.prepare(`
+    const searchParams = request.nextUrl.searchParams;
+    const type = searchParams.get('type');
+
+    let query = `
       SELECT c.*, 
              (SELECT COUNT(*) FROM car_images WHERE car_id = c.id) as image_count,
              (SELECT url FROM car_images WHERE car_id = c.id ORDER BY sort_order LIMIT 1) as thumbnail
       FROM cars c
       WHERE c.status = 'published'
-      ORDER BY c.sort_order ASC, c.created_at DESC
-    `).all();
+    `;
+
+    const params: any[] = [];
+
+    if (type && ['BEV', 'CSH', 'ICE'].includes(type)) {
+      query += ` AND c.type = ?`;
+      params.push(type);
+    }
+
+    query += ` ORDER BY c.sort_order ASC, c.created_at DESC`;
+
+    const cars = db.prepare(query).all(...params);
 
     return NextResponse.json(cars, {
       headers: {
@@ -37,7 +50,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, slug, subtitle, description, priceFrom, status, featured, sortOrder } = body;
+    const { name, slug, subtitle, description, priceFrom, type, status, featured, sortOrder } = body;
 
     // Basic validation
     if (!name || !slug) {
@@ -48,9 +61,9 @@ export async function POST(request: NextRequest) {
     const now = new Date().toISOString();
 
     db.prepare(`
-      INSERT INTO cars (id, name, slug, subtitle, description, price_from, status, featured, sort_order, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(id, name, slug, subtitle, description, priceFrom, status || "draft", featured ? 1 : 0, sortOrder || 0, now, now);
+      INSERT INTO cars (id, name, slug, subtitle, description, price_from, type, status, featured, sort_order, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(id, name, slug, subtitle, description, priceFrom, type || "ICE", status || "draft", featured ? 1 : 0, sortOrder || 0, now, now);
 
     return NextResponse.json({ id, message: "Car created successfully" }, { status: 201 });
   } catch (error) {

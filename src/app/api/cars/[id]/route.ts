@@ -56,15 +56,15 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { name, slug, subtitle, description, priceFrom, status, featured, sortOrder, thumbnail } = body;
+    const { name, slug, subtitle, description, priceFrom, type, status, featured, sortOrder, thumbnail } = body;
     const now = new Date().toISOString();
 
     const result = db.prepare(`
       UPDATE cars 
-      SET name = ?, slug = ?, subtitle = ?, description = ?, price_from = ?, 
+      SET name = ?, slug = ?, subtitle = ?, description = ?, price_from = ?, type = ?,
           status = ?, featured = ?, sort_order = ?, thumbnail = ?, updated_at = ?
       WHERE id = ? AND deleted_at IS NULL
-    `).run(name, slug, subtitle, description, priceFrom, status || "draft", featured ? 1 : 0, sortOrder || 0, thumbnail || null, now, id);
+    `).run(name, slug, subtitle, description, priceFrom, type || "ICE", status || "draft", featured ? 1 : 0, sortOrder || 0, thumbnail || null, now, id);
 
     if (result.changes === 0) {
       return NextResponse.json({ error: "Car not found" }, { status: 404 });
