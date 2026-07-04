@@ -46,3 +46,10 @@ Commands:
 
 * ABORT
 
+Deployment:
+
+* Docker single-stage (node:22-alpine)
+* CI: lint on PRs
+* CD: build → push to GHCR → SSH deploy
+* `docker compose up --build` (dev), `docker compose up -d` (prod)
+* `.env` required: AUTH_SECRET, AUTH_URL

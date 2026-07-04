@@ -1,63 +1,74 @@
-# CI/CD Setup Guide
+# CI/CD Pipeline
 
 ## Overview
 
-Project ini menggunakan GitHub Actions untuk Continuous Integration (CI) dan Continuous Deployment (CD).
+Project ini menggunakan GitHub Actions untuk build Docker image, push ke GitHub Container Registry (GHCR), dan deploy ke server via SSH.
 
 ## Workflows
 
-### 1. CI (Continuous Integration)
+### 1. CI — Lint Check
 **File**: `.github/workflows/ci.yml`
 
-**Trigger**: Push ke branch `main` atau `develop`, Pull Request ke `main` atau `develop`
+| Trigger | Action |
+|---|---|
+| Push ke `main`, `develop` | Lint |
+| Pull Request ke `main`, `develop` | Lint |
 
-**Steps**:
-1. Checkout code
-2. Setup Node.js v20
-3. Install dependencies (`npm ci`)
-4. Run linting (`npm run lint`)
-5. Build project (`npm run build`)
-6. Run tests (jika ada)
-
-### 2. CD (Continuous Deployment)
+### 2. CD — Build, Push & Deploy
 **File**: `.github/workflows/cd.yml`
 
-**Trigger**: Push ke branch `main` atau setelah CI berhasil
+| Trigger | Action |
+|---|---|
+| Push ke `main` | Build → Push → Deploy |
+| `workflow_dispatch` | Build → Push → Deploy (opsional) |
 
-**Steps**:
+**Steps:**
 1. Checkout code
-2. Setup Node.js v20
-3. Install dependencies
-4. Build project
-5. Deploy ke Vercel (primary)
-6. Notify deployment status
+2. Login ke GHCR
+3. Build Docker image (single-stage, Alpine)
+4. Push ke `ghcr.io/{owner}/{repo}:latest` + SHA tag
+5. SSH ke server, `docker compose pull && up -d`, run seed
 
-## Setup Secrets
+## Required Secrets & Variables
 
-Untuk mengaktifkan deployment, tambahkan secrets berikut di GitHub repository:
+Tambahkan di **Settings → Secrets and variables → Actions**:
 
-### Vercel (Recommended)
-1. Buat akun di [Vercel](https://vercel.com)
-2. Import project dari GitHub
-3. Dapatkan token dari Vercel Settings
-4. Tambahkan secrets di GitHub:
-   - `VERCEL_TOKEN`: Token dari Vercel
-   - `VERCEL_ORG_ID`: Organization ID dari Vercel
-   - `VERCEL_PROJECT_ID`: Project ID dari Vercel
+### Variables
 
-### Netlify (Alternative)
-1. Buat akun di [Netlify](https://netlify.com)
-2. Dapatkan auth token dan site ID
-3. Tambahkan secrets:
-   - `NETLIFY_AUTH_TOKEN`: Auth token dari Netlify
-   - `NETLIFY_SITE_ID`: Site ID dari Netlify
+| Name | Description |
+|---|---|
+| `SERVER_HOST` | IP/hostname server |
+| `SERVER_USER` | SSH username |
+| `SERVER_PATH` | Path project di server (tempat `docker-compose.yml`) |
 
-### Railway (Alternative - untuk database/backend)
-1. Buat akun di [Railway](https://railway.app)
-2. Deploy database
-3. Tambahkan secrets:
-   - `RAILWAY_TOKEN`: Token dari Railway
-   - `RAILWAY_SERVICE`: Service name dari Railway
+### Secrets
+
+| Name | Description |
+|---|---|
+| `SERVER_SSH_KEY` | Private SSH key untuk autentikasi |
+
+## Server Setup
+
+Di server, pastikan ada file `.env` di `$SERVER_PATH`:
+
+```bash
+GHCR_IMAGE=ghcr.io/rendy2122-web/figmachery
+AUTH_SECRET=your-generated-secret
+AUTH_URL=https://your-domain.com
+PORT=3000
+```
+
+Generate `AUTH_SECRET`:
+```bash
+openssl rand -base64 32
+```
+
+## Docker Compose Files
+
+| File | Purpose |
+|---|---|
+| `docker-compose.yml` | Production — pull image from GHCR |
+| `docker-compose.override.yml` | Development — build locally, hot reload |
 
 ## Cara Menambahkan Secrets di GitHub
 
