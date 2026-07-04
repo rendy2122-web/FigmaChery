@@ -174,16 +174,22 @@ export function CarShowcase() {
 
         {model.specs && model.specs.length > 0 && (
           <div className="grid w-full grid-cols-1 gap-6 pt-2 sm:grid-cols-3">
-            {model.specs.map((spec) => (
-              <div key={spec.label} className="flex flex-col items-center gap-2">
-                <span className="text-sm text-muted-foreground">
-                  {spec.label}
-                </span>
-                <span className="text-h3 font-heading font-bold text-foreground">
-                  {spec.value}
-                </span>
-              </div>
-            ))}
+            {model.specs.map((spec) => {
+              const isRangeSpec = spec.label.toLowerCase().includes("range");
+              return (
+                <div
+                  key={spec.label}
+                  className={`flex flex-col items-center gap-2 ${isRangeSpec ? "sm:col-span-3" : ""}`}
+                >
+                  <span className="text-sm text-muted-foreground">
+                    {spec.label}
+                  </span>
+                  <span className="text-h3 font-heading font-bold text-foreground">
+                    {spec.value}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         )}
 
