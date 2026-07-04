@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Chery Automotive Website
+
+Modern premium automotive website built from Figma design, featuring car showcases, dealer locator, booking system, and CMS dashboard.
+
+## Stack
+
+- **Next.js 16** (App Router)
+- **TypeScript**
+- **TailwindCSS v4** + shadcn/ui
+- **SQLite** (via better-sqlite3)
+- **Prisma 6** (migrations)
+- **NextAuth v5** (authentication)
+- **Docker** (containerized deployment)
 
 ## Getting Started
 
-First, run the development server:
+### Local development (without Docker)
 
 ```bash
+npm install
+npx prisma migrate deploy
+npx tsx src/lib/db/seed.ts
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Docker development
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Create .env file
+echo 'AUTH_SECRET=dev-secret-change-in-production' > .env
 
-## Learn More
+# Start with hot reload
+docker compose up --build
+```
 
-To learn more about Next.js, take a look at the following resources:
+The `docker-compose.override.yml` automatically enables hot reload, mounts source code, and uses development mode.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Production build
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+docker build -t figmachery .
+docker run -p 3000:3000 figmachery
+```
 
-## Deploy on Vercel
+## Admin Dashboard
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Route | Description |
+|---|---|
+| `/login` | Admin login |
+| `/dashboard` | Overview (stats, activity) |
+| `/dashboard/articles` | Articles CRUD |
+| `/dashboard/cars` | Cars CRUD |
+| `/dashboard/dealers` | Dealers CRUD |
+| `/dashboard/hero` | Hero slideshow editor |
+| `/dashboard/media` | Media library |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Default credentials (from seed): `admin@chery.com` / `admin123`
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── (auth)/login/        # Login page
+│   ├── (dashboard)/         # Admin dashboard
+│   ├── api/                 # API routes
+│   └── booking/             # Test drive booking
+├── components/
+│   ├── booking/             # Booking form
+│   ├── cms/                 # Dashboard forms & tables
+│   ├── dashboard/           # Dashboard layout
+│   ├── layout/              # Public layout (navbar, footer)
+│   ├── product/             # Product page sections
+│   ├── sections/            # Homepage sections
+│   └── ui/                  # shadcn/ui components
+└── lib/
+    ├── auth.ts              # NextAuth config
+    └── db/
+        ├── index.ts         # SQLite connection & schema
+        └── seed.ts          # Database seed data
+```
+
+## Deployment
+
+Docker image is built and pushed to GitHub Container Registry via GitHub Actions.
+
+```bash
+# On server, create .env:
+GHCR_IMAGE=ghcr.io/your-org/figmachery
+AUTH_SECRET=your-secret
+AUTH_URL=https://your-domain.com
+
+# Pull and run
+docker compose pull
+docker compose up -d
+```
+
+See `.github/workflows/` for CI/CD pipeline details.

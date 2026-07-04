@@ -38,3 +38,12 @@ After every task:
 * Explain implementation  
 * Explain how to run
 
+Docker:
+
+* Single-stage Dockerfile (node:22-alpine)
+* `docker compose up --build` for dev, `docker compose -f docker-compose.yml up -d` for prod
+* `docker-compose.override.yml` auto-merged for dev
+* Prisma CLI: `node node_modules/prisma/build/index.js` (not `npx prisma`)
+* Server: `npm run start` (uses next start, not standalone)
+* Volumes: prisma/data (SQLite), public/uploads (media)
+
