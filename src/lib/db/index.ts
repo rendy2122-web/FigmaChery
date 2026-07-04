@@ -167,6 +167,7 @@ db.exec(`
     maps_embed TEXT,
     status TEXT DEFAULT 'active',
     sort_order INTEGER DEFAULT 0,
+    image TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )

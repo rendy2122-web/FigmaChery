@@ -28,13 +28,13 @@ async function seed() {
 
   // Seed default dealers
   const dealerStmt = db.prepare(`
-    INSERT OR IGNORE INTO dealers (id, name, city, address, phone, whatsapp, status, sort_order)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT OR IGNORE INTO dealers (id, name, city, address, phone, whatsapp, image, status, sort_order)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
   
-  dealerStmt.run("dealer-1", "Chery Cibubur", "Jakarta", "Jl. Alternatif Cibubur No.KM. 6, Nagrak, Kec. Gn. Putri, Kabupaten Bogor, Jawa Barat 16967", "+62 895 2707 2446", "6289527072446", "active", 1);
-  dealerStmt.run("dealer-2", "Chery Makassar", "Sulawesi Selatan", "Makassar, Sulawesi Selatan", "+62 895 2707 2446", "6289527072446", "active", 2);
-  dealerStmt.run("dealer-3", "Chery Pare-pare", "Sulawesi Selatan", "Pare-pare, Sulawesi Selatan", "+62 895 2707 2446", "6289527072446", "active", 3);
+  dealerStmt.run("dealer-1", "Chery Cibubur", "Jakarta", "Jl. Alternatif Cibubur No.KM. 6, Nagrak, Kec. Gn. Putri, Kabupaten Bogor, Jawa Barat 16967", "+62 895 2707 2446", "6289527072446", "/figma/dealer-cibubur.png", "active", 1);
+  dealerStmt.run("dealer-2", "Chery Makassar", "Sulawesi Selatan", "Makassar, Sulawesi Selatan", "+62 895 2707 2446", "6289527072446", "/figma/dealer-makassar.png", "active", 2);
+  dealerStmt.run("dealer-3", "Chery Pare-pare", "Sulawesi Selatan", "Pare-pare, Sulawesi Selatan", "+62 895 2707 2446", "6289527072446", "/figma/dealer-parepare.png", "active", 3);
   console.log("✓ Created default dealers");
 
   // Seed default settings

@@ -166,6 +166,7 @@ model Dealer {
   phone       String
   email       String?
   whatsapp    String
+  image       String?
   mapsEmbed   String?
   status      String    @default("active") // active, inactive
   sortOrder   Int       @default(0)
