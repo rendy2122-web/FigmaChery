@@ -12,26 +12,29 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  // Get stats
-  const totalCars = db.prepare("SELECT COUNT(*) as count FROM cars").get() as { count: number };
-  const totalArticles = db.prepare("SELECT COUNT(*) as count FROM articles").get() as { count: number };
-  const totalDealers = db.prepare("SELECT COUNT(*) as count FROM dealers").get() as { count: number };
-  const totalPromotions = db.prepare("SELECT COUNT(*) as count FROM promotions").get() as { count: number };
+  // Get stats - single query optimization (exclude soft deleted)
+  const statsRow = db.prepare(`
+    SELECT 
+      (SELECT COUNT(*) FROM cars WHERE deleted_at IS NULL) as cars,
+      (SELECT COUNT(*) FROM articles WHERE deleted_at IS NULL) as articles,
+      (SELECT COUNT(*) FROM dealers WHERE deleted_at IS NULL) as dealers,
+      (SELECT COUNT(*) FROM promotions) as promotions
+  `).get() as { cars: number; articles: number; dealers: number; promotions: number };
 
   const stats = [
-    { label: "Total Mobil", value: totalCars.count, href: "/dashboard/cars" },
-    { label: "Total Artikel", value: totalArticles.count, href: "/dashboard/articles" },
-    { label: "Total Dealer", value: totalDealers.count, href: "/dashboard/dealers" },
-    { label: "Total Promosi", value: totalPromotions.count, href: "/dashboard/promotions" },
+    { label: "Total Mobil", value: statsRow.cars, href: "/dashboard/cars" },
+    { label: "Total Artikel", value: statsRow.articles, href: "/dashboard/articles" },
+    { label: "Total Dealer", value: statsRow.dealers, href: "/dashboard/dealers" },
+    { label: "Total Promosi", value: statsRow.promotions, href: "/dashboard/promotions" },
   ];
 
-  // Get recent activity (last 5 updated items)
+  // Recent activity (exclude soft deleted)
   const recentCars = db.prepare(`
-    SELECT id, name, updated_at FROM cars ORDER BY updated_at DESC LIMIT 3
+    SELECT id, name, updated_at FROM cars WHERE deleted_at IS NULL ORDER BY updated_at DESC LIMIT 3
   `).all() as any[];
 
   const recentArticles = db.prepare(`
-    SELECT id, title, updated_at FROM articles ORDER BY updated_at DESC LIMIT 3
+    SELECT id, title, updated_at FROM articles WHERE deleted_at IS NULL ORDER BY updated_at DESC LIMIT 3
   `).all() as any[];
 
   const recentActivity = [

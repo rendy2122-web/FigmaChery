@@ -3,17 +3,24 @@ import { auth } from "@/lib/auth";
 import db from "@/lib/db";
 import { randomUUID } from "crypto";
 
-// GET all articles
+// GET all articles - with caching
+export const revalidate = 1800; // ISR: 30 minutes
+
 export async function GET() {
   try {
     const articles = db.prepare(`
       SELECT a.*, c.name as category_name
       FROM articles a
       LEFT JOIN categories c ON a.category_id = c.id
-      ORDER BY a.created_at DESC
+      WHERE a.status = 'published'
+      ORDER BY a.published_at DESC, a.created_at DESC
     `).all();
 
-    return NextResponse.json(articles);
+    return NextResponse.json(articles, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=59',
+      },
+    });
   } catch (error) {
     console.error("Error fetching articles:", error);
     return NextResponse.json({ error: "Failed to fetch articles" }, { status: 500 });
@@ -30,6 +37,11 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { title, slug, excerpt, content, featuredImage, categoryId, status, publishedAt, scheduledAt } = body;
+
+    // Basic validation
+    if (!title || !slug) {
+      return NextResponse.json({ error: "Title and slug are required" }, { status: 400 });
+    }
 
     const id = randomUUID();
     const now = new Date().toISOString();

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import db from "@/lib/db";
+import { validateOrigin } from "@/lib/security";
 
 // GET single car
 export async function GET(
@@ -9,7 +10,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const car = db.prepare("SELECT * FROM cars WHERE id = ?").get(id) as any;
+    const car = db.prepare("SELECT * FROM cars WHERE id = ? AND deleted_at IS NULL").get(id) as any;
 
     if (!car) {
       return NextResponse.json({ error: "Car not found" }, { status: 404 });
@@ -43,6 +44,12 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
+    
+    // CSRF
+    if (!validateOrigin(request)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -56,7 +63,7 @@ export async function PUT(
       UPDATE cars 
       SET name = ?, slug = ?, subtitle = ?, description = ?, price_from = ?, 
           status = ?, featured = ?, sort_order = ?, thumbnail = ?, updated_at = ?
-      WHERE id = ?
+      WHERE id = ? AND deleted_at IS NULL
     `).run(name, slug, subtitle, description, priceFrom, status || "draft", featured ? 1 : 0, sortOrder || 0, thumbnail || null, now, id);
 
     if (result.changes === 0) {
@@ -70,19 +77,26 @@ export async function PUT(
   }
 }
 
-// DELETE car
+// DELETE car - soft delete
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
+    
+    // CSRF
+    if (!validateOrigin(request)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const result = db.prepare("DELETE FROM cars WHERE id = ?").run(id);
+    const now = new Date().toISOString();
+    const result = db.prepare("UPDATE cars SET deleted_at = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL").run(now, now, id);
 
     if (result.changes === 0) {
       return NextResponse.json({ error: "Car not found" }, { status: 404 });
@@ -93,4 +107,4 @@ export async function DELETE(
     console.error("Error deleting car:", error);
     return NextResponse.json({ error: "Failed to delete car" }, { status: 500 });
   }
-}
+}

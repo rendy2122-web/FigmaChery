@@ -67,7 +67,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@chery.com"
+                placeholder="nama@email.com"
                 required
                 disabled={loading}
                 className="h-[52px] w-full rounded-lg border-2 border-gray-200 bg-white px-4 text-sm focus:border-brand-deep focus:outline-none disabled:bg-gray-100"
@@ -99,9 +99,6 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-gray-600">
-            <p>Default: admin@chery.com / admin123</p>
-          </div>
         </div>
 
         <div className="text-center">

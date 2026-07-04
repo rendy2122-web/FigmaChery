@@ -4,7 +4,9 @@ import db from "@/lib/db";
 
 export const runtime = "nodejs";
 
-// GET hero slides
+// GET hero slides - with caching
+export const revalidate = 3600; // ISR: 1 hour
+
 export async function GET() {
   try {
     const hero = db.prepare("SELECT * FROM homepage_sections WHERE section = 'hero'").get() as any;
@@ -16,7 +18,11 @@ export async function GET() {
       } catch {}
     }
 
-    return NextResponse.json(slides);
+    return NextResponse.json(slides, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=59',
+      },
+    });
   } catch (error) {
     console.error("Error fetching hero slides:", error);
     return NextResponse.json({ error: "Failed to fetch hero slides" }, { status: 500 });

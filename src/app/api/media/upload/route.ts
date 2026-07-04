@@ -2,11 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { writeFileSync, mkdirSync } from "fs";
 import path from "path";
+import { validateUpload, validateOrigin } from "@/lib/security";
 
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   try {
+    // CSRF check
+    if (!validateOrigin(request)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -19,6 +25,12 @@ export async function POST(request: NextRequest) {
 
     if (!file) {
       return NextResponse.json({ error: "File is required" }, { status: 400 });
+    }
+
+    // File validation
+    const validationError = validateUpload(file);
+    if (validationError) {
+      return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
     // Create uploads directory if it doesn't exist
