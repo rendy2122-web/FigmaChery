@@ -48,7 +48,7 @@ export function CarShowcase() {
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
-          // Map cars API response to Model type and fetch specs for each car
+          // Map cars API response to Model type (specs are now included in the response)
           const mapped = data.map((car: any) => ({
             id: car.id,
             name: car.name.toUpperCase(),
@@ -56,35 +56,13 @@ export function CarShowcase() {
             watermark: car.name.toUpperCase(),
             image: car.thumbnail || "/figma/car-q.png",
             type: car.type || "ICE",
-            specs: [], // Will be fetched below
+            specs: (car.specs || []).map((spec: any) => ({
+              label: spec.label,
+              value: spec.value,
+            })),
           }));
           setModels(mapped);
           setActiveIndex(0); // Reset to first car when filter changes
-
-          // Fetch specs for all cars
-          Promise.all(
-            data.map((car: any) =>
-              fetch(`/api/cars/${car.id}`)
-                .then(res => res.json())
-                .then((carData: any) => {
-                  const specs = (carData.specs || []).map((spec: any) => ({
-                    label: spec.label,
-                    value: spec.value,
-                  }));
-                  return { id: car.id, specs };
-                })
-            )
-          ).then(specsData => {
-            setModels(prevModels =>
-              prevModels.map(model => {
-                const carSpecs = specsData.find(s => s.id === model.id);
-                return {
-                  ...model,
-                  specs: carSpecs?.specs || [],
-                };
-              })
-            );
-          }).catch(console.error);
         }
       })
       .catch(console.error);
@@ -194,9 +172,9 @@ export function CarShowcase() {
           </div>
         </div>
 
-        <div className="grid w-full grid-cols-1 gap-6 pt-2 sm:grid-cols-3">
-          {model.specs && model.specs.length > 0 ? (
-            model.specs.map((spec) => (
+        {model.specs && model.specs.length > 0 && (
+          <div className="grid w-full grid-cols-1 gap-6 pt-2 sm:grid-cols-3">
+            {model.specs.map((spec) => (
               <div key={spec.label} className="flex flex-col items-center gap-2">
                 <span className="text-sm text-muted-foreground">
                   {spec.label}
@@ -205,13 +183,9 @@ export function CarShowcase() {
                   {spec.value}
                 </span>
               </div>
-            ))
-          ) : (
-            <div className="col-span-full text-center text-muted-foreground">
-              Loading specifications...
-            </div>
-          )}
-        </div>
+            ))}
+          </div>
+        )}
 
         <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
           <Button

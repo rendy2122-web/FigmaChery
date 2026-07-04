@@ -30,7 +30,16 @@ export async function GET(request: NextRequest) {
 
     const cars = db.prepare(query).all(...params);
 
-    return NextResponse.json(cars, {
+    // Fetch specs for each car
+    const carsWithSpecs = cars.map((car: any) => {
+      const specs = db.prepare("SELECT label, value FROM car_specs WHERE car_id = ? ORDER BY sort_order").all(car.id);
+      return {
+        ...car,
+        specs: specs || []
+      };
+    });
+
+    return NextResponse.json(carsWithSpecs, {
       headers: {
         'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=59',
       },
