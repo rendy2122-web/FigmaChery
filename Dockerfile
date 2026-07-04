@@ -31,4 +31,4 @@ USER nextjs
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "node node_modules/prisma/build/index.js migrate deploy && npx tsx src/lib/db/seed.ts && node .next/standalone/server.js"]
+CMD ["sh", "-c", "node node_modules/prisma/build/index.js migrate deploy && npx tsx src/lib/db/seed.ts && cd .next/standalone && node server.js"]
