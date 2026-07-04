@@ -1,0 +1,224 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      String   @default("editor") // admin or editor
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Car {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  subtitle    String?
+  description String?
+  priceFrom   String?
+  status      String    @default("draft") // draft or published
+  featured    Boolean   @default(false)
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  images      CarImage[]
+  specs       CarSpec[]
+  features    CarFeature[]
+  promotions  Promotion[]
+}
+
+model CarImage {
+  id        String   @id @default(cuid())
+  carId     String
+  url       String
+  alt       String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  
+  @@index([carId])
+}
+
+model CarSpec {
+  id        String   @id @default(cuid())
+  carId     String
+  label     String
+  value     String
+  sortOrder Int      @default(0)
+  
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  
+  @@index([carId])
+}
+
+model CarFeature {
+  id        String   @id @default(cuid())
+  carId     String
+  title     String
+  description String?
+  icon      String?
+  sortOrder Int      @default(0)
+  
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  
+  @@index([carId])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  
+  articles    Article[]
+}
+
+model Article {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String?
+  content     String    @db.Text
+  featuredImage String?
+  status      String    @default("draft") // draft, published, scheduled
+  publishedAt DateTime?
+  scheduledAt DateTime?
+  views       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  seo         SEOMetadata?
+  tags        ArticleTag[]
+}
+
+model Tag {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  
+  articles  ArticleTag[]
+}
+
+model ArticleTag {
+  articleId String
+  tagId     String
+  
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@id([articleId, tagId])
+}
+
+model Media {
+  id          String    @id @default(cuid())
+  filename    String
+  originalName String
+  mimeType    String
+  size        Int
+  url         String
+  folder      String    @default("general")
+  alt         String?
+  width       Int?
+  height      Int?
+  createdAt   DateTime  @default(now())
+}
+
+model Promotion {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  description String?
+  bannerImage String?
+  ctaText     String?
+  ctaLink     String?
+  startDate   DateTime?
+  endDate     DateTime?
+  status      String    @default("draft") // draft, active, expired
+  featured    Boolean   @default(false)
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  carId       String?
+  car         Car?      @relation(fields: [carId], references: [id])
+  
+  @@index([carId])
+}
+
+model Dealer {
+  id          String    @id @default(cuid())
+  name        String
+  city        String
+  address     String
+  phone       String
+  email       String?
+  whatsapp    String
+  mapsEmbed   String?
+  status      String    @default("active") // active, inactive
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model FAQ {
+  id          String    @id @default(cuid())
+  question    String
+  answer      String    @db.Text
+  category    String?
+  sortOrder   Int       @default(0)
+  status      String    @default("published") // draft, published
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Setting {
+  id          String    @id @default(cuid())
+  key         String    @unique
+  value       String    @db.Text
+  type        String    @default("text") // text, textarea, json, image
+  group       String    @default("general") // general, social, contact, footer
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model HomepageSection {
+  id          String    @id @default(cuid())
+  section     String    @unique // hero, cta, features, etc.
+  title       String?
+  subtitle    String?
+  description String?
+  image       String?
+  ctaText     String?
+  ctaLink     String?
+  isActive    Boolean   @default(true)
+  sortOrder   Int       @default(0)
+  metadata    String?   @db.Text // JSON for flexible data
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model SEOMetadata {
+  id          String    @id @default(cuid())
+  page        String    @unique // home, cars, articles, etc.
+  title       String?
+  description String?
+  keywords    String?
+  ogImage     String?
+  canonical   String?
+  noIndex     Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

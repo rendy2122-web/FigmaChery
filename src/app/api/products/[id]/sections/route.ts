@@ -1,0 +1,73 @@
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import db from "@/lib/db";
+
+export const runtime = "nodejs";
+
+// GET product sections
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const sections = db.prepare(`
+      SELECT * FROM product_sections 
+      WHERE car_id = ? 
+      ORDER BY sort_order ASC
+    `).all(params.id);
+
+    return NextResponse.json(sections);
+  } catch (error) {
+    console.error("Error fetching product sections:", error);
+    return NextResponse.json({ error: "Failed to fetch product sections" }, { status: 500 });
+  }
+}
+
+// PUT update product sections (admin only)
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const sections = await request.json();
+    const now = new Date().toISOString();
+
+    // Delete existing sections
+    db.prepare("DELETE FROM product_sections WHERE car_id = ?").run(params.id);
+
+    // Insert new sections
+    const stmt = db.prepare(`
+      INSERT INTO product_sections (id, car_id, section_type, title, subtitle, content, image, icon, features, sort_order, is_active, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    sections.forEach((section: any, index: number) => {
+      const id = section.id || `ps-${Date.now()}-${index}`;
+      stmt.run(
+        id,
+        params.id,
+        section.section_type,
+        section.title || null,
+        section.subtitle || null,
+        section.content || null,
+        section.image || null,
+        section.icon || null,
+        section.features ? JSON.stringify(section.features) : null,
+        section.sort_order || index,
+        section.is_active ? 1 : 0,
+        now,
+        now
+      );
+    });
+
+    return NextResponse.json({ message: "Product sections updated successfully" });
+  } catch (error) {
+    console.error("Error updating product sections:", error);
+    return NextResponse.json({ error: "Failed to update product sections" }, { status: 500 });
+  }
+}
