@@ -52,11 +52,12 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-# Copy Prisma artifacts (schema + migrations for runtime migrations)
+# Copy Prisma artifacts (schema + migrations + CLI binary)
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
 
 # Copy better-sqlite3 native binding (already compiled for alpine)
 COPY --from=builder /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
