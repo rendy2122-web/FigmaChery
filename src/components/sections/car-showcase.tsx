@@ -17,6 +17,7 @@ type Model = {
   watermark: string;
   image: string;
   type: string;
+  specs: Array<{ label: string; value: string }>;
 };
 
 const defaultModels: Model[] = [
@@ -27,13 +28,12 @@ const defaultModels: Model[] = [
     watermark: "CHERY Q",
     image: "/figma/car-q.png",
     type: "ICE",
+    specs: [
+      { label: "Maximum power (kW/PS)", value: "90/122" },
+      { label: "Maximum torque (NM)", value: "115" },
+      { label: "Dimensions (L x W x H) (mm.)", value: "4195 x 1811 x 1568" },
+    ],
   },
-];
-
-const defaultSpecs = [
-  { label: "Maximum power (kW/PS)", value: "90/122" },
-  { label: "Maximum torque (NM)", value: "115" },
-  { label: "Dimensions (L x W x H) (mm.)", value: "4195 x 1811 x 1568" },
 ];
 
 export function CarShowcase() {
@@ -48,7 +48,7 @@ export function CarShowcase() {
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
-          // Map cars API response to Model type
+          // Map cars API response to Model type and fetch specs for each car
           const mapped = data.map((car: any) => ({
             id: car.id,
             name: car.name.toUpperCase(),
@@ -56,9 +56,35 @@ export function CarShowcase() {
             watermark: car.name.toUpperCase(),
             image: car.thumbnail || "/figma/car-q.png",
             type: car.type || "ICE",
+            specs: [], // Will be fetched below
           }));
           setModels(mapped);
           setActiveIndex(0); // Reset to first car when filter changes
+
+          // Fetch specs for all cars
+          Promise.all(
+            data.map((car: any) =>
+              fetch(`/api/cars/${car.id}`)
+                .then(res => res.json())
+                .then((carData: any) => {
+                  const specs = (carData.specs || []).map((spec: any) => ({
+                    label: spec.label,
+                    value: spec.value,
+                  }));
+                  return { id: car.id, specs };
+                })
+            )
+          ).then(specsData => {
+            setModels(prevModels =>
+              prevModels.map(model => {
+                const carSpecs = specsData.find(s => s.id === model.id);
+                return {
+                  ...model,
+                  specs: carSpecs?.specs || [],
+                };
+              })
+            );
+          }).catch(console.error);
         }
       })
       .catch(console.error);
@@ -169,16 +195,22 @@ export function CarShowcase() {
         </div>
 
         <div className="grid w-full grid-cols-1 gap-6 pt-2 sm:grid-cols-3">
-          {defaultSpecs.map((spec) => (
-            <div key={spec.label} className="flex flex-col items-center gap-2">
-              <span className="text-sm text-muted-foreground">
-                {spec.label}
-              </span>
-              <span className="text-h3 font-heading font-bold text-foreground">
-                {spec.value}
-              </span>
+          {model.specs && model.specs.length > 0 ? (
+            model.specs.map((spec) => (
+              <div key={spec.label} className="flex flex-col items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  {spec.label}
+                </span>
+                <span className="text-h3 font-heading font-bold text-foreground">
+                  {spec.value}
+                </span>
+              </div>
+            ))
+          ) : (
+            <div className="col-span-full text-center text-muted-foreground">
+              Loading specifications...
             </div>
-          ))}
+          )}
         </div>
 
         <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">

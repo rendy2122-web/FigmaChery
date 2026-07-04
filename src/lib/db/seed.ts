@@ -100,25 +100,82 @@ async function seed() {
   carImageStmt.run("car-img-8", "car-8", "/figma/car-c5.png", "CHERY C5 CSH", 1);
   console.log("✓ Created car images");
 
-  // Seed car specs
+  // Seed car specs - unique for each model
   const carSpecStmt = db.prepare(`
     INSERT OR IGNORE INTO car_specs (id, car_id, label, value, sort_order)
     VALUES (?, ?, ?, ?, ?)
   `);
 
-  const specs = [
+  // CHERY Q specs
+  const qSpecs = [
     { label: "Maximum power (kW/PS)", value: "90/122" },
     { label: "Maximum torque (NM)", value: "115" },
     { label: "Dimensions (L x W x H) (mm.)", value: "4195 x 1811 x 1568" },
   ];
 
-  // Add specs for all 8 cars
-  for (let i = 1; i <= 8; i++) {
+  // CHERY J6 specs
+  const j6BevSpecs = [
+    { label: "Maximum power (kW/PS)", value: "150/204" },
+    { label: "Maximum torque (NM)", value: "310" },
+    { label: "Battery capacity (kWh)", value: "60.5" },
+    { label: "Range (km)", value: "460" },
+  ];
+  const j6CshSpecs = [
+    { label: "Maximum power (kW/PS)", value: "125/170" },
+    { label: "Maximum torque (NM)", value: "280" },
+    { label: "Battery capacity (kWh)", value: "19.3" },
+    { label: "Dimensions (L x W x H) (mm.)", value: "4750 x 1865 x 1710" },
+  ];
+  const j6IceSpecs = [
+    { label: "Maximum power (kW/PS)", value: "115/156" },
+    { label: "Maximum torque (NM)", value: "230" },
+    { label: "Dimensions (L x W x H) (mm.)", value: "4750 x 1865 x 1710" },
+  ];
+
+  // CHERY E5 specs
+  const e5BevSpecs = [
+    { label: "Maximum power (kW/PS)", value: "150/204" },
+    { label: "Maximum torque (NM)", value: "310" },
+    { label: "Battery capacity (kWh)", value: "60.5" },
+    { label: "Range (km)", value: "520" },
+  ];
+  const e5CshSpecs = [
+    { label: "Maximum power (kW/PS)", value: "145/197" },
+    { label: "Maximum torque (NM)", value: "300" },
+    { label: "Battery capacity (kWh)", value: "19.3" },
+    { label: "Dimensions (L x W x H) (mm.)", value: "4780 x 1893 x 1515" },
+  ];
+  const e5IceSpecs = [
+    { label: "Maximum power (kW/PS)", value: "115/156" },
+    { label: "Maximum torque (NM)", value: "230" },
+    { label: "Dimensions (L x W x H) (mm.)", value: "4780 x 1893 x 1515" },
+  ];
+
+  // CHERY C5 CSH specs
+  const c5CshSpecs = [
+    { label: "Maximum power (kW/PS)", value: "145/197" },
+    { label: "Maximum torque (NM)", value: "300" },
+    { label: "Battery capacity (kWh)", value: "19.3" },
+    { label: "Dimensions (L x W x H) (mm.)", value: "4780 x 1893 x 1515" },
+  ];
+
+  // Insert specs for each car
+  const insertSpecs = (carId: string, specs: any[]) => {
     specs.forEach((spec, idx) => {
-      carSpecStmt.run(`spec-${i}-${idx}`, `car-${i}`, spec.label, spec.value, idx);
+      carSpecStmt.run(`spec-${carId}-${idx}`, carId, spec.label, spec.value, idx);
     });
-  }
-  console.log("✓ Created car specs");
+  };
+
+  insertSpecs("car-1", qSpecs);
+  insertSpecs("car-2", j6BevSpecs);
+  insertSpecs("car-3", j6CshSpecs);
+  insertSpecs("car-4", j6IceSpecs);
+  insertSpecs("car-5", e5BevSpecs);
+  insertSpecs("car-6", e5CshSpecs);
+  insertSpecs("car-7", e5IceSpecs);
+  insertSpecs("car-8", c5CshSpecs);
+
+  console.log("✓ Created car specs with accurate specifications");
 
   // Seed product sections for car-1 (Tiggo Cross CSH)
   const sectionStmt = db.prepare(`
