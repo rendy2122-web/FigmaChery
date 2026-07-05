@@ -5,6 +5,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { SkipToContent } from "@/components/layout/skip-to-content";
 import { WhatsAppButton } from "@/components/layout/whatsapp-button";
+import CheryAssistant from "@/components/product/chery-assistant";
 import { siteConfig } from "@/lib/site-config";
 
 const inter = Inter({
@@ -79,6 +80,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <WhatsAppButton />
+        <CheryAssistant />
       </body>
     </html>
   );

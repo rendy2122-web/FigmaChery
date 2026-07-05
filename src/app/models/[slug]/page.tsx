@@ -7,7 +7,6 @@ import FeaturesGrid from "@/components/product/features-grid";
 import SpecComparison from "@/components/product/spec-comparison";
 import CustomerReviews from "@/components/product/customer-reviews";
 import BookingForm from "@/components/product/booking-form";
-import CheryAssistant from "@/components/product/chery-assistant";
 
 interface CarData {
   id: string;
@@ -92,8 +91,6 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
         cars={allCars}
         activeCar={car}
       />
-
-      <CheryAssistant />
     </div>
   );
 }
