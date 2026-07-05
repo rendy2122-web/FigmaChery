@@ -30,6 +30,7 @@ function getGreeting(): string {
 
 export function WhatsAppButton() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isChivaOpen, setIsChivaOpen] = useState(false);
   const [step, setStep] = useState<Step>("greeting");
   const [userData, setUserData] = useState<UserData>({
     name: "",
@@ -37,6 +38,24 @@ export function WhatsAppButton() {
     dealer: "",
   });
   const [inputValue, setInputValue] = useState("");
+
+  useEffect(() => {
+    // Notify chiva when our open state changes
+    const event = new CustomEvent("whatsapp-open-state", { detail: { isOpen } });
+    window.dispatchEvent(event);
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleChivaState = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      setIsChivaOpen(customEvent.detail.isOpen);
+    };
+
+    window.addEventListener("chiva-open-state", handleChivaState);
+    return () => {
+      window.removeEventListener("chiva-open-state", handleChivaState);
+    };
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -164,22 +183,24 @@ export function WhatsAppButton() {
   return (
     <>
       {/* Floating Button */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="whatsapp-float-button"
-        aria-label="Chat WhatsApp"
-      >
-        <Image
-          src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-          alt="WhatsApp"
-          width={32}
-          height={32}
-          className="whatsapp-icon"
-        />
-      </button>
+      {!isChivaOpen && (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="whatsapp-float-button"
+          aria-label="Chat WhatsApp"
+        >
+          <Image
+            src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+            alt="WhatsApp"
+            width={32}
+            height={32}
+            className="whatsapp-icon"
+          />
+        </button>
+      )}
 
       {/* Chat Popup */}
-      {isOpen && (
+      {!isChivaOpen && isOpen && (
         <div className="whatsapp-popup">
           {/* Header */}
           <div className="whatsapp-header">

@@ -10,6 +10,7 @@ interface Message {
 
 export default function CheryAssistant() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isWhatsappOpen, setIsWhatsappOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -23,6 +24,24 @@ export default function CheryAssistant() {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  useEffect(() => {
+    // Notify WhatsApp when our open state changes
+    const event = new CustomEvent("chiva-open-state", { detail: { isOpen } });
+    window.dispatchEvent(event);
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleWhatsappState = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      setIsWhatsappOpen(customEvent.detail.isOpen);
+    };
+
+    window.addEventListener("whatsapp-open-state", handleWhatsappState);
+    return () => {
+      window.removeEventListener("whatsapp-open-state", handleWhatsappState);
+    };
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -79,7 +98,11 @@ export default function CheryAssistant() {
   };
 
   return (
-    <div className={`fixed z-[10000] font-sans transition-all duration-300 ${isOpen ? "bottom-6 right-6" : "bottom-24 right-6"}`}>
+    <div className={`fixed z-[10000] font-sans transition-all duration-300 ${
+      isWhatsappOpen 
+        ? "opacity-0 pointer-events-none scale-95 translate-y-4" 
+        : "opacity-100 scale-100 translate-y-0"
+    } ${isOpen ? "bottom-6 right-6" : "bottom-24 right-6"}`}>
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
