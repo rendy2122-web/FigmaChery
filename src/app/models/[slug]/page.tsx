@@ -17,6 +17,7 @@ interface CarData {
   price_from: string;
   type: string;
   images: { url: string }[];
+  color_images?: { color_name: string; color_hex: string; image_url: string }[];
   specs: { label: string; value: string }[];
   highlights: { title: string; description: string; iconName: string }[];
   interiorImage?: string;
