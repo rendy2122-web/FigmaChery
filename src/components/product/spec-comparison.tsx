@@ -38,18 +38,34 @@ export default function SpecComparison({ cars }: SpecComparisonProps) {
       return price.includes(".") ? `Rp ${price}` : `Rp ${parseInt(price || "0").toLocaleString("id-ID")}`;
     }
     
-    const spec = car.specs?.find((s) => s.label === label);
+    // Perform loose matching to handle variations in label naming
+    const normalizedLabel = label.toLowerCase().replace(/[^a-z0-9]/g, "");
+    
+    const spec = car.specs?.find((s) => {
+      const sNorm = s.label.toLowerCase().replace(/[^a-z0-9]/g, "");
+      // Check for exact normalized match, or key substrings
+      if (sNorm === normalizedLabel) return true;
+      if (normalizedLabel.includes("power") && sNorm.includes("power")) return true;
+      if (normalizedLabel.includes("torque") && sNorm.includes("torque")) return true;
+      if (normalizedLabel.includes("dimensions") && sNorm.includes("dimensions")) return true;
+      if (normalizedLabel.includes("battery") && sNorm.includes("battery")) return true;
+      if (normalizedLabel.includes("range") && sNorm.includes("range")) return true;
+      if (normalizedLabel.includes("engine") && sNorm.includes("engine")) return true;
+      return false;
+    });
+    
     if (spec?.value) return spec.value;
     
     // Return default values for common specs
     const defaults: Record<string, string> = {
+      "type": car.type || "ICE",
       "warranty": "10 Tahun / 1.000.000 KM",
-      "seats": car.id === "car-10" ? "7 Seater" : "5 Seater",
-      "trunk_capacity": car.id === "car-10" ? "193 L" : "450 L",
+      "seats": ["car-5", "car-7", "car-12", "car-13"].includes(car.id) ? "7 Seater" : "5 Seater",
+      "trunk_capacity": ["car-5", "car-13"].includes(car.id) ? "193 L" : "450 L",
       "front_suspension": "MacPherson Strut",
-      "rear_suspension": car.id === "car-10" ? "Multi-Link" : "Torsion Beam",
-      "wheel_size": car.id === "car-10" ? "18 inch" : "17 inch",
-      "drive_type": car.id === "car-10" ? "AWD" : "FWD",
+      "rear_suspension": ["car-5", "car-10", "car-13"].includes(car.id) ? "Multi-Link" : "Torsion Beam",
+      "wheel_size": ["car-5", "car-10", "car-13"].includes(car.id) ? "18 inch" : "17 inch",
+      "drive_type": car.id === "car-13" ? "AWD" : "FWD",
       "brake_system": "ABS + EBD + BA",
       "safety_features": "ESC, TCS, HSA, TPMS",
     };
