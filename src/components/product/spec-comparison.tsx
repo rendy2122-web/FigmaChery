@@ -68,6 +68,18 @@ export default function SpecComparison({ cars }: SpecComparisonProps) {
       "drive_type": car.id === "car-13" ? "AWD" : "FWD",
       "brake_system": "ABS + EBD + BA",
       "safety_features": "ESC, TCS, HSA, TPMS",
+      "ADAS": ["car-13", "car-5", "car-10", "car-2", "car-3", "car-7", "car-12"].includes(car.id)
+        ? "Advanced ADAS (ACC, AEB, LKA, BSD, LDW)"
+        : ["car-1"].includes(car.id)
+        ? "Tidak Tersedia"
+        : "Standard ADAS (ACC, AEB, BSD)",
+      "Airbags": car.id === "car-13" 
+        ? "9 Airbags" 
+        : ["car-1"].includes(car.id) 
+        ? "2 Airbags" 
+        : ["car-4", "car-6", "car-9", "car-11"].includes(car.id)
+        ? "4 Airbags"
+        : "6 Airbags",
     };
     
     return defaults[label] || "-";
