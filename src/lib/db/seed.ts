@@ -78,66 +78,66 @@ async function seed() {
     "329.800.000", "BEV", "published", 1, 1);
 
   // 2. CHERY E5 BEV
-  carStmt.run("car-2", "CHERY E5", "chery-e5", "ELECTRIC SEDAN",
-    "CHERY E5 menghadirkan sedan listrik premium dengan desain elegan dan teknologi canggih. Diciptakan untuk profesional modern yang menginginkan kendaraan ramah lingkungan tanpa mengorbankan kenyamanan dan performa, dengan interior luas serta fitur keselamatan ADAS terkini.",
+  carStmt.run("car-2", "CHERY E5", "chery-e5", "ELECTRIC CROSSOVER",
+    "CHERY E5 menghadirkan crossover listrik premium dengan desain elegan dan teknologi canggih. Diciptakan untuk profesional modern yang menginginkan kendaraan ramah lingkungan tanpa mengorbankan kenyamanan dan performa, dengan interior luas serta fitur keselamatan ADAS terkini.",
     "799.900.000", "BEV", "published", 1, 2);
 
   // 3. J6 BEV
-  carStmt.run("car-3", "CHERY J6", "chery-j6", "ELECTRIC SEDAN",
-    "CHERY J6 adalah sedan listrik flagship dengan desain futuristik yang memukau dan performa bertenaga. Diciptakan untuk eksekutif yang menginginkan perpaduan sempurna antara kemewahan, teknologi baterai canggih, dan pengalaman berkendara senyap dengan jangkauan jauh.",
+  carStmt.run("car-3", "CHERY J6", "chery-j6", "ELECTRIC OFF-ROAD SUV",
+    "CHERY J6 adalah SUV off-road listrik flagship dengan desain boxy futuristik yang memukau dan performa bertenaga. Diciptakan untuk petualang modern yang menginginkan perpaduan sempurna antara ketangguhan medan berat, teknologi baterai canggih, dan kesenyapan berkendara.",
     "739.900.000", "BEV", "published", 1, 3);
 
   // ===================== CSH (Charged Sustainable Hybrid) =====================
 
   // 4. CHERY C5 CSH
-  carStmt.run("car-4", "CHERY C5 CSH", "chery-c5-csh", "CHARGED SUSTAINABLE HYBRID",
-    "CHERY C5 CSH menghadirkan sedan hybrid elegan dengan teknologi plug-in hybrid yang efisien. Diciptakan untuk profesional urban yang menginginkan gaya premium tanpa mengorbankan efisiensi bahan bakar, menawarkan kombinasi sempurna antara performa tangguh dan ramah lingkungan.",
+  carStmt.run("car-4", "CHERY C5 CSH", "chery-c5-csh", "PLUG-IN HYBRID CROSSOVER",
+    "CHERY C5 CSH menghadirkan crossover hybrid elegan dengan teknologi plug-in hybrid yang efisien. Diciptakan untuk profesional urban yang menginginkan gaya premium tanpa mengorbankan efisiensi bahan bakar, menawarkan kombinasi sempurna antara performa tangguh dan ramah lingkungan.",
     "739.900.000", "CSH", "published", 1, 4);
 
   // 5. TIGGO 9 CSH
-  carStmt.run("car-5", "TIGGO 9 CSH", "tiggo-9-csh", "CHARGED SUSTAINABLE HYBRID",
+  carStmt.run("car-5", "TIGGO 9 CSH", "tiggo-9-csh", "PLUG-IN HYBRID 7-SEATER SUV",
     "TIGGO 9 CSH adalah SUV hybrid flagship yang menggabungkan kemewahan kelas atas dengan teknologi ramah lingkungan. Diciptakan untuk keluarga modern yang menginginkan kendaraan besar dengan efisiensi bahan bakar superior, kabin premium 7-seater, dan performa hybrid yang tangguh.",
     "849.900.000", "CSH", "published", 1, 5);
 
   // 6. TIGGO CROSS CSH
-  carStmt.run("car-6", "TIGGO CROSS CSH", "tiggo-cross-csh", "CHARGED SUSTAINABLE HYBRID",
+  carStmt.run("car-6", "TIGGO CROSS CSH", "tiggo-cross-csh", "PLUG-IN HYBRID CROSSOVER",
     "TIGGO CROSS CSH menghadirkan compact SUV hybrid dengan desain crossover modern dan teknologi hybrid cerdas. Diciptakan untuk keluarga muda yang aktif dan peduli lingkungan, menawarkan efisiensi bahan bakar maksimal, ruang kabin fleksibel, dan fitur keselamatan lengkap.",
     "429.900.000", "CSH", "published", 1, 6);
 
   // 7. TIGGO 8 CSH
-  carStmt.run("car-7", "TIGGO 8 CSH", "tiggo-8-csh", "CHARGED SUSTAINABLE HYBRID",
+  carStmt.run("car-7", "TIGGO 8 CSH", "tiggo-8-csh", "PLUG-IN HYBRID 7-SEATER SUV",
     "TIGGO 8 CSH adalah SUV hybrid 7-seater premium yang menggabungkan kenyamanan keluarga dengan teknologi hybrid terkini. Diciptakan untuk keluarga besar yang mengutamakan kemewahan dan kepraktisan, menawarkan kabin luas, fitur hiburan lengkap, dan efisiensi bahan bakar superior.",
     "668.500.000", "CSH", "published", 1, 7);
 
   // ===================== ICE (Internal Combustion Engine) =====================
 
   // 8. CHERY C5 ICE
-  carStmt.run("car-8", "CHERY C5", "chery-c5", "INTERNAL COMBUSTION ENGINE",
-    "CHERY C5 menghadirkan sedan bensin elegan dengan performa tangguh dan konsumsi bahan bakar irit. Diciptakan untuk keluarga modern yang menghargai kenyamanan berkendara dan keandalan mesin bensin konvensional, dengan desain premium dan fitur keselamatan lengkap.",
+  carStmt.run("car-8", "CHERY C5", "chery-c5", "PREMIUM CROSSOVER SUV",
+    "CHERY C5 menghadirkan crossover bensin elegan dengan performa tangguh dan konsumsi bahan bakar irit. Diciptakan untuk keluarga modern yang menghargai kenyamanan berkendara dan keandalan mesin bensin konvensional, dengan desain premium dan fitur keselamatan lengkap.",
     "659.900.000", "ICE", "published", 1, 8);
 
   // 9. TIGGO CROSS SPORT
-  carStmt.run("car-9", "TIGGO CROSS SPORT", "tiggo-cross-sport", "INTERNAL COMBUSTION ENGINE",
+  carStmt.run("car-9", "TIGGO CROSS SPORT", "tiggo-cross-sport", "COMPACT SPORTY SUV",
     "TIGGO CROSS SPORT adalah varian sporty dari Tiggo Cross dengan tampilan lebih agresif dan dinamis. Diciptakan untuk pengendara muda yang menginginkan SUV crossover berkarakter sporty dengan performa mesin bensin bertenaga, desain modern, dan harga terjangkau.",
     "399.900.000", "ICE", "published", 1, 9);
 
   // 10. OMODA 5 GT
-  carStmt.run("car-10", "OMODA 5 GT", "omoda-5-gt", "INTERNAL COMBUSTION ENGINE",
+  carStmt.run("car-10", "OMODA 5 GT", "omoda-5-gt", "TURBO CROSSOVER SUV",
     "OMODA 5 GT menghadirkan crossover sporty dengan desain futuristik 'Art in Motion' yang agresif dan mesin 1.6L Turbocharged bertenaga 197 HP. Diciptakan bagi individu dinamis yang menginginkan gaya mencolok tanpa mengorbankan performa, dilengkapi suspensi Multi-Link dan asisten berkendara digital.",
     "404.800.000", "ICE", "published", 1, 10);
 
   // 11. TIGGO CROSS ICE
-  carStmt.run("car-11", "TIGGO CROSS", "tiggo-cross", "INTERNAL COMBUSTION ENGINE",
-    "TIGGO CROSS adalah compact SUV bensin yang dirancang untuk mobilitas perkotaan yang praktis dan efisien. Diciptakan bagi keluarga muda yang mencari SUV kompak dengan konsumsi bahan bakar irit, kabin yang luas, dan fitur keselamatan standar dengan harga bersahabat.",
+  carStmt.run("car-11", "TIGGO CROSS", "tiggo-cross", "COMPACT CROSSOVER SUV",
+    "TIGGO CROSS adalah compact SUV bensin yang dirancang untuk mobilitas perkotaan yang praktis and efisien. Diciptakan bagi keluarga muda yang mencari SUV kompak dengan konsumsi bahan bakar irit, kabin yang luas, dan fitur keselamatan standar dengan harga bersahabat.",
     "329.800.000", "ICE", "published", 1, 11);
 
   // 12. TIGGO 8 ICE
-  carStmt.run("car-12", "TIGGO 8", "tiggo-8", "INTERNAL COMBUSTION ENGINE",
+  carStmt.run("car-12", "TIGGO 8", "tiggo-8", "7-SEATER FAMILY SUV",
     "TIGGO 8 adalah SUV 7-seater bensin premium dengan mesin bertenaga dan kabin mewah. Diciptakan untuk keluarga besar yang mengutamakan kenyamanan dan ruang luas, dilengkapi fitur keselamatan ADAS terkini, sistem hiburan canggih, dan desain eksterior yang berwibawa.",
     "568.500.000", "ICE", "published", 1, 12);
 
   // 13. TIGGO 8 PRO MAX ICE
-  carStmt.run("car-13", "TIGGO 8 PRO MAX", "tiggo-8-pro-max", "INTERNAL COMBUSTION ENGINE",
+  carStmt.run("car-13", "TIGGO 8 PRO MAX", "tiggo-8-pro-max", "FLAGSHIP 7-SEATER AWD SUV",
     "TIGGO 8 PRO MAX adalah SUV 7-seater flagship dengan mesin 2.0L Turbocharged bertenaga 250 HP dan AWD untuk ketangguhan di semua medan. Diciptakan bagi keluarga besar yang menginginkan kemewahan kelas VIP, menawarkan kabin spacious dengan 7 tempat duduk premium, sistem audio Sony 10 speaker, suspensi Comfort Plus, dan fitur keselamatan ADAS 9 airbags untuk perlindungan maksimal.",
     "585.500.000", "ICE", "published", 1, 13);
 
@@ -155,16 +155,16 @@ async function seed() {
   carImageStmt.run("car-img-1", "car-1", "/figma/car-q.png", "CHERY Q BEV", 1);
   carImageStmt.run("car-img-2", "car-2", "/figma/car-e5.png", "CHERY E5 BEV", 1);
   carImageStmt.run("car-img-3", "car-3", "/figma/car-j6.png", "CHERY J6 BEV", 1);
-  carImageStmt.run("car-img-4", "car-4", "/figma/car-c5.png", "CHERY C5 CSH", 1);
-  carImageStmt.run("car-img-5", "car-5", "/figma/car-tiggo9.png", "TIGGO 9 CSH", 1);
-  carImageStmt.run("car-img-6", "car-6", "/figma/car-tiggocross.png", "TIGGO CROSS CSH", 1);
-  carImageStmt.run("car-img-7", "car-7", "/figma/car-tiggo8.png", "TIGGO 8 CSH", 1);
-  carImageStmt.run("car-img-8", "car-8", "/figma/car-c5.png", "CHERY C5 ICE", 1);
-  carImageStmt.run("car-img-9", "car-9", "/figma/car-tiggocross.png", "TIGGO CROSS SPORT", 1);
-  carImageStmt.run("car-img-10", "car-10", "/figma/car-omoda5.png", "OMODA 5 GT", 1);
-  carImageStmt.run("car-img-11", "car-11", "/figma/car-tiggocross.png", "TIGGO CROSS ICE", 1);
-  carImageStmt.run("car-img-12", "car-12", "/figma/car-tiggo8.png", "TIGGO 8 ICE", 1);
-  carImageStmt.run("car-img-13", "car-13", "/figma/car-tiggo8.png", "TIGGO 8 PRO MAX", 1);
+  carImageStmt.run("car-img-4", "car-4", "/figma/chery-c5-csh.webp", "CHERY C5 CSH", 1);
+  carImageStmt.run("car-img-5", "car-5", "/figma/tiggo-9-csh.webp", "TIGGO 9 CSH", 1);
+  carImageStmt.run("car-img-6", "car-6", "/figma/tiggo-cross-csh.webp", "TIGGO CROSS CSH", 1);
+  carImageStmt.run("car-img-7", "car-7", "/figma/tiggo-8-csh.webp", "TIGGO 8 CSH", 1);
+  carImageStmt.run("car-img-8", "car-8", "/figma/chery-c5.webp", "CHERY C5 ICE", 1);
+  carImageStmt.run("car-img-9", "car-9", "/figma/tiggo-cross-sport.webp", "TIGGO CROSS SPORT", 1);
+  carImageStmt.run("car-img-10", "car-10", "/figma/omoda-5-gt.webp", "OMODA 5 GT", 1);
+  carImageStmt.run("car-img-11", "car-11", "/figma/tiggo-cross.webp", "TIGGO CROSS ICE", 1);
+  carImageStmt.run("car-img-12", "car-12", "/figma/tiggo-8.webp", "TIGGO 8 ICE", 1);
+  carImageStmt.run("car-img-13", "car-13", "/figma/tiggo-8-pro-max.webp", "TIGGO 8 PRO MAX", 1);
   console.log("✓ Created main car images");
 
   // ────────────────────────────────────────────────────────
