@@ -72,7 +72,7 @@ export default function HeroSection({ car, onOpenBooking }: HeroSectionProps) {
               <div className="p-4 bg-white border border-slate-200 rounded-sm shadow-sm inline-block">
                 <span className="block text-[10px] text-slate-400 uppercase tracking-widest font-mono font-bold">Harga OTR Spesial</span>
                 <span className="text-2xl sm:text-3xl font-black tracking-tight text-[#1A1A1A]">
-                  Rp {parseInt(car.price_from).toLocaleString("id-ID")}
+                  Rp {car.price_from?.includes(".") ? car.price_from : parseInt(car.price_from || "0").toLocaleString("id-ID")}
                 </span>
                 <span className="block text-[10px] text-slate-400 mt-1">*OTR DKI Jakarta & Tangerang, subsidi EV berlaku.</span>
               </div>
