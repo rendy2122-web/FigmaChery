@@ -47,6 +47,11 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: [siteConfig.ogImage],
   },
+  icons: {
+    icon: "/chery-logo.png",
+    shortcut: "/chery-logo.png",
+    apple: "/chery-logo.png",
+  },
   robots: {
     index: true,
     follow: true,

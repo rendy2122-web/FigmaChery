@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import db from "@/lib/db";
 import { validateOrigin } from "@/lib/security";
+import { getArticleById, updateArticle, softDeleteArticle } from "@/lib/data/articles";
 
 // GET single article
 export async function GET(
@@ -10,7 +10,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const article = db.prepare("SELECT * FROM articles WHERE id = ? AND deleted_at IS NULL").get(id) as any;
+    const article = getArticleById(id);
 
     if (!article) {
       return NextResponse.json({ error: "Article not found" }, { status: 404 });
@@ -30,28 +30,33 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
-    
+
     if (!validateOrigin(request)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-    
+
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
-    const { title, slug, excerpt, content, featuredImage, categoryId, status, publishedAt, scheduledAt } = body;
-    const now = new Date().toISOString();
+    const { title, slug, excerpt, content, featuredImage, categoryId, status, publishedAt, scheduledAt, author } = body;
 
-    const result = db.prepare(`
-      UPDATE articles 
-      SET title = ?, slug = ?, excerpt = ?, content = ?, featured_image = ?, category_id = ?, 
-          status = ?, published_at = ?, scheduled_at = ?, updated_at = ?
-      WHERE id = ? AND deleted_at IS NULL
-    `).run(title, slug, excerpt, content, featuredImage || null, categoryId || null, status, publishedAt || null, scheduledAt || null, now, id);
+    const updated = updateArticle(id, {
+      title,
+      slug,
+      excerpt,
+      content,
+      featuredImage,
+      categoryId,
+      status,
+      publishedAt,
+      scheduledAt,
+      author,
+    });
 
-    if (result.changes === 0) {
+    if (!updated) {
       return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
 
@@ -69,20 +74,19 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    
+
     if (!validateOrigin(request)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-    
+
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const now = new Date().toISOString();
-    const result = db.prepare("UPDATE articles SET deleted_at = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL").run(now, now, id);
+    const deleted = softDeleteArticle(id);
 
-    if (result.changes === 0) {
+    if (!deleted) {
       return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
 

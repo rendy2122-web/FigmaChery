@@ -3,92 +3,53 @@ import Image from "next/image";
 import { ClockIcon, ArrowRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/layout/section";
-
-type Offer = {
-  id: string;
-  image: string;
-  badge?: { label: string; variant: "dark" | "light" };
-  title: string;
-  tag: string;
-  description: string;
-  validUntil: string;
-};
-
-const offers: Offer[] = [
-  {
-    id: "dp-10",
-    image: "/figma/promo-1.png",
-    badge: { label: "Limited Offer", variant: "dark" },
-    title: "DP Mulai 10%",
-    tag: "Khusus Tiggo 8",
-    description:
-      "Miliki Chery Tiggo 8 dengan DP ringan mulai 10% dan tenor hingga 60 bulan.",
-    validUntil: "Valid until: 30 Juni 2026",
-  },
-  {
-    id: "bonus-service",
-    image: "/figma/promo-2.png",
-    badge: { label: "Special Promo", variant: "light" },
-    title: "Bonus Service 3 Tahun",
-    tag: "Untuk Pembelian Omoda 5",
-    description:
-      "Dapatkan gratis service hingga 3 tahun untuk setiap pembelian Omoda 5 baru.",
-    validUntil: "Valid until: 31 Juli 2026",
-  },
-  {
-    id: "trade-in",
-    image: "/figma/promo-3.png",
-    title: "Trade-In Bonus",
-    tag: "Harga Terbaik untuk Mobil Lama",
-    description:
-      "Tukar tambah mobil lama Anda dengan harga terbaik + bonus tambahan untuk pembelian model Chery apa pun.",
-    validUntil: "Valid until: 30 Juni 2026",
-  },
-];
+import { getSpecialOffersSection } from "@/lib/data/homepage-sections";
 
 export function SpecialOffers() {
+  const { header, offers } = getSpecialOffersSection();
+
   return (
     <Section
       id="special-offers"
       aria-labelledby="special-offers-heading"
-      className="bg-brand-deep text-white"
+      className="bg-gradient-to-b from-[#720D2B] via-[#4F071C] to-[#2B020B] text-white py-24 sm:py-32"
     >
-      <div className="mx-auto mb-16 flex max-w-2xl flex-col items-center gap-4 text-center">
-        <span className="text-eyebrow font-medium uppercase tracking-widest text-white/70">
-          Promotion
+      <div className="mx-auto mb-20 flex max-w-2xl flex-col items-center gap-4 text-center">
+        <span className="text-xs font-bold uppercase tracking-widest text-[#FF8E8E]">
+          {header.eyebrow}
         </span>
         <h2
           id="special-offers-heading"
-          className="text-h1 font-heading font-bold text-white"
+          className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black tracking-tight text-white leading-tight"
         >
-          Special Offers
+          {header.heading}
         </h2>
-        <p className="text-body-lg text-white/80">
-          Limited-time promotions to help you drive home your dream Chery
-          with amazing benefits.
+        <p className="text-base sm:text-lg text-white/70 font-medium leading-relaxed">
+          {header.subtext}
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        {offers.map((offer) => (
+      <div className="grid gap-6 md:grid-cols-3 max-w-7xl mx-auto px-4">
+        {offers.map((offer, idx) => (
           <div
             key={offer.id}
-            className="flex flex-col gap-6 rounded-xl bg-[#881337] p-2"
+            className="group flex flex-col justify-between overflow-hidden rounded-sm bg-white/[0.03] border border-white/[0.05] hover:border-white/20 transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(218,41,28,0.18)] opacity-0 animate-fade-up"
+            style={{ animationDelay: `${(idx + 1) * 150}ms`, animationFillMode: 'forwards' }}
           >
-            <div className="relative overflow-hidden rounded-lg">
+            <div className="relative overflow-hidden aspect-[4/3] rounded-t-sm">
               <Image
                 src={offer.image}
                 alt={offer.title}
                 width={389}
                 height={289}
-                className="h-72 w-full object-cover"
+                className="h-full w-full object-cover transition-transform duration-750 ease-out group-hover:scale-105"
               />
               {offer.badge && (
                 <span
                   className={
                     offer.badge.variant === "dark"
-                      ? "absolute top-3 left-3 rounded bg-[#881337] px-3 py-1.5 text-sm font-bold text-white"
-                      : "absolute top-3 left-3 rounded bg-white px-3 py-1.5 text-sm font-bold text-[#881337]"
+                      ? "absolute top-4 left-4 z-10 px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-sm bg-[#DA291C] text-white border border-white/10 shadow-md"
+                      : "absolute top-4 left-4 z-10 px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-sm bg-white text-slate-950 border border-transparent shadow-md"
                   }
                 >
                   {offer.badge.label}
@@ -96,27 +57,27 @@ export function SpecialOffers() {
               )}
             </div>
 
-            <div className="flex flex-col gap-4 px-2 pb-2">
-              <div className="flex flex-col gap-3">
-                <h3 className="text-2xl font-heading font-bold text-white">
-                  {offer.title}
-                </h3>
-                <span className="w-fit rounded-full bg-[#e11d48] px-4 py-1.5 text-sm text-white">
+            <div className="flex flex-col gap-4 p-6 flex-1">
+              <div className="flex flex-col gap-3 flex-1">
+                <span className="w-fit rounded-sm bg-white/5 border border-white/15 px-3 py-1 text-[9px] font-bold uppercase tracking-wider text-white/80">
                   {offer.tag}
                 </span>
-                <p className="text-sm text-white/90">{offer.description}</p>
-                <div className="flex items-center gap-2 text-sm text-white/80">
+                <h3 className="text-xl font-bold tracking-tight text-white group-hover:text-[#FF8E8E] transition-colors duration-300">
+                  {offer.title}
+                </h3>
+                <p className="text-xs text-white/60 leading-relaxed font-sans line-clamp-3">{offer.description}</p>
+                <div className="flex items-center gap-2 text-[10px] text-white/45 mt-auto">
                   <ClockIcon className="size-3.5" aria-hidden="true" />
                   {offer.validUntil}
                 </div>
               </div>
 
               <Button
-                className="h-11 w-full rounded px-5 text-base font-bold bg-white text-[#881337] hover:bg-white/90"
+                className="mt-4 h-11 w-full rounded-sm px-5 text-xs font-bold uppercase tracking-wider bg-white text-slate-950 hover:bg-[#DA291C] hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
                 render={<Link href="#cta" />}
               >
                 Claim Promo
-                <ArrowRightIcon className="size-4" aria-hidden="true" />
+                <ArrowRightIcon className="size-3.5 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
               </Button>
             </div>
           </div>

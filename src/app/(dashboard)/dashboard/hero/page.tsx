@@ -120,17 +120,26 @@ export default function HeroSlidesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between border-b border-gray-200 pb-5">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Hero Slides</h1>
           <p className="mt-1 text-sm text-gray-600">
             Kelola slide banner hero di halaman utama
           </p>
         </div>
-        <Button onClick={addSlide}>
-          <PlusIcon className="size-4 mr-2" />
-          Tambah Slide
-        </Button>
+        <div className="flex gap-3">
+          <Button onClick={addSlide} variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 h-10 px-4">
+            <PlusIcon className="size-4 mr-2" />
+            Tambah Slide
+          </Button>
+          <Button 
+            onClick={handleSave} 
+            disabled={saving} 
+            className="bg-red-600 hover:bg-red-700 text-white font-semibold shadow-sm h-10 px-4 transition-colors"
+          >
+            {saving ? "Menyimpan..." : "Simpan Semua Slide"}
+          </Button>
+        </div>
       </div>
 
       {error && (
@@ -270,8 +279,12 @@ export default function HeroSlidesPage() {
         ))}
       </div>
 
-      <div className="flex gap-4">
-        <Button onClick={handleSave} disabled={saving}>
+      <div className="flex gap-4 border-t border-gray-200 pt-5">
+        <Button 
+          onClick={handleSave} 
+          disabled={saving}
+          className="bg-red-600 hover:bg-red-700 text-white font-semibold shadow-sm h-10 px-5 transition-colors"
+        >
           {saving ? "Menyimpan..." : "Simpan Semua Slide"}
         </Button>
       </div>

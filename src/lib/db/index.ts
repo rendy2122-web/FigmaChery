@@ -2,7 +2,14 @@ import Database from "better-sqlite3";
 import path from "path";
 
 const dbPath = path.join(process.cwd(), "prisma", "dev.db");
-const db = new Database(dbPath);
+
+// Prevent multiple sqlite connections in development due to HMR
+const globalForDb = global as unknown as { db: Database.Database };
+const db = globalForDb.db || new Database(dbPath);
+
+if (process.env.NODE_ENV !== "production") {
+  globalForDb.db = db;
+}
 
 // Enable foreign keys
 db.pragma("foreign_keys = ON");
@@ -31,6 +38,7 @@ db.exec(`
     status TEXT DEFAULT 'draft',
     featured BOOLEAN DEFAULT 0,
     sort_order INTEGER DEFAULT 0,
+    thumbnail TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )
@@ -99,6 +107,14 @@ db.exec(`
     FOREIGN KEY (category_id) REFERENCES categories(id)
   )
 `);
+
+// Lightweight, idempotent column migrations for tables that predate this field.
+// SQLite has no "ADD COLUMN IF NOT EXISTS" on older builds, so guard with try/catch.
+try {
+  db.exec(`ALTER TABLE articles ADD COLUMN author TEXT`);
+} catch {
+  // column already exists — ignore
+}
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS tags (
@@ -186,6 +202,12 @@ db.exec(`
   )
 `);
 
+try {
+  db.exec(`ALTER TABLE faqs ADD COLUMN deleted_at DATETIME`);
+} catch {
+  // column already exists — ignore
+}
+
 db.exec(`
   CREATE TABLE IF NOT EXISTS settings (
     id TEXT PRIMARY KEY,
@@ -250,7 +272,26 @@ db.exec(`
   )
 `);
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS testimonials (
+    id TEXT PRIMARY KEY,
+    car_id TEXT,
+    author_name TEXT NOT NULL,
+    rating INTEGER NOT NULL DEFAULT 5,
+    comment TEXT NOT NULL,
+    verified BOOLEAN DEFAULT 0,
+    likes INTEGER DEFAULT 0,
+    status TEXT DEFAULT 'published',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    deleted_at DATETIME,
+    FOREIGN KEY (car_id) REFERENCES cars(id) ON DELETE SET NULL
+  )
+`);
+
 // Create indexes
+db.exec(`CREATE INDEX IF NOT EXISTS idx_testimonials_car ON testimonials(car_id)`);
+db.exec(`CREATE INDEX IF NOT EXISTS idx_testimonials_status ON testimonials(status)`);
 db.exec(`CREATE INDEX IF NOT EXISTS idx_cars_status ON cars(status)`);
 db.exec(`CREATE INDEX IF NOT EXISTS idx_cars_featured ON cars(featured)`);
 db.exec(`CREATE INDEX IF NOT EXISTS idx_articles_status ON articles(status)`);

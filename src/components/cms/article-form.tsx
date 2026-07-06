@@ -16,6 +16,7 @@ interface ArticleFormData {
   status: string;
   publishedAt: string;
   scheduledAt: string;
+  author: string;
 }
 
 interface ArticleFormProps {
@@ -42,6 +43,7 @@ export function ArticleForm({ article, categories = [], onSuccess }: ArticleForm
     status: article?.status || "draft",
     publishedAt: article?.published_at || "",
     scheduledAt: article?.scheduled_at || "",
+    author: article?.author || "",
   });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -208,6 +210,17 @@ export function ArticleForm({ article, categories = [], onSuccess }: ArticleForm
             rows={12}
             required
             className="w-full rounded-lg border-2 border-gray-200 bg-white px-4 py-3 text-sm focus:border-brand-deep focus:outline-none font-mono"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor="author" className="block text-sm font-medium text-gray-700">Penulis</label>
+          <input
+            id="author"
+            value={formData.author}
+            onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+            placeholder="Chery Indonesia"
+            className="h-[52px] w-full rounded-lg border-2 border-gray-200 bg-white px-4 text-sm focus:border-brand-deep focus:outline-none"
           />
         </div>
 

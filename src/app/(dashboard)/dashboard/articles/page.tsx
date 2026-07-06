@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import db from "@/lib/db";
+import { getAllArticlesForAdmin } from "@/lib/data/articles";
 import { ArticlesTable } from "@/components/cms/articles-table";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -14,12 +14,7 @@ export default async function ArticlesPage() {
   }
 
   // Get all articles with category
-  const articles = db.prepare(`
-    SELECT a.*, c.name as category_name
-    FROM articles a
-    LEFT JOIN categories c ON a.category_id = c.id
-    ORDER BY a.created_at DESC
-  `).all() as any[];
+  const articles = getAllArticlesForAdmin() as any[];
 
   return (
     <div className="space-y-6">

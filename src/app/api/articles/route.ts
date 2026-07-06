@@ -1,24 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import db from "@/lib/db";
-import { randomUUID } from "crypto";
+import { getPublishedArticles, createArticle } from "@/lib/data/articles";
 
 // GET all articles - with caching
-export const revalidate = 1800; // ISR: 30 minutes
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const articles = db.prepare(`
-      SELECT a.*, c.name as category_name
-      FROM articles a
-      LEFT JOIN categories c ON a.category_id = c.id
-      WHERE a.status = 'published'
-      ORDER BY a.published_at DESC, a.created_at DESC
-    `).all();
+    const articles = getPublishedArticles();
 
     return NextResponse.json(articles, {
       headers: {
-        'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=59',
+        'Cache-Control': 'no-store, max-age=0, must-revalidate',
       },
     });
   } catch (error) {
@@ -36,20 +29,25 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, slug, excerpt, content, featuredImage, categoryId, status, publishedAt, scheduledAt } = body;
+    const { title, slug, excerpt, content, featuredImage, categoryId, status, publishedAt, scheduledAt, author } = body;
 
     // Basic validation
     if (!title || !slug) {
       return NextResponse.json({ error: "Title and slug are required" }, { status: 400 });
     }
 
-    const id = randomUUID();
-    const now = new Date().toISOString();
-
-    db.prepare(`
-      INSERT INTO articles (id, title, slug, excerpt, content, featured_image, category_id, status, published_at, scheduled_at, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(id, title, slug, excerpt, content, featuredImage, categoryId, status || "draft", publishedAt, scheduledAt, now, now);
+    const id = createArticle({
+      title,
+      slug,
+      excerpt,
+      content,
+      featuredImage,
+      categoryId,
+      status,
+      publishedAt,
+      scheduledAt,
+      author,
+    });
 
     return NextResponse.json({ id, message: "Article created successfully" }, { status: 201 });
   } catch (error) {

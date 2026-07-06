@@ -15,6 +15,8 @@ import {
   SettingsIcon,
   LogOutIcon,
   ImageDownIcon,
+  StarIcon,
+  SearchIcon,
 } from "lucide-react";
 
 const menuItems = [
@@ -22,10 +24,12 @@ const menuItems = [
   { href: "/dashboard/hero", label: "Hero Slides", icon: ImageIcon },
   { href: "/dashboard/cars", label: "Mobil", icon: CarIcon },
   { href: "/dashboard/articles", label: "Artikel", icon: FileTextIcon },
+  { href: "/dashboard/testimonials", label: "Ulasan", icon: StarIcon },
   { href: "/dashboard/media", label: "Media", icon: ImageIcon },
   { href: "/dashboard/promotions", label: "Promosi", icon: TagIcon },
   { href: "/dashboard/dealers", label: "Dealer", icon: StoreIcon },
   { href: "/dashboard/faqs", label: "FAQ", icon: HelpCircleIcon },
+  { href: "/dashboard/seo", label: "SEO", icon: SearchIcon },
   { href: "/dashboard/settings", label: "Pengaturan", icon: SettingsIcon },
 ];
 

@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import db from "@/lib/db";
+import { getAllCarsForAdmin } from "@/lib/data/cars";
 import { CarsTable } from "@/components/cms/cars-table";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -14,13 +14,7 @@ export default async function CarsPage() {
   }
 
   // Get all cars
-  const cars = db.prepare(`
-    SELECT c.*, 
-           (SELECT COUNT(*) FROM car_images WHERE car_id = c.id) as image_count,
-           (SELECT url FROM car_images WHERE car_id = c.id ORDER BY sort_order LIMIT 1) as thumbnail
-    FROM cars c
-    ORDER BY c.sort_order ASC, c.created_at DESC
-  `).all() as any[];
+  const cars = getAllCarsForAdmin() as any[];
 
   return (
     <div className="space-y-6">

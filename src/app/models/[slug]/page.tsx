@@ -1,96 +1,95 @@
-"use client";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getCarBySlugForPublic, getPublishedCars } from "@/lib/data/cars";
+import { getAllPublishedTestimonials } from "@/lib/data/testimonials";
+import { ProductDetailClient, type CarData } from "@/components/product/product-detail-client";
 
-import { useState, useEffect, use } from "react";
-import HeroSection from "@/components/product/hero-section";
-import HeroSlide from "@/components/product/hero-slide";
-import FeaturesGrid from "@/components/product/features-grid";
-import SpecComparison from "@/components/product/spec-comparison";
-import CustomerReviews from "@/components/product/customer-reviews";
-import BookingForm from "@/components/product/booking-form";
-
-interface CarData {
-  id: string;
-  name: string;
-  slug: string;
-  subtitle: string;
-  description: string;
-  price_from: string;
-  type: string;
-  images: { url: string }[];
-  color_images?: { color_name: string; color_hex: string; image_url: string }[];
-  specs: { label: string; value: string }[];
-  highlights: { title: string; description: string; iconName: string }[];
-  interiorImage?: string;
-  techImage?: string;
-  features: { name: string; description: string }[];
+export function generateStaticParams() {
+  return getPublishedCars().map((car) => ({ slug: car.slug }));
 }
 
-export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = use(params);
-  const [car, setCar] = useState<CarData | null>(null);
-  const [allCars, setAllCars] = useState<CarData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [bookingType, setBookingType] = useState<"test" | "prebook">("test");
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const car = getCarBySlugForPublic(slug);
+  if (!car) return {};
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`/api/cars/by-slug/${slug}`);
-        const data = await res.json();
-        setCar(data);
+  const title = car.subtitle ? `${car.name} — ${car.subtitle}` : car.name;
+  const description = car.description
+    ? car.description.slice(0, 160)
+    : `Simak spesifikasi, harga, dan promo terbaru ${car.name} dari Chery Indonesia.`;
+  const ogImage = car.thumbnail || car.images?.[0]?.url;
 
-        const allRes = await fetch("/api/cars");
-        const allData = await allRes.json();
-        setAllCars(allData);
-      } catch (err) {
-        console.error("Failed to fetch car:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [slug]);
-
-  const handleOpenBooking = (type: "test" | "prebook") => {
-    setBookingType(type);
-    setIsBookingOpen(true);
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: ogImage ? [{ url: ogImage }] : undefined,
+    },
   };
+}
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-2 border-[#DA291C] border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm text-slate-500">Loading...</span>
-        </div>
-      </div>
-    );
-  }
+/**
+ * DB fields are nullable at the schema level; every seeded car has them
+ * populated, but the presentational components (hero-section, spec-comparison,
+ * etc.) declare non-nullable string props, so we coerce once here at the
+ * server/client boundary rather than loosening every child component's contract.
+ */
+function toDetailCarData(row: NonNullable<ReturnType<typeof getCarBySlugForPublic>>): CarData {
+  return {
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    subtitle: row.subtitle ?? "",
+    description: row.description ?? "",
+    price_from: row.price_from ?? "",
+    type: row.type,
+    thumbnail: row.thumbnail ?? undefined,
+    images: row.images ?? [],
+    color_images: row.color_images,
+    specs: row.specs ?? [],
+    highlights: row.highlights ?? [],
+    interiorImage: row.interiorImage,
+    techImage: row.techImage,
+  };
+}
 
-  if (!car) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-slate-500">Car not found</p>
-      </div>
-    );
-  }
+function toListCarData(row: ReturnType<typeof getPublishedCars>[number]): CarData {
+  return {
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    subtitle: row.subtitle ?? "",
+    description: row.description ?? "",
+    price_from: row.price_from ?? "",
+    type: row.type,
+    thumbnail: row.thumbnail ?? undefined,
+    images: [],
+    specs: row.specs ?? [],
+    highlights: [],
+  };
+}
 
-  return (
-    <div className="min-h-screen bg-white text-[#1A1A1A]">
-      <HeroSlide slug={car.slug} />
-      <HeroSection car={car} onOpenBooking={handleOpenBooking} />
-      <FeaturesGrid car={car} />
-      <SpecComparison cars={allCars} />
-      <CustomerReviews car={car} allCars={allCars} />
+export default async function ProductPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const carRow = getCarBySlugForPublic(slug);
 
-      <BookingForm
-        isOpen={isBookingOpen}
-        onClose={() => setIsBookingOpen(false)}
-        type={bookingType}
-        cars={allCars}
-        activeCar={car}
-      />
-    </div>
-  );
+  if (!carRow) notFound();
+
+  const allCarsRows = getPublishedCars();
+  const testimonials = getAllPublishedTestimonials();
+
+  const car = toDetailCarData(carRow);
+  const allCars = allCarsRows.map(toListCarData);
+
+  return <ProductDetailClient car={car} allCars={allCars} testimonials={testimonials} />;
 }

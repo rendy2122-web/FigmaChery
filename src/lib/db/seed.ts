@@ -24,7 +24,129 @@ async function seed() {
   categoryStmt.run("cat-1", "News", "news", "Latest news and updates");
   categoryStmt.run("cat-2", "Events", "events", "Events and promotions");
   categoryStmt.run("cat-3", "Tips", "tips", "Tips and guides");
+  categoryStmt.run("cat-4", "Press Release", "press-release", "Official press releases");
+  categoryStmt.run("cat-5", "Technology", "technology", "Technology deep-dives");
+  categoryStmt.run("cat-6", "Ownership Tips", "ownership-tips", "Maintenance and ownership guides");
   console.log("✓ Created default categories");
+
+  // ────────────────────────────────────────────────────────
+  // SEED ARTICLES — migrated from the previous static news-data.ts
+  // so the public /news pages can be reconnected to the real CMS.
+  // ────────────────────────────────────────────────────────
+  console.log("  Clearing existing article data...");
+  db.prepare("DELETE FROM articles").run();
+
+  const articleStmt = db.prepare(`
+    INSERT INTO articles (id, title, slug, excerpt, content, featured_image, category_id, status, published_at, author, views)
+    VALUES (?, ?, ?, ?, ?, ?, ?, 'published', ?, ?, 0)
+  `);
+
+  articleStmt.run(
+    "sales-record",
+    "Chery Indonesia Raih Pertumbuhan Penjualan Rekor Tertinggi Sepanjang Sejarah",
+    "chery-indonesia-rekor-penjualan-tertinggi",
+    "Chery Indonesia mencatat rekor penjualan tertinggi sepanjang sejarah dengan pertumbuhan signifikan sebesar 150% pada semester pertama ini.",
+    [
+      "Chery Indonesia mencatat pencapaian bersejarah dengan membukukan pertumbuhan penjualan sebesar 150% dibandingkan periode yang sama tahun lalu. Pencapaian ini menjadikan Chery sebagai salah satu merek yang tumbuh paling cepat di pasar otomotif nasional pada semester pertama tahun ini.",
+      "Pertumbuhan ini didorong oleh kuatnya penerimaan pasar terhadap lini produk hybrid dan electric vehicle (EV) Chery, termasuk Tiggo Cross CSH, Tiggo 8 CSH, dan Chery Q yang terus menjadi favorit konsumen Indonesia yang mencari kendaraan efisien tanpa mengorbankan performa dan kenyamanan.",
+      "\"Pencapaian ini adalah bukti nyata kepercayaan konsumen Indonesia terhadap kualitas dan inovasi yang kami hadirkan,\" ujar perwakilan manajemen Chery Indonesia. \"Kami akan terus memperluas jaringan dealer dan layanan purna jual agar semakin banyak masyarakat dapat merasakan pengalaman berkendara Chery.\"",
+      "Selain pertumbuhan penjualan, Chery Indonesia juga mengumumkan penambahan lebih dari 20 titik dealer resmi baru yang tersebar di berbagai kota besar, termasuk Cibubur, Makassar, dan Pare-pare, guna memastikan aksesibilitas layanan yang lebih merata bagi pelanggan di seluruh Indonesia.",
+      "Dengan momentum pertumbuhan ini, Chery Indonesia optimistis akan terus memperkuat posisinya sebagai salah satu pemain utama di industri otomotif nasional, khususnya di segmen kendaraan elektrifikasi yang semakin diminati oleh konsumen modern.",
+    ].join("\n\n"),
+    "/figma/article-1.png",
+    "cat-4",
+    "2026-06-15 09:00:00",
+    "Chery Indonesia"
+  );
+
+  articleStmt.run(
+    "shs-safety",
+    "Mengenal Chery Safety Handling System (SHS): Inovasi Keamanan Standard Global",
+    "mengenal-chery-safety-handling-system",
+    "Pelajari bagaimana kecanggihan teknologi Chery SHS (Safety Handling System) memberikan perlindungan dan kestabilan berkendara maksimal di segala medan.",
+    [
+      "Keamanan berkendara adalah prioritas utama dalam setiap rekayasa kendaraan Chery. Salah satu inovasi unggulan yang tertanam di seluruh lini model adalah Chery Safety Handling System (SHS), sebuah sistem terintegrasi yang dirancang untuk menjaga stabilitas kendaraan dalam berbagai kondisi jalan.",
+      "SHS menggabungkan sistem kontrol stabilitas elektronik, distribusi pengereman berbasis sensor real-time, dan struktur sasis dengan rigiditas tinggi. Kombinasi ini memungkinkan kendaraan tetap stabil saat bermanuver mendadak, melintasi jalan basah, maupun saat menikung pada kecepatan tinggi.",
+      "Selain itu, SHS juga terintegrasi dengan Advanced Driver Assistance System (ADAS) yang mencakup fitur seperti Adaptive Cruise Control, Lane Keeping Assist, dan Automatic Emergency Braking, memberikan lapisan perlindungan tambahan bagi pengemudi dan penumpang.",
+      "Seluruh kendaraan Chery yang dilengkapi SHS telah melalui pengujian tabrak internal yang ketat serta memenuhi standar keselamatan ASEAN NCAP, menegaskan komitmen Chery terhadap keselamatan berkendara kelas dunia.",
+      "\"Kami percaya bahwa teknologi terbaik adalah teknologi yang melindungi penggunanya tanpa mereka sadari,\" jelas Tim Teknis Chery Indonesia. \"SHS bekerja secara senyap di balik layar, siap merespons dalam hitungan milidetik ketika dibutuhkan.\"",
+    ].join("\n\n"),
+    "/figma/article-2.png",
+    "cat-5",
+    "2026-06-10 09:00:00",
+    "Tim Teknis"
+  );
+
+  articleStmt.run(
+    "rainy-season-tips",
+    "Panduan Lengkap Merawat Mobil Hybrid Chery Tetap Prima di Musim Hujan",
+    "panduan-merawat-mobil-hybrid-musim-hujan",
+    "Panduan praktis dan tips perawatan lengkap dari para ahli agar mesin hybrid Chery Anda tetap bekerja prima dan aman selama menghadapi musim hujan.",
+    [
+      "Musim hujan membawa tantangan tersendiri bagi perawatan kendaraan, termasuk mobil hybrid. Meski teknologi hybrid Chery telah dirancang dengan sertifikasi tahan air IP68 pada komponen baterai, perawatan rutin tetap penting untuk menjaga performa optimal.",
+      "Pertama, pastikan area sekitar port pengisian daya dan komponen elektrikal selalu bersih dan kering. Hindari mencuci kendaraan dengan tekanan air tinggi secara langsung ke area tersebut, meskipun sudah memiliki sertifikasi tahan air.",
+      "Kedua, periksa kondisi ban secara berkala. Musim hujan meningkatkan risiko aquaplaning, sehingga kedalaman alur ban dan tekanan udara yang sesuai menjadi krusial untuk menjaga traksi dan stabilitas kendaraan di jalan basah.",
+      "Ketiga, jangan lupakan perawatan sistem rem dan wiper. Sistem pengereman regeneratif pada mobil hybrid bekerja secara berbeda dari mobil konvensional, sehingga pemeriksaan berkala oleh teknisi bersertifikasi Chery sangat dianjurkan untuk memastikan respons pengereman tetap optimal.",
+      "Terakhir, manfaatkan layanan servis berkala di dealer resmi Chery terdekat. Tim teknisi kami menggunakan peralatan diagnostik khusus untuk memastikan seluruh sistem hybrid, termasuk baterai dan motor listrik, tetap dalam kondisi prima menghadapi segala cuaca.",
+    ].join("\n\n"),
+    "/figma/article-3.png",
+    "cat-6",
+    "2026-06-05 09:00:00",
+    "Tim After Sales"
+  );
+
+  articleStmt.run(
+    "ev-charging-network",
+    "Chery Perluas Jaringan Pengisian Daya untuk Dukung Ekosistem Kendaraan Listrik",
+    "ekspansi-jaringan-pengisian-daya-chery",
+    "Chery Indonesia berkolaborasi dengan mitra strategis untuk memperluas jaringan stasiun pengisian daya di kota-kota besar demi mendukung adopsi kendaraan listrik.",
+    [
+      "Sebagai bagian dari komitmen mendukung ekosistem kendaraan listrik nasional, Chery Indonesia mengumumkan kemitraan strategis untuk memperluas jaringan stasiun pengisian daya (charging station) di berbagai kota besar di Indonesia.",
+      "Kemitraan ini akan menghadirkan ratusan titik pengisian daya baru yang tersebar di area perkotaan, pusat perbelanjaan, dan jalur utama antar kota, memudahkan pemilik kendaraan listrik Chery untuk melakukan pengisian daya kapan pun dibutuhkan.",
+      "\"Infrastruktur pengisian daya yang memadai adalah kunci untuk mempercepat adopsi kendaraan listrik di Indonesia,\" ujar manajemen Chery Indonesia. \"Kami berkomitmen untuk terus berinvestasi dalam ekosistem ini demi kenyamanan pelanggan kami.\"",
+      "Selain memperluas jaringan fisik, Chery juga menghadirkan aplikasi pintar yang memungkinkan pengguna untuk mencari, memesan, dan memantau status pengisian daya secara real-time langsung dari perangkat mobile mereka.",
+    ].join("\n\n"),
+    "/figma/promo-1.png",
+    "cat-1",
+    "2026-05-28 09:00:00",
+    "Chery Indonesia"
+  );
+
+  articleStmt.run(
+    "test-drive-experience",
+    "Rasakan Pengalaman Test Drive Eksklusif di Seluruh Dealer Chery",
+    "pengalaman-test-drive-eksklusif-chery",
+    "Chery Indonesia menghadirkan program test drive eksklusif yang memungkinkan calon pelanggan merasakan langsung performa dan kenyamanan setiap lini model.",
+    [
+      "Chery Indonesia kembali menghadirkan program test drive eksklusif di seluruh jaringan dealer resmi, memberikan kesempatan bagi calon pelanggan untuk merasakan langsung performa, kenyamanan, dan teknologi canggih dari setiap lini model Chery.",
+      "Program ini mencakup seluruh rentang produk, mulai dari Chery Q yang lincah untuk perkotaan, hingga Tiggo 9 CSH yang mewah dan penuh teknologi untuk keluarga modern. Setiap sesi test drive didampingi oleh konsultan penjualan profesional yang siap menjelaskan detail fitur setiap kendaraan.",
+      "Calon pelanggan dapat menjadwalkan sesi test drive secara mudah melalui website resmi atau langsung mengunjungi dealer terdekat. Tim Chery Indonesia berkomitmen untuk memastikan setiap pengalaman test drive berjalan nyaman dan informatif.",
+      "\"Kami ingin setiap calon pelanggan merasakan sendiri kualitas Chery sebelum memutuskan untuk membeli,\" ujar Tim Marketing Chery Indonesia. \"Pengalaman langsung adalah cara terbaik untuk membuktikan komitmen kami terhadap kualitas.\"",
+    ].join("\n\n"),
+    "/figma/promo-2.png",
+    "cat-2",
+    "2026-05-20 09:00:00",
+    "Tim Marketing"
+  );
+
+  articleStmt.run(
+    "warranty-program",
+    "Chery Perkenalkan Program Garansi Diperpanjang untuk Ketenangan Pelanggan",
+    "program-garansi-diperpanjang-chery",
+    "Program garansi diperpanjang hingga 10 tahun memberikan ketenangan pikiran ekstra bagi setiap pemilik kendaraan Chery di Indonesia.",
+    [
+      "Chery Indonesia memperkenalkan program garansi diperpanjang yang mencakup perlindungan mesin dan komponen utama hingga 10 tahun atau 1.000.000 kilometer, memberikan ketenangan pikiran ekstra bagi setiap pelanggan setia Chery.",
+      "Program ini berlaku untuk seluruh lini produk, termasuk kendaraan hybrid dan listrik, dengan cakupan khusus untuk komponen baterai dan motor listrik yang menjadi jantung dari teknologi elektrifikasi Chery.",
+      "\"Kami memahami bahwa membeli kendaraan adalah investasi jangka panjang,\" ujar Tim After Sales Chery Indonesia. \"Program garansi diperpanjang ini adalah wujud komitmen kami untuk mendampingi pelanggan sepanjang perjalanan kepemilikan kendaraan mereka.\"",
+      "Pelanggan dapat mendaftarkan kendaraan mereka ke dalam program ini melalui dealer resmi Chery terdekat, dengan proses yang mudah dan tanpa biaya tambahan untuk pembelian kendaraan baru.",
+    ].join("\n\n"),
+    "/figma/promo-3.png",
+    "cat-6",
+    "2026-05-12 09:00:00",
+    "Tim After Sales"
+  );
+
+  console.log("✓ Created 6 articles (migrated from static news data)");
 
   // Seed default dealers
   const dealerStmt = db.prepare(`
@@ -50,6 +172,14 @@ async function seed() {
   settingStmt.run("setting-5", "facebook_url", "https://facebook.com/cheryindonesia", "text", "social");
   settingStmt.run("setting-6", "instagram_url", "https://instagram.com/cheryindonesia", "text", "social");
   settingStmt.run("setting-7", "youtube_url", "https://youtube.com/cheryindonesia", "text", "social");
+  settingStmt.run("setting-8", "operating_hours", "Senin - Sabtu, 08.00 - 17.00", "text", "contact");
+  settingStmt.run(
+    "setting-9",
+    "showroom_address",
+    "Jl. Alternatif Cibubur No.KM. 6, Nagrak, Kec. Gn. Putri, Kabupaten Bogor, Jawa Barat 16967",
+    "text",
+    "contact"
+  );
   console.log("✓ Created default settings");
 
   // Delete existing data in correct order (respecting foreign keys)
@@ -166,6 +296,87 @@ async function seed() {
   carImageStmt.run("car-img-12", "car-12", "/figma/tiggo-8.webp", "TIGGO 8 ICE", 1);
   carImageStmt.run("car-img-13", "car-13", "/figma/tiggo-8-pro-max.webp", "TIGGO 8 PRO MAX", 1);
   console.log("✓ Created main car images");
+
+  // ────────────────────────────────────────────────────────
+  // SEED CAR COLOR VARIANT IMAGES — only 6 of 13 cars have real
+  // distinct per-color product shots pulled from chery.co.id; the
+  // rest intentionally have none (hero-section.tsx hides the color
+  // picker for cars without real color_images rows).
+  // ────────────────────────────────────────────────────────
+  db.prepare("DELETE FROM car_images WHERE color_name IS NOT NULL").run();
+
+  const colorImageStmt = db.prepare(`
+    INSERT INTO car_images (id, car_id, url, alt, sort_order, color_name, color_hex)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  const colorImages: [string, string, string, string, string][] = [
+    // car-1 CHERY Q
+    ["car-1", "/figma/cheryq-oat.png", "CHERY Q — Oat", "Oat", "#C9BFA3"],
+    ["car-1", "/figma/cheryq-purple.png", "CHERY Q — Purple", "Purple", "#9B72B0"],
+    ["car-1", "/figma/cheryq-white.png", "CHERY Q — White", "White", "#F2F2ED"],
+    // car-2 CHERY E5
+    ["car-2", "/figma/e5-black.png", "CHERY E5 — Black", "Black", "#141414"],
+    ["car-2", "/figma/e5-green.png", "CHERY E5 — Green", "Green", "#2F4A3D"],
+    ["car-2", "/figma/e5-grey.png", "CHERY E5 — Grey", "Grey", "#8A8D90"],
+    ["car-2", "/figma/e5-white.png", "CHERY E5 — White", "White", "#F2F2ED"],
+    ["car-2", "/figma/e5-white-twotone.png", "CHERY E5 — White Two-Tone", "White Two-Tone", "#E8E8E0"],
+    // car-3 CHERY J6
+    ["car-3", "/figma/j6-black.webp", "CHERY J6 — Black", "Black", "#141414"],
+    ["car-3", "/figma/j6-green.webp", "CHERY J6 — Green", "Green", "#2F4A3D"],
+    ["car-3", "/figma/j6-grey.webp", "CHERY J6 — Grey", "Grey", "#8A8D90"],
+    ["car-3", "/figma/j6-white.webp", "CHERY J6 — White", "White", "#F2F2ED"],
+    // car-4 CHERY C5 CSH
+    ["car-4", "/figma/c5csh-black.webp", "CHERY C5 CSH — Black", "Black", "#141414"],
+    ["car-4", "/figma/c5csh-red.webp", "CHERY C5 CSH — Red", "Red", "#B91C2C"],
+    ["car-4", "/figma/c5csh-white.webp", "CHERY C5 CSH — White", "White", "#F2F2ED"],
+    ["car-4", "/figma/c5csh-white-twotone.webp", "CHERY C5 CSH — White Two-Tone", "White Two-Tone", "#E8E8E0"],
+    // car-5 TIGGO 9 CSH
+    ["car-5", "/figma/t9csh-black.png", "TIGGO 9 CSH — Black", "Black", "#141414"],
+    ["car-5", "/figma/t9csh-green.png", "TIGGO 9 CSH — Green", "Green", "#1F3D2E"],
+    ["car-5", "/figma/t9csh-grey.png", "TIGGO 9 CSH — Grey", "Grey", "#8A8D90"],
+    ["car-5", "/figma/t9csh-white.png", "TIGGO 9 CSH — White", "White", "#F2F2ED"],
+    // car-7 TIGGO 8 CSH
+    ["car-7", "/figma/t8csh-black.png", "TIGGO 8 CSH — Black", "Black", "#141414"],
+    ["car-7", "/figma/t8csh-green.png", "TIGGO 8 CSH — Green", "Green", "#1F3D2E"],
+    ["car-7", "/figma/t8csh-grey.png", "TIGGO 8 CSH — Grey", "Grey", "#8A8D90"],
+    ["car-7", "/figma/t8csh-white.png", "TIGGO 8 CSH — White", "White", "#F2F2ED"],
+    // car-6 TIGGO CROSS CSH
+    ["car-6", "/figma/tiggocrosscsh-black-platinum.png", "TIGGO CROSS CSH — Black Platinum", "Black Platinum", "#1C1C1E"],
+    ["car-6", "/figma/New-TCCSH-Grey-Tech.png", "TIGGO CROSS CSH — Grey Tech", "Grey Tech", "#6E7175"],
+    ["car-6", "/figma/tccsh-red-ruby.png", "TIGGO CROSS CSH — Red Ruby", "Red Ruby", "#8B1E2E"],
+    ["car-6", "/figma/tccsh-silver-moonlight.png", "TIGGO CROSS CSH — Silver Moonlight", "Silver Moonlight", "#C7C9CC"],
+    ["car-6", "/figma/tccsh-white-howlite.png", "TIGGO CROSS CSH — White Howlite", "White Howlite", "#F2F1EC"],
+    // car-8 CHERY C5 (ICE)
+    ["car-8", "/figma/C5 ice-Black-Platinum.png", "CHERY C5 — Black Platinum", "Black Platinum", "#1C1C1E"],
+    ["car-8", "/figma/C5 ice-White-Howlite.png", "CHERY C5 — White Howlite", "White Howlite", "#F2F1EC"],
+    // car-9 TIGGO CROSS SPORT
+    ["car-9", "/figma/tcscsh-black-platinum.png", "TIGGO CROSS SPORT — Black Platinum", "Black Platinum", "#1C1C1E"],
+    ["car-9", "/figma/tcscsh-red-ruby.png", "TIGGO CROSS SPORT — Red Ruby", "Red Ruby", "#8B1E2E"],
+    ["car-9", "/figma/tcscsh-silver-moonlight.png", "TIGGO CROSS SPORT — Silver Moonlight", "Silver Moonlight", "#C7C9CC"],
+    ["car-9", "/figma/tcscsh-white-howlite.png", "TIGGO CROSS SPORT — White Howlite", "White Howlite", "#F2F1EC"],
+    // car-10 OMODA 5 GT
+    ["car-10", "/figma/omoda 5 gt white-howlite-black-car-desktop.webp", "OMODA 5 GT — White Howlite Black", "White Howlite Black", "#D9D9D2"],
+    // car-11 TIGGO CROSS (ICE)
+    ["car-11", "/figma/tc ice red-ruby-car-desktop.png", "TIGGO CROSS — Red Ruby", "Red Ruby", "#8B1E2E"],
+    ["car-11", "/figma/tc ice silver-moonlight-car-desktop.png", "TIGGO CROSS — Silver Moonlight", "Silver Moonlight", "#C7C9CC"],
+    ["car-11", "/figma/tc ice black-platinum-car-desktop.png", "TIGGO CROSS — Black Platinum", "Black Platinum", "#1C1C1E"],
+    ["car-11", "/figma/tc ice white-howlite-car-desktop.png", "TIGGO CROSS — White Howlite", "White Howlite", "#F2F1EC"],
+    // car-12 TIGGO 8 (ICE)
+    ["car-12", "/figma/tiggo 8 white-howlite-desktop.png", "TIGGO 8 — White Howlite", "White Howlite", "#F2F1EC"],
+    ["car-12", "/figma/tiggo 8 black-platinum-desktop.png", "TIGGO 8 — Black Platinum", "Black Platinum", "#1C1C1E"],
+    ["car-12", "/figma/tiggo 8 blue-sapphire-desktop.png", "TIGGO 8 — Blue Sapphire", "Blue Sapphire", "#1E3A5F"],
+    ["car-12", "/figma/tiggo 8 grey-morganite-desktop.png", "TIGGO 8 — Grey Morganite", "Grey Morganite", "#9B9488"],
+    // car-13 TIGGO 8 PRO MAX
+    ["car-13", "/figma/tiggo 8 pro max carbon-crystal-black.png", "TIGGO 8 PRO MAX — Carbon Crystal Black", "Carbon Crystal Black", "#0D0D0D"],
+    ["car-13", "/figma/tiggo 8 pro max khaki-white.png", "TIGGO 8 PRO MAX — Khaki White", "Khaki White", "#EDE8DD"],
+  ];
+
+  colorImages.forEach(([carId, url, alt, colorName, colorHex], i) => {
+    colorImageStmt.run(`car-color-img-${i + 1}`, carId, url, alt, i + 1, colorName, colorHex);
+  });
+
+  console.log(`✓ Created ${colorImages.length} color variant images across 13 models`);
 
   // ────────────────────────────────────────────────────────
   // SEED CAR SPECS
@@ -426,14 +637,306 @@ async function seed() {
     VALUES (?, 'hero', 'Hero Banner', 'Chery Slideshow', 'Hero carousel slides', ?, 1)
   `).run("section-hero", heroSlides);
 
-  // Seed CTA section
+  // Seed CTA section — title/subtitle here are the real displayed eyebrow/heading text
   db.prepare("DELETE FROM homepage_sections WHERE section = 'cta'").run();
   db.prepare(`
     INSERT INTO homepage_sections (id, section, title, subtitle, description, is_active)
-    VALUES (?, 'cta', 'Hubungi Sales Kami Hari Ini', 'Rasakan pengalaman berkendara masa depan', 'Contact us today', 1)
+    VALUES (?, 'cta', 'Hubungi Kami', 'Hubungi Sales Kami Hari Ini', 'Bottom-of-homepage contact CTA', 1)
   `).run("section-cta");
 
   console.log("✓ Created hero slides (3 slides with banners, captions, CTAs)");
+
+  // ────────────────────────────────────────────────────────
+  // SEED WHY CHERY / SERVICES / SPECIAL OFFERS — migrated from
+  // previously-hardcoded homepage section components.
+  // ────────────────────────────────────────────────────────
+  const whyCheryBenefits = JSON.stringify([
+    {
+      icon: "BadgeCheckIcon",
+      title: "Dealer Resmi Chery Indonesia",
+      description: "Jaminan keaslian unit dan layanan prima langsung dari jaringan dealer resmi terpercaya Chery Indonesia.",
+    },
+    {
+      icon: "CreditCardIcon",
+      title: "Kredit Tanpa Bunga",
+      description: "Fasilitas pembiayaan eksklusif dengan bunga 0% dan tenor fleksibel sesuai kebutuhan finansial Anda.",
+    },
+    {
+      icon: "TruckIcon",
+      title: "Pengiriman ke Jabodetabek",
+      description: "Layanan pengiriman kendaraan yang aman, cepat, dan profesional langsung ke alamat garasi rumah Anda.",
+    },
+    {
+      icon: "Building2Icon",
+      title: "Dealer Resmi Cibubur",
+      description: "Layanan sales, servis berkala dengan mekanik bersertifikat, dan penyediaan suku cadang resmi terlengkap.",
+    },
+    {
+      icon: "AwardIcon",
+      title: "Garansi 5 Tahun/100.000 KM",
+      description: "Garansi suku cadang komprehensif untuk ketenangan pikiran berkendara Anda bersama keluarga.",
+    },
+    {
+      icon: "HeadsetIcon",
+      title: "Customer Care 24/7",
+      description: "Layanan bantuan darurat jalan raya dan layanan pelanggan yang responsif siap siaga setiap saat.",
+    },
+  ]);
+
+  db.prepare("DELETE FROM homepage_sections WHERE section = 'why-chery'").run();
+  db.prepare(`
+    INSERT INTO homepage_sections (id, section, title, subtitle, description, metadata, is_active)
+    VALUES (?, 'why-chery', 'Mengapa Beli Chery Di Sini', 'Dealer Resmi Chery Terpercaya di Cibubur, Makassar, dan Pare – Pilihan Utama Anda', 'Komitmen kami: harga resmi, layanan transparan, dan program after-sales terlengkap untuk kenyamanan Anda', ?, 1)
+  `).run("section-why-chery", whyCheryBenefits);
+
+  const serviceCards = JSON.stringify([
+    {
+      icon: "CarIcon",
+      title: "Penjualan Unit Chery",
+      description: "Jelajahi lini kendaraan Chery terbaru dengan penawaran eksklusif, konsultasi spesifikasi detail, dan unit test drive yang siap Anda coba langsung.",
+    },
+    {
+      icon: "CreditCardIcon",
+      title: "Kredit Mobil Chery",
+      description: "Dapatkan kemudahan skema pembiayaan dengan suku bunga kompetitif, DP ringan, serta proses pengajuan yang cepat dan transparan.",
+    },
+    {
+      icon: "HandshakeIcon",
+      title: "Servis Berkala & Dukungan",
+      description: "Perawatan rutin dan perbaikan kendaraan Anda ditangani oleh teknisi bersertifikasi global dengan peralatan diagnosis modern.",
+    },
+    {
+      icon: "SettingsIcon",
+      title: "Suku Cadang Asli",
+      description: "Penyediaan suku cadang orisinal (Genuine Parts) bergaransi resmi untuk menjamin keselamatan dan performa maksimal mobil Anda.",
+    },
+  ]);
+
+  db.prepare("DELETE FROM homepage_sections WHERE section = 'services'").run();
+  db.prepare(`
+    INSERT INTO homepage_sections (id, section, title, subtitle, description, metadata, is_active)
+    VALUES (?, 'services', 'Layanan Lengkap', 'Semua Layanan Terbaik yang Anda Butuhkan Ada di Sini', 'Kami berkomitmen menghadirkan ekosistem layanan purna jual lengkap demi kenyamanan, keselamatan, dan kepuasan berkendara Anda.', ?, 1)
+  `).run("section-services", serviceCards);
+
+  const specialOffers = JSON.stringify([
+    {
+      id: "dp-10",
+      image: "/figma/promo-1.png",
+      badge: { label: "Limited Offer", variant: "dark" },
+      title: "DP Mulai 10%",
+      tag: "Khusus Tiggo 8",
+      description: "Miliki Chery Tiggo 8 dengan DP ringan mulai 10% dan tenor hingga 60 bulan.",
+      validUntil: "Valid until: 30 Juni 2026",
+    },
+    {
+      id: "bonus-service",
+      image: "/figma/promo-2.png",
+      badge: { label: "Special Promo", variant: "light" },
+      title: "Bonus Service 3 Tahun",
+      tag: "Untuk Pembelian Omoda 5",
+      description: "Dapatkan gratis service hingga 3 tahun untuk setiap pembelian Omoda 5 baru.",
+      validUntil: "Valid until: 31 Juli 2026",
+    },
+    {
+      id: "trade-in",
+      image: "/figma/promo-3.png",
+      title: "Trade-In Bonus",
+      tag: "Harga Terbaik untuk Mobil Lama",
+      description: "Tukar tambah mobil lama Anda dengan harga terbaik + bonus tambahan untuk pembelian model Chery apa pun.",
+      validUntil: "Valid until: 30 Juni 2026",
+    },
+  ]);
+
+  db.prepare("DELETE FROM homepage_sections WHERE section = 'special-offers'").run();
+  db.prepare(`
+    INSERT INTO homepage_sections (id, section, title, subtitle, description, metadata, is_active)
+    VALUES (?, 'special-offers', 'Program Promo Spesial', 'Special Offers', 'Penawaran eksklusif dengan waktu terbatas untuk membantu Anda membawa pulang kendaraan Chery impian dengan berbagai keuntungan menarik.', ?, 1)
+  `).run("section-special-offers", specialOffers);
+
+  console.log("✓ Created why-chery, services, and special-offers homepage sections");
+
+  // ────────────────────────────────────────────────────────
+  // SEED TESTIMONIALS — replaces the old localStorage-only fake
+  // reviews with real, shared rows tied to actual car ids.
+  // ────────────────────────────────────────────────────────
+  db.prepare("DELETE FROM testimonials").run();
+
+  const testimonialStmt = db.prepare(`
+    INSERT INTO testimonials (id, car_id, author_name, rating, comment, verified, likes, status, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, 1, ?, 'published', ?, ?)
+  `);
+
+  const testimonials: [string, string, string, number, string, number, string][] = [
+    [
+      "testi-1", "car-1", "Hendra Gunawan", 4,
+      "CHERY Q ini pas banget buat mobilitas harian di kota. Kompak, gampang diparkir, dan tenaga listriknya responsif untuk stop-and-go di kemacetan Jakarta. Fitur keselamatannya juga lengkap untuk kelas hatchback listrik.",
+      12, "2026-06-20 10:00:00",
+    ],
+    [
+      "testi-2", "car-2", "Sari Indah", 5,
+      "Sudah 2 bulan pakai CHERY E5 dan sangat puas. Jangkauan baterainya realistis untuk perjalanan luar kota, interior terasa premium, dan fitur ADAS-nya bikin tenang saat bawa keluarga di tol.",
+      27, "2026-06-15 09:30:00",
+    ],
+    [
+      "testi-3", "car-3", "Kevin Chandra", 5,
+      "CHERY J6 adalah SUV listrik yang bikin surprised. Akselerasinya halus dan senyap, kabin lega untuk keluarga, dan pengisian dayanya cukup cepat di rumah maupun SPKLU. Recommended untuk yang mau upgrade ke EV.",
+      19, "2026-06-08 14:00:00",
+    ],
+    [
+      "testi-4", "car-4", "Ahmad Fauzi", 4,
+      "CHERY C5 CSH desainnya elegan dan teknologi hybrid-nya benar-benar menghemat konsumsi bahan bakar dibanding sedan konvensional yang saya pakai sebelumnya. Interior clean, Apple CarPlay & Android Auto terintegrasi mulus.",
+      14, "2026-05-30 11:15:00",
+    ],
+    [
+      "testi-5", "car-5", "Budi Santoso", 5,
+      "TIGGO 9 CSH ini kelas premium banget untuk keluarga besar saya. Kabin luas, jok nyaman untuk perjalanan jauh, dan sistem hybrid-nya bikin konsumsi BBM jauh lebih irit tanpa mengorbankan tenaga.",
+      31, "2026-05-22 16:20:00",
+    ],
+    [
+      "testi-6", "car-6", "Rizki Hidayat", 4,
+      "Baru 3 minggu pakai TIGGO CROSS CSH, sejauh ini puas dengan efisiensi bahan bakarnya di rute tol harian. Fitur infotainment lengkap dan suspensinya nyaman untuk jalan yang kurang mulus.",
+      9, "2026-05-14 08:45:00",
+    ],
+    [
+      "testi-7", "car-7", "Linda Wijaya", 5,
+      "TIGGO 8 CSH pilihan tepat untuk keluarga besar yang butuh 7 seater tapi tetap irit. Fitur keselamatannya lengkap, dan kabin baris ketiga masih nyaman untuk orang dewasa, tidak sekadar formalitas.",
+      22, "2026-05-05 13:00:00",
+    ],
+    [
+      "testi-8", "car-8", "Maria Susanti", 4,
+      "CHERY C5 dengan mesin turbo-nya bertenaga tapi tetap halus. Harga yang ditawarkan sangat kompetitif untuk sedan dengan spesifikasi selengkap ini. Pelayanan di dealer juga ramah dan profesional.",
+      16, "2026-04-28 10:30:00",
+    ],
+    [
+      "testi-9", "car-10", "Andi Wijaya", 5,
+      "Sudah 3 bulan pakai OMODA 5 GT dan sangat puas! Desainnya yang futuristik selalu dapat perhatian di jalan, handling-nya tangkas, dan fitur ADAS-nya sangat membantu saat macet. Highly recommended!",
+      24, "2026-04-20 09:00:00",
+    ],
+    [
+      "testi-10", "car-13", "Diana Putri", 5,
+      "TIGGO 8 PRO MAX adalah pilihan terbaik untuk keluarga besar saya. 7 tempat duduk yang lapang, anak-anak nyaman di kursi ketiga, dan tenaga mesinnya tangguh bahkan saat mobil terisi penuh. Pelayanan after-sales juga memuaskan.",
+      18, "2026-04-10 15:00:00",
+    ],
+  ];
+
+  for (const [id, carId, authorName, rating, comment, likes, createdAt] of testimonials) {
+    testimonialStmt.run(id, carId, authorName, rating, comment, likes, createdAt, createdAt);
+  }
+
+  console.log("✓ Created 10 testimonials tied to real car records");
+
+  // ────────────────────────────────────────────────────────
+  // SEED FAQS
+  // ────────────────────────────────────────────────────────
+  db.prepare("DELETE FROM faqs").run();
+
+  const faqStmt = db.prepare(`
+    INSERT INTO faqs (id, question, answer, category, sort_order, status, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, 'published', ?, ?)
+  `);
+
+  const faqs: [string, string, string, string, number][] = [
+    [
+      "faq-1",
+      "Berapa lama masa garansi kendaraan Chery?",
+      "Seluruh lini kendaraan Chery di Indonesia dilengkapi garansi mesin hingga 10 tahun atau 1.000.000 KM (mana yang tercapai lebih dulu), termasuk untuk komponen baterai dan motor listrik pada model hybrid maupun full-electric.",
+      "Garansi",
+      1,
+    ],
+    [
+      "faq-2",
+      "Bagaimana cara menjadwalkan test drive?",
+      "Anda dapat menjadwalkan test drive langsung melalui halaman Booking di website ini, memilih model dan dealer terdekat, atau menghubungi tim sales kami via WhatsApp. Konsultan kami akan mengonfirmasi jadwal dalam waktu 1x24 jam.",
+      "Test Drive",
+      2,
+    ],
+    [
+      "faq-3",
+      "Apakah tersedia simulasi kredit sebelum membeli?",
+      "Ya, gunakan Kalkulator Simulasi Kredit yang tersedia di menu navigasi untuk memperkirakan uang muka, margin, dan estimasi angsuran bulanan sebelum mengajukan pembiayaan resmi melalui mitra pembiayaan Chery.",
+      "Pembiayaan",
+      3,
+    ],
+    [
+      "faq-4",
+      "Berapa lama waktu pengisian daya untuk mobil listrik Chery?",
+      "Waktu pengisian bervariasi tergantung model dan sumber daya. Menggunakan home charger AC, pengisian penuh umumnya membutuhkan 6-8 jam semalaman. Dengan fast charging DC di SPKLU, baterai dapat terisi hingga 80% dalam waktu sekitar 30-40 menit.",
+      "Kendaraan Listrik",
+      4,
+    ],
+    [
+      "faq-5",
+      "Apakah Chery menerima tukar tambah (trade-in) mobil lama?",
+      "Ya, seluruh dealer resmi Chery menerima trade-in mobil lama dari merek apa pun dengan penawaran harga terbaik berdasarkan kondisi kendaraan, yang dapat langsung dipotongkan sebagai uang muka pembelian mobil Chery baru.",
+      "Pembelian",
+      5,
+    ],
+    [
+      "faq-6",
+      "Di kota mana saja dealer resmi Chery tersedia?",
+      "Saat ini Chery Indonesia memiliki dealer resmi di Cibubur (Jabodetabek), Makassar, dan Pare-pare, dengan rencana perluasan jaringan ke kota-kota besar lainnya. Cek halaman Dealer untuk detail lokasi dan kontak masing-masing cabang.",
+      "Dealer",
+      6,
+    ],
+    [
+      "faq-7",
+      "Apa saja yang termasuk dalam layanan servis berkala?",
+      "Layanan servis berkala mencakup pemeriksaan menyeluruh mesin/motor listrik, sistem pengereman, kelistrikan, penggantian oli dan filter (untuk model ICE/hybrid), serta pembaruan software kendaraan, seluruhnya ditangani teknisi bersertifikasi Chery menggunakan suku cadang asli.",
+      "Servis",
+      7,
+    ],
+    [
+      "faq-8",
+      "Apakah bisa membeli mobil Chery secara online sepenuhnya?",
+      "Anda dapat melakukan pre-booking dan simulasi kredit sepenuhnya online melalui website ini. Untuk penandatanganan kontrak pembiayaan dan serah terima unit, tetap diperlukan kunjungan ke dealer resmi sesuai regulasi yang berlaku.",
+      "Pembelian",
+      8,
+    ],
+  ];
+
+  const now = new Date().toISOString();
+  for (const [id, question, answer, category, sortOrder] of faqs) {
+    faqStmt.run(id, question, answer, category, sortOrder, now, now);
+  }
+
+  console.log("✓ Created 8 FAQs");
+
+  // ────────────────────────────────────────────────────────
+  // SEED SEO METADATA — admin-overridable per-page SEO for
+  // pages without an underlying content record (home, news list).
+  // ────────────────────────────────────────────────────────
+  db.prepare("DELETE FROM seo_metadata").run();
+
+  const seoStmt = db.prepare(`
+    INSERT INTO seo_metadata (id, page, title, description, keywords, og_image, no_index, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?)
+  `);
+
+  const seoNow = new Date().toISOString();
+
+  seoStmt.run(
+    "seo-home",
+    "home",
+    "Dealer Resmi Chery Indonesia — Tiggo, Omoda, E5 & Lini Hybrid/EV",
+    "Jelajahi lineup lengkap Chery Indonesia: BEV, hybrid CSH, dan ICE. Simulasi kredit, jadwalkan test drive, dan temukan dealer resmi terdekat di Cibubur, Makassar, dan Pare-pare.",
+    "Chery Indonesia, dealer Chery, Tiggo, Omoda, Chery E5, mobil listrik, mobil hybrid, test drive Chery",
+    "/og-image.jpg",
+    seoNow,
+    seoNow
+  );
+
+  seoStmt.run(
+    "seo-news",
+    "news",
+    "Berita & Artikel Chery Indonesia",
+    "Ikuti berita, wawasan teknologi, dan tips perawatan kendaraan terbaru dari Chery Indonesia.",
+    "berita Chery, artikel otomotif, tips perawatan mobil, teknologi Chery",
+    null,
+    seoNow,
+    seoNow
+  );
+
+  console.log("✓ Created SEO metadata overrides (home, news)");
 
   console.log("\n✅ Database seeded successfully!");
   console.log("\nDefault admin credentials:");

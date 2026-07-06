@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sliders, Check, HelpCircle, ChevronDown } from "lucide-react";
+import { Sliders, Check, HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 
 interface Car {
   id: string;
@@ -13,21 +14,43 @@ interface Car {
 
 interface SpecComparisonProps {
   cars: Car[];
+  currentCarId?: string;
 }
 
-export default function SpecComparison({ cars }: SpecComparisonProps) {
+export default function SpecComparison({ cars, currentCarId }: SpecComparisonProps) {
   const [modelAId, setModelAId] = useState<string>("");
   const [modelBId, setModelBId] = useState<string>("");
+  
+  // Accordion state with Ringkasan Utama & Performa Mesin open by default
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    "Ringkasan Utama": true,
+    "Performa & Mesin": true,
+    "Dimensi & Kapasitas": false,
+    "Suspensi & Roda": false,
+    "Teknologi & Keamanan": false,
+  });
 
   useEffect(() => {
-    if (cars.length >= 2) {
-      setModelAId(cars[0].id);
-      setModelBId(cars[1].id);
+    if (cars.length > 0) {
+      // Set Vehicle A to the current car if provided, otherwise default to cars[0]
+      const defaultA = currentCarId ? (cars.find(c => c.id === currentCarId)?.id || cars[0].id) : cars[0].id;
+      setModelAId(defaultA);
+
+      // Set Vehicle B to another car (different from Vehicle A)
+      const defaultB = cars.find(c => c.id !== defaultA)?.id || cars[1]?.id || cars[0].id;
+      setModelBId(defaultB);
     }
-  }, [cars]);
+  }, [cars, currentCarId]);
 
   const modelA = cars.find((m) => m.id === modelAId) || cars[0];
   const modelB = cars.find((m) => m.id === modelBId) || cars[1];
+
+  const toggleSection = (title: string) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [title]: !prev[title],
+    }));
+  };
 
   const getSpecValue = (car: Car | undefined, label: string): string => {
     if (!car) return "-";
@@ -134,78 +157,139 @@ export default function SpecComparison({ cars }: SpecComparisonProps) {
   ];
 
   return (
-    <section id="comparison" className="bg-white text-[#1A1A1A] py-20 border-b border-slate-100">
+    <section id="comparison" className="bg-[#FAF9F9] text-[#1A1A1A] py-24 sm:py-32 border-b border-slate-100 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs uppercase tracking-[0.25em] text-[#DA291C] font-mono font-bold block mb-2">Perbandingan Cerdas</span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#1A1A1A]">Komparasi Spesifikasi Interaktif</h2>
-          <p className="mt-4 text-slate-500 text-sm sm:text-base leading-relaxed">Pilih dua tipe mobil Chery yang ingin Anda bandingkan secara langsung.</p>
+        
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-20">
+          <span className="text-xs uppercase tracking-[0.25em] text-[#DA291C] font-mono font-bold block mb-3">Perbandingan Cerdas</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black tracking-tight text-slate-950 leading-tight">Komparasi Spesifikasi Interaktif</h2>
+          <p className="mt-4 text-slate-500 text-base leading-relaxed font-medium">Pilih dua tipe mobil Chery yang ingin Anda bandingkan secara langsung.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-          <div className="p-5 bg-slate-50 border border-slate-200 rounded-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="space-y-1">
-              <span className="block text-[10px] text-[#DA291C] uppercase font-bold tracking-widest font-mono">Pilih Kendaraan A</span>
-              <span className="text-lg font-bold text-[#1A1A1A] block">{modelA?.name}</span>
+        {/* Dropdown Selector Cards */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12"
+        >
+          {/* Card A */}
+          <div className="p-6 bg-white border border-slate-100 rounded-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm hover:shadow-2xl hover:shadow-slate-200/50 hover:border-[#DA291C]/15 hover:-translate-y-1 transition-all duration-500 ease-out">
+            <div className="space-y-1 font-sans">
+              <span className="block text-[8px] text-slate-400 uppercase font-black tracking-widest font-mono">Pilih Kendaraan A</span>
+              <span className="text-base sm:text-lg font-black text-slate-900 tracking-tight block">{modelA?.name}</span>
             </div>
             <div className="relative inline-block w-full sm:w-56">
-              <select value={modelAId} onChange={(e) => setModelAId(e.target.value)} className="w-full appearance-none bg-white border border-slate-200 hover:border-slate-300 text-slate-800 py-3 px-4 pr-10 rounded-sm text-xs font-bold font-sans cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#DA291C] shadow-sm">
+              <select 
+                value={modelAId} 
+                onChange={(e) => setModelAId(e.target.value)} 
+                className="w-full appearance-none bg-slate-50 border border-slate-200 hover:border-slate-350 text-slate-800 py-3 px-4 pr-10 rounded-sm text-xs font-bold font-sans cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#DA291C] shadow-xs transition-colors"
+              >
                 {cars.map((m) => (<option key={m.id} value={m.id}>{m.name}</option>))}
               </select>
               <ChevronDown className="w-4 h-4 text-slate-500 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
 
-          <div className="p-5 bg-slate-50 border border-slate-200 rounded-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="space-y-1">
-              <span className="block text-[10px] text-[#DA291C] uppercase font-bold tracking-widest font-mono">Pilih Kendaraan B</span>
-              <span className="text-lg font-bold text-[#1A1A1A] block">{modelB?.name}</span>
+          {/* Card B */}
+          <div className="p-6 bg-white border border-slate-100 rounded-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm hover:shadow-2xl hover:shadow-slate-200/50 hover:border-[#DA291C]/15 hover:-translate-y-1 transition-all duration-500 ease-out">
+            <div className="space-y-1 font-sans">
+              <span className="block text-[8px] text-slate-400 uppercase font-black tracking-widest font-mono">Pilih Kendaraan B</span>
+              <span className="text-base sm:text-lg font-black text-slate-900 tracking-tight block">{modelB?.name}</span>
             </div>
             <div className="relative inline-block w-full sm:w-56">
-              <select value={modelBId} onChange={(e) => setModelBId(e.target.value)} className="w-full appearance-none bg-white border border-slate-200 hover:border-slate-300 text-slate-800 py-3 px-4 pr-10 rounded-sm text-xs font-bold font-sans cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#DA291C] shadow-sm">
-                {cars.map((m) => (<option key={m.id} value={m.id} disabled={m.id === modelAId}>{m.name} {m.id === modelAId ? "(Aktif di A)" : ""}</option>))}
+              <select 
+                value={modelBId} 
+                onChange={(e) => setModelBId(e.target.value)} 
+                className="w-full appearance-none bg-slate-50 border border-slate-200 hover:border-slate-350 text-slate-800 py-3 px-4 pr-10 rounded-sm text-xs font-bold font-sans cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#DA291C] shadow-xs transition-colors"
+              >
+                {cars.map((m) => (
+                  <option key={m.id} value={m.id} disabled={m.id === modelAId}>
+                    {m.name} {m.id === modelAId ? "(Aktif di A)" : ""}
+                  </option>
+                ))}
               </select>
               <ChevronDown className="w-4 h-4 text-slate-500 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="border border-slate-200 rounded-sm overflow-hidden bg-white shadow-sm">
-          <div className="grid grid-cols-3 bg-slate-50 p-6 border-b border-slate-200 items-center text-center font-sans">
-            <div className="text-left text-xs uppercase font-extrabold text-slate-500 tracking-wider">Spesifikasi Teknis</div>
-            <div className="font-extrabold text-sm sm:text-base text-[#DA291C]">{modelA?.name}</div>
-            <div className="font-extrabold text-sm sm:text-base text-[#1A1A1A]">{modelB?.name}</div>
+        {/* Main Comparison Table */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
+          className="border border-slate-100 rounded-sm overflow-hidden bg-white shadow-md hover:shadow-2xl hover:shadow-slate-250/30 transition-all duration-500 ease-out"
+        >
+          {/* Table Header */}
+          <div className="grid grid-cols-3 bg-slate-50 p-6 border-b border-slate-100 items-center text-center font-sans">
+            <div className="text-left text-xs uppercase font-black text-slate-400 tracking-widest">Spesifikasi Teknis</div>
+            <div className="font-heading font-black text-sm sm:text-base text-[#DA291C] tracking-tight">{modelA?.name}</div>
+            <div className="font-heading font-black text-sm sm:text-base text-slate-950 tracking-tight">{modelB?.name}</div>
           </div>
 
-          <div className="divide-y divide-slate-200">
-            {comparisonSections.map((section, secIdx) => (
-              <div key={secIdx} className="space-y-0 font-sans">
-                <div className="bg-slate-50 py-3.5 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200/60">{section.title}</div>
-                <div className="divide-y divide-slate-100">
-                  {section.specs.map((spec, specIdx) => {
-                    const specLabel = spec.label;
-                    const valA = modelA ? getSpecValue(modelA, specLabel) : "-";
-                    const valB = modelB ? getSpecValue(modelB, specLabel) : "-";
-                    const isDifferent = valA !== valB;
+          <div className="divide-y divide-slate-100">
+            {comparisonSections.map((section, secIdx) => {
+              const isOpen = !!openSections[section.title];
+              return (
+                <div key={secIdx} className="space-y-0 font-sans">
+                  {/* Section Separator Button (Clickable to toggle collapse) */}
+                  <button 
+                    onClick={() => toggleSection(section.title)}
+                    className="w-full flex items-center justify-between bg-slate-50/50 hover:bg-slate-100/50 py-4 px-6 border-b border-slate-100 transition-colors focus:outline-none cursor-pointer group"
+                  >
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-slate-600 transition-colors">
+                      {section.title}
+                    </span>
+                    <ChevronDown 
+                      className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isOpen ? "rotate-180 text-[#DA291C]" : "group-hover:text-slate-600"}`} 
+                    />
+                  </button>
 
-                    return (
-                      <div key={specIdx} className="grid grid-cols-3 p-5 sm:p-6 text-xs sm:text-sm items-center text-center hover:bg-slate-50/50 transition-colors">
-                        <div className="text-left font-semibold text-slate-500 pr-2">{spec.name}</div>
-                        <div className={`px-2 font-medium ${isDifferent ? "text-[#DA291C] font-bold bg-red-50/40 rounded-sm py-1.5" : "text-slate-800"}`}>{valA}</div>
-                        <div className={`px-2 font-medium ${isDifferent ? "text-[#1A1A1A] font-bold bg-slate-100/50 rounded-sm py-1.5" : "text-slate-800"}`}>{valB}</div>
-                      </div>
-                    );
-                  })}
+                  {/* Collapsible content with smooth height transition */}
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                      >
+                        <div className="divide-y divide-slate-100">
+                          {section.specs.map((spec, specIdx) => {
+                            const specLabel = spec.label;
+                            const valA = modelA ? getSpecValue(modelA, specLabel) : "-";
+                            const valB = modelB ? getSpecValue(modelB, specLabel) : "-";
+                            const isDifferent = valA !== valB;
+
+                            return (
+                              <div key={specIdx} className="grid grid-cols-3 p-5 sm:p-6 text-xs sm:text-sm items-center text-center hover:bg-slate-50/40 transition-colors">
+                                <div className="text-left font-bold text-slate-500 pr-2 tracking-tight">{spec.name}</div>
+                                <div className={`px-3 py-2 font-semibold ${isDifferent ? "text-[#DA291C] bg-[#DA291C]/3 rounded-sm" : "text-slate-800"}`}>{valA}</div>
+                                <div className={`px-3 py-2 font-semibold ${isDifferent ? "text-slate-950 bg-slate-100/50 rounded-sm" : "text-slate-800"}`}>{valB}</div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
+        </motion.div>
+
+        {/* Warning Note */}
+        <div className="mt-8 flex items-start sm:items-center gap-3.5 bg-white border border-slate-100 p-5 rounded-sm text-xs text-slate-500 font-sans shadow-xs">
+          <HelpCircle className="w-5 h-5 text-[#DA291C] shrink-0 mt-0.5 sm:mt-0" />
+          <p className="leading-relaxed">Spesifikasi di atas dapat berubah sewaktu-waktu oleh ATPM Chery Indonesia. Untuk penawaran skema cicilan kredit tenor hingga 7 tahun dan promo DP murah khusus, silakan tanyakan kepada sales kami.</p>
         </div>
 
-        <div className="mt-6 flex items-center gap-2.5 bg-slate-50 border border-slate-200 p-4 rounded-sm text-xs text-slate-500 font-sans">
-          <HelpCircle className="w-5 h-5 text-[#DA291C] shrink-0" />
-          <p>Spesifikasi di atas dapat berubah sewaktu-waktu oleh ATPM Chery Indonesia. Untuk penawaran skema cicilan kredit tenor hingga 7 tahun dan promo DP murah khusus, silakan tanyakan kepada sales kami.</p>
-        </div>
       </div>
     </section>
   );

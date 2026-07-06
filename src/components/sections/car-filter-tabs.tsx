@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-type CarType = "ALL" | "BEV" | "CSH" | "ICE";
+type CarType = "BEV" | "CSH" | "ICE";
 
 interface CarFilterTabsProps {
   onFilterChange: (type: CarType) => void;
@@ -11,7 +11,6 @@ interface CarFilterTabsProps {
 
 export function CarFilterTabs({ onFilterChange, activeFilter }: CarFilterTabsProps) {
   const tabs: { label: string; value: CarType }[] = [
-    { label: "Semua", value: "ALL" },
     { label: "BEV", value: "BEV" },
     { label: "CSH", value: "CSH" },
     { label: "ICE", value: "ICE" },

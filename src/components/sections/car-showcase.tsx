@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Container } from "@/components/layout/container";
 import { CarFilterTabs } from "@/components/sections/car-filter-tabs";
 
-type CarType = "ALL" | "BEV" | "CSH" | "ICE";
+type CarType = "BEV" | "CSH" | "ICE";
 
 type Model = {
   id: string;
@@ -17,21 +17,54 @@ type Model = {
   watermark: string;
   image: string;
   type: string;
+  slug: string;
   specs: Array<{ label: string; value: string }>;
 };
 
 const defaultModels: Model[] = [
   {
-    id: "q",
+    id: "car-1",
     name: "CHERY Q",
-    subtitle: "COMPACT SUV",
+    subtitle: "ELECTRIC HATCHBACK",
     watermark: "CHERY Q",
-    image: "/figma/car-q.png",
-    type: "ICE",
+    image: "/figma/chery q/hero.png",
+    type: "BEV",
+    slug: "chery-q",
     specs: [
-      { label: "Maximum power (kW/PS)", value: "90/122" },
-      { label: "Maximum torque (NM)", value: "115" },
-      { label: "Dimensions (L x W x H) (mm.)", value: "4195 x 1811 x 1568" },
+      { label: "Motor power (kW)", value: "70" },
+      { label: "Max torque (Nm)", value: "150" },
+      { label: "Battery capacity (kWh)", value: "35" },
+      { label: "Range (km)", value: "320" },
+    ],
+  },
+  {
+    id: "car-2",
+    name: "CHERY E5",
+    subtitle: "ELECTRIC CROSSOVER",
+    watermark: "CHERY E5",
+    image: "/figma/chery e5/hero.png",
+    type: "BEV",
+    slug: "chery-e5",
+    specs: [
+      { label: "Motor power (kW/PS)", value: "150/204" },
+      { label: "Max torque (Nm)", value: "310" },
+      { label: "Battery capacity (kWh)", value: "60.5" },
+      { label: "Range (km)", value: "520" },
+    ],
+  },
+  {
+    id: "car-3",
+    name: "CHERY J6",
+    subtitle: "ELECTRIC OFF-ROAD SUV",
+    watermark: "CHERY J6",
+    image: "/figma/J6/hero.png",
+    type: "BEV",
+    slug: "chery-j6",
+    specs: [
+      { label: "Motor power (kW)", value: "135" },
+      { label: "Max torque (Nm)", value: "220" },
+      { label: "Battery capacity (kWh)", value: "69.6" },
+      { label: "Range (km)", value: "430" },
     ],
   },
 ];
@@ -39,10 +72,10 @@ const defaultModels: Model[] = [
 export function CarShowcase() {
   const [models, setModels] = useState<Model[]>(defaultModels);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [activeFilter, setActiveFilter] = useState<CarType>("ALL");
+  const [activeFilter, setActiveFilter] = useState<CarType>("BEV");
 
   useEffect(() => {
-    const url = activeFilter === "ALL" ? "/api/cars" : `/api/cars?type=${activeFilter}`;
+    const url = `/api/cars?type=${activeFilter}&t=${Date.now()}`;
 
     fetch(url)
       .then(res => res.json())
@@ -56,6 +89,7 @@ export function CarShowcase() {
             watermark: car.name.toUpperCase(),
             image: car.thumbnail || "/figma/car-q.png",
             type: car.type || "ICE",
+            slug: car.slug,
             specs: (car.specs || []).map((spec: any) => ({
               label: spec.label,
               value: spec.value,
@@ -87,6 +121,43 @@ export function CarShowcase() {
     }
   };
 
+  const getFilterDescription = (filter: CarType): string => {
+    switch (filter) {
+      case "BEV":
+        return "Kendaraan listrik masa depan dengan teknologi baterai terdepan dan performa tinggi yang ramah lingkungan.";
+      case "CSH":
+        return "Teknologi Hybrid terdepan yang mengombinasikan efisiensi listrik dan keandalan mesin konvensional.";
+      case "ICE":
+        return "Performa optimal dengan mesin konvensional terpercaya, dirancang untuk memenuhi kebutuhan berkendara Anda.";
+    }
+  };
+
+  // Filter specs based on type - show only relevant specs
+  const getFilteredSpecs = (model: Model) => {
+    if (!model.specs) return [];
+    
+    const filterLabel = (label: string) => {
+      const lower = label.toLowerCase();
+      // Always show these
+      if (lower.includes("power") || lower.includes("torque") || lower.includes("dimensions")) {
+        return true;
+      }
+      // BEV: show battery and range
+      if (model.type === "BEV" && (lower.includes("battery") || lower.includes("range"))) {
+        return true;
+      }
+      // CSH/ICE: show engine capacity
+      if ((model.type === "CSH" || model.type === "ICE") && lower.includes("engine")) {
+        return true;
+      }
+      return false;
+    };
+
+    return model.specs.filter(spec => filterLabel(spec.label));
+  };
+
+  const filteredSpecs = getFilteredSpecs(model);
+
   return (
     <section
       id="car-showcase"
@@ -94,6 +165,8 @@ export function CarShowcase() {
       className="relative bg-muted py-section-y"
     >
       <Container className="flex flex-col items-center gap-8 text-center">
+        <CarFilterTabs onFilterChange={setActiveFilter} activeFilter={activeFilter} />
+
         <div className="flex flex-col items-center gap-3">
           <span className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
             Chery Future Innovation
@@ -104,13 +177,10 @@ export function CarShowcase() {
           >
             Pilih Kendaraan Impian Anda
           </h2>
-          <p className="text-body-lg max-w-xl text-muted-foreground">
-            Temukan standar baru berkendara dengan kombinasi desain
-            futuristik, performa tangguh, dan integrasi teknologi cerdas.
+          <p className="text-body-lg max-w-2xl text-muted-foreground">
+            {getFilterDescription(activeFilter)}
           </p>
         </div>
-
-        <CarFilterTabs onFilterChange={setActiveFilter} activeFilter={activeFilter} />
 
         <div className="flex w-full flex-col items-center gap-8">
           <div className="relative flex w-full items-center justify-center overflow-hidden py-8">
@@ -172,24 +242,21 @@ export function CarShowcase() {
           </div>
         </div>
 
-        {model.specs && model.specs.length > 0 && (
-          <div className="grid w-full grid-cols-1 gap-6 pt-2 sm:grid-cols-3">
-            {model.specs.map((spec) => {
-              const isRangeSpec = spec.label.toLowerCase().includes("range");
-              return (
-                <div
-                  key={spec.label}
-                  className={`flex flex-col items-center gap-2 ${isRangeSpec ? "sm:col-span-3" : ""}`}
-                >
-                  <span className="text-sm text-muted-foreground">
-                    {spec.label}
-                  </span>
-                  <span className="text-h3 font-heading font-bold text-foreground">
-                    {spec.value}
-                  </span>
-                </div>
-              );
-            })}
+        {filteredSpecs && filteredSpecs.length > 0 && (
+          <div className="flex w-full flex-wrap justify-center gap-4 pt-2">
+            {filteredSpecs.map((spec) => (
+              <div
+                key={spec.label}
+                className="flex flex-col items-center gap-2 rounded-xl bg-white/10 backdrop-blur-lg border border-white/20 p-4 shadow-lg min-w-[140px] flex-1 max-w-[200px]"
+              >
+                <span className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {spec.label}
+                </span>
+                <span className="text-base font-bold text-foreground">
+                  {spec.value}
+                </span>
+              </div>
+            ))}
           </div>
         )}
 
@@ -203,7 +270,7 @@ export function CarShowcase() {
           <Button
             variant="outline"
             className="h-11 rounded px-5 text-base font-bold border-brand-deep text-brand-deep hover:bg-brand-deep/5"
-            render={<Link href="#cta" />}
+            render={<Link href={`/models/${model.slug}`} />}
           >
             Lihat Lebih Detail
           </Button>

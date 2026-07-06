@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { CarForm } from "@/components/cms/car-form";
-import db from "@/lib/db";
+import { getCarById } from "@/lib/data/cars";
 
 export default async function EditCarPage({
   params,
@@ -17,7 +17,7 @@ export default async function EditCarPage({
   const { id } = await params;
 
   // Get car data
-  const car = db.prepare("SELECT * FROM cars WHERE id = ?").get(id) as any;
+  const car = getCarById(id);
 
   if (!car) {
     redirect("/dashboard/cars");

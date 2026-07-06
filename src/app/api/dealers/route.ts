@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import db from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limit";
+import { getActiveDealers } from "@/lib/data/dealers";
 
 export const runtime = "nodejs";
 
 // GET all dealers - with caching
-export const revalidate = 3600; // ISR: 1 hour
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
@@ -17,11 +16,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
-    const dealers = db.prepare("SELECT * FROM dealers WHERE status = 'active' ORDER BY sort_order ASC").all();
-    
+    const dealers = getActiveDealers();
+
     return NextResponse.json(dealers, {
       headers: {
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=59',
+        'Cache-Control': 'no-store, max-age=0, must-revalidate',
       },
     });
   } catch (error) {

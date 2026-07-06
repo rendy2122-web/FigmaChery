@@ -36,7 +36,7 @@ export function Hero() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/homepage/hero")
+    fetch("/api/homepage/hero?t=" + Date.now())
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
@@ -54,7 +54,7 @@ export function Hero() {
   };
 
   return (
-    <section id="hero" aria-labelledby="hero-heading" className="relative">
+    <section id="hero" aria-labelledby="hero-heading" className="relative mt-[-80px]">
       <div className="relative">
         <Image
           key={slide.id}
@@ -63,7 +63,7 @@ export function Hero() {
           width={1440}
           height={944}
           priority={activeSlide === 0}
-          className="h-[420px] w-full object-cover sm:h-[560px] lg:h-[780px]"
+          className="h-screen w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent" />
 

@@ -84,7 +84,7 @@ export default function CheryAssistant() {
           ...prev,
           {
             role: "assistant",
-            content: "Koneksi asisten sedang sibuk. Namun, untuk membantu keputusan Anda secara cepat:\n\n• **Chery OMODA E5** (EV) seharga Rp 496 Juta ditenagai baterai 61 kWh LFP aman air IP68 dengan jarak tempuh **430 km**.\n• **TIGGO 8 Pro Max** (Petrol) seharga Rp 568.5 Juta adalah SUV keluarga VIP 7-Seater bermesin **2.0L Turbo 250 HP AWD**.\n• **OMODA 5 GT** seharga Rp 404.8 Juta mengusung mesin **1.6L Turbo 197 HP**.\n\nAnda dapat menguji performanya langsung dengan mengklik tombol **Book Test Drive** di bagian atas halaman!"
+            content: "Koneksi asisten sedang sibuk. Namun, untuk membantu keputusan Anda secara cepat, berikut lineup mobil Chery ter-update kami:\n\n• **Chery OMODA E5** (EV): Rp 799.9 Juta (Baterai LFP 61 kWh, Jarak tempuh **430 km**)\n• **Chery J6** (EV Off-Road): Rp 739.9 Juta\n• **TIGGO 9 CSH** (Hybrid): Rp 849.9 Juta (Luxury 7-Seater)\n• **OMODA 5 GT** (Petrol): Rp 404.8 Juta (Mesin **1.6L Turbo 197 HP**)\n• **CHERY Q** (EV Hatchback): Rp 329.8 Juta\n\nAnda dapat menguji performa lineup Chery langsung dengan mengklik tombol **Book Test Drive** di bagian atas halaman!"
           }
         ]);
       }, 1000);

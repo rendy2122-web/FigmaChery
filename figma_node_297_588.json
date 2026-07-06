@@ -1,0 +1,149 @@
+﻿{
+    "id":  "297:588",
+    "name":  "Model=CHERY Q, Category=BEV",
+    "type":  "COMPONENT",
+    "scrollBehavior":  "SCROLLS",
+    "children":  [
+                     {
+                         "id":  "281:3588",
+                         "name":  "CHERY Q",
+                         "type":  "RECTANGLE",
+                         "scrollBehavior":  "SCROLLS",
+                         "blendMode":  "PASS_THROUGH",
+                         "fills":  [
+                                       {
+                                           "blendMode":  "NORMAL",
+                                           "visible":  false,
+                                           "type":  "IMAGE",
+                                           "scaleMode":  "FILL",
+                                           "imageRef":  "742129484ddb7f069d93e7a3c1d8849221ec6e5e"
+                                       },
+                                       {
+                                           "blendMode":  "NORMAL",
+                                           "type":  "IMAGE",
+                                           "scaleMode":  "FILL",
+                                           "imageRef":  "247b858a0a85ad27b8f130b8afb4acc5dcca5b19"
+                                       }
+                                   ],
+                         "strokes":  [
+
+                                     ],
+                         "strokeWeight":  1.6781609058380127,
+                         "strokeAlign":  "INSIDE",
+                         "absoluteBoundingBox":  {
+                                                     "x":  5963.0,
+                                                     "y":  3171.0,
+                                                     "width":  1142.9531250,
+                                                     "height":  480.45324707031250
+                                                 },
+                         "absoluteRenderBounds":  {
+                                                      "x":  5963.0,
+                                                      "y":  3171.0,
+                                                      "width":  1142.9531250,
+                                                      "height":  480.4531250
+                                                  },
+                         "constraints":  {
+                                             "vertical":  "SCALE",
+                                             "horizontal":  "SCALE"
+                                         },
+                         "exportSettings":  [
+                                                {
+                                                    "suffix":  "",
+                                                    "format":  "PNG",
+                                                    "constraint":  {
+                                                                       "type":  "SCALE",
+                                                                       "value":  1.0
+                                                                   }
+                                                }
+                                            ],
+                         "effects":  [
+
+                                     ],
+                         "interactions":  [
+
+                                          ],
+                         "complexStrokeProperties":  {
+                                                         "strokeType":  "BASIC"
+                                                     }
+                     }
+                 ],
+    "blendMode":  "PASS_THROUGH",
+    "clipsContent":  false,
+    "background":  [
+                       {
+                           "blendMode":  "NORMAL",
+                           "visible":  false,
+                           "type":  "SOLID",
+                           "color":  {
+                                         "r":  1.0,
+                                         "g":  1.0,
+                                         "b":  1.0,
+                                         "a":  1.0
+                                     }
+                       }
+                   ],
+    "fills":  [
+                  {
+                      "blendMode":  "NORMAL",
+                      "visible":  false,
+                      "type":  "SOLID",
+                      "color":  {
+                                    "r":  1.0,
+                                    "g":  1.0,
+                                    "b":  1.0,
+                                    "a":  1.0
+                                }
+                  }
+              ],
+    "strokes":  [
+
+                ],
+    "strokeWeight":  1.0,
+    "strokeAlign":  "INSIDE",
+    "backgroundColor":  {
+                            "r":  0.0,
+                            "g":  0.0,
+                            "b":  0.0,
+                            "a":  0.0
+                        },
+    "absoluteBoundingBox":  {
+                                "x":  5963.0,
+                                "y":  3171.0,
+                                "width":  1142.9531250,
+                                "height":  480.45324707031250
+                            },
+    "absoluteRenderBounds":  {
+                                 "x":  5963.0,
+                                 "y":  3171.0,
+                                 "width":  1142.9531250,
+                                 "height":  480.45324707031250
+                             },
+    "preserveRatio":  true,
+    "targetAspectRatio":  {
+                              "x":  609.0,
+                              "y":  256.0
+                          },
+    "constraints":  {
+                        "vertical":  "TOP",
+                        "horizontal":  "LEFT"
+                    },
+    "layoutAlign":  "INHERIT",
+    "layoutGrow":  1.0,
+    "gridRowAnchorIndex":  0,
+    "gridColumnAnchorIndex":  0,
+    "gridRowSpan":  1,
+    "gridColumnSpan":  1,
+    "gridChildHorizontalAlign":  "AUTO",
+    "gridChildVerticalAlign":  "AUTO",
+    "layoutSizingHorizontal":  "FILL",
+    "layoutSizingVertical":  "FIXED",
+    "effects":  [
+
+                ],
+    "interactions":  [
+
+                     ],
+    "complexStrokeProperties":  {
+                                    "strokeType":  "BASIC"
+                                }
+}

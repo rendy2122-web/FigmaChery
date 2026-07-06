@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PhoneIcon, MailIcon, ClockIcon } from "lucide-react";
+import { PhoneIcon, MailIcon } from "lucide-react";
 import { Container } from "@/components/layout/container";
 import { Logo } from "@/components/layout/logo";
 import {
@@ -7,32 +7,46 @@ import {
   InstagramIcon,
   YoutubeIcon,
 } from "@/components/ui/social-icons";
-
-const models = ["Tiggo 8", "C5", "Tiggo 9"];
-
-const contact = [
-  { icon: PhoneIcon, label: "+62 895 2707 2446", href: "tel:+6289527072446" },
-  {
-    icon: MailIcon,
-    label: "sales@chery-cibubur.id",
-    href: "mailto:sales@chery-cibubur.id",
-  },
-  { icon: ClockIcon, label: "+62 895 2707 2446", href: "tel:+6289527072446" },
-];
-
-const social = [
-  { icon: FacebookIcon, label: "Facebook", href: "#" },
-  { icon: InstagramIcon, label: "Instagram", href: "#" },
-  { icon: YoutubeIcon, label: "YouTube", href: "#" },
-];
+import { getPublishedCars } from "@/lib/data/cars";
+import { getSettingsMap } from "@/lib/data/settings";
 
 export function Footer() {
   const year = new Date().getFullYear();
 
+  let cars: any[] = [];
+  try {
+    const res = getPublishedCars();
+    if (Array.isArray(res)) {
+      cars = res;
+    }
+  } catch (error) {
+    console.error("Error loading cars in footer:", error);
+  }
+  
+  const bevModels = cars.filter((c) => c.type === "BEV");
+  const cshModels = cars.filter((c) => c.type === "CSH");
+  const iceModels = cars.filter((c) => c.type === "ICE");
+
+  const settings = getSettingsMap();
+  const contactPhone = settings.contact_phone || "+62 895 2707 2446";
+  const contactEmail = settings.contact_email || "sales@chery-cibubur.id";
+  const phoneHref = `tel:${contactPhone.replace(/[^0-9+]/g, "")}`;
+
+  const contact = [
+    { icon: PhoneIcon, label: contactPhone, href: phoneHref },
+    { icon: MailIcon, label: contactEmail, href: `mailto:${contactEmail}` },
+  ];
+
+  const social = [
+    { icon: FacebookIcon, label: "Facebook", href: settings.facebook_url || "#" },
+    { icon: InstagramIcon, label: "Instagram", href: settings.instagram_url || "#" },
+    { icon: YoutubeIcon, label: "YouTube", href: settings.youtube_url || "#" },
+  ];
+
   return (
     <footer className="border-t border-white/10 bg-[#0a0a0a] text-white">
       <Container className="py-section-y-sm">
-        <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
+        <div className="grid gap-12 lg:grid-cols-[1.5fr_2.5fr_1.2fr_1fr]">
           <div className="flex flex-col gap-4">
             <Logo variant="light" />
             <p className="max-w-xs text-sm text-white/60">
@@ -41,22 +55,68 @@ export function Footer() {
             </p>
           </div>
 
-          <nav aria-label="Mobile Cherry">
-            <h2 className="mb-4 font-heading text-lg font-semibold text-white">
-              Mobile Cherry
+          <nav aria-label="Product Line-up" className="flex flex-col gap-4">
+            <h2 className="font-heading text-lg font-semibold text-white">
+              Product
             </h2>
-            <ul className="flex flex-col gap-3">
-              {models.map((model) => (
-                <li key={model}>
-                  <Link
-                    href="#car-showcase"
-                    className="text-sm text-white/60 transition-colors hover:text-white"
-                  >
-                    {model}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div className="grid grid-cols-3 gap-4 sm:gap-6 mt-1">
+              {/* BEV Category */}
+              <div className="flex flex-col gap-3">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#DA291C]">
+                  BEV
+                </span>
+                <ul className="flex flex-col gap-2.5">
+                  {bevModels.map((model) => (
+                    <li key={model.id}>
+                      <Link
+                        href={`/models/${model.slug}`}
+                        className="text-xs text-white/60 transition-colors hover:text-[#DA291C]"
+                      >
+                        {model.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* CSH Category */}
+              <div className="flex flex-col gap-3">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#DA291C]">
+                  CSH
+                </span>
+                <ul className="flex flex-col gap-2.5">
+                  {cshModels.map((model) => (
+                    <li key={model.id}>
+                      <Link
+                        href={`/models/${model.slug}`}
+                        className="text-xs text-white/60 transition-colors hover:text-[#DA291C]"
+                      >
+                        {model.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* ICE Category */}
+              <div className="flex flex-col gap-3">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#DA291C]">
+                  ICE
+                </span>
+                <ul className="flex flex-col gap-2.5">
+                  {iceModels.map((model) => (
+                    <li key={model.id}>
+                      <Link
+                        href={`/models/${model.slug}`}
+                        className="text-xs text-white/60 transition-colors hover:text-[#DA291C]"
+                      >
+                        {model.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </nav>
 
           <nav aria-label="Kontak Sales">

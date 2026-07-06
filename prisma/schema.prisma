@@ -48,6 +48,8 @@ model CarImage {
   carId     String
   url       String
   alt       String?
+  colorName String?
+  colorHex  String?
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
 

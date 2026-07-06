@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { DealerForm } from "@/components/cms/dealer-form";
-import db from "@/lib/db";
+import { getDealerById } from "@/lib/data/dealers";
 
 export default async function EditDealerPage({
   params,
@@ -17,7 +17,7 @@ export default async function EditDealerPage({
   const { id } = await params;
 
   // Get dealer data
-  const dealer = db.prepare("SELECT * FROM dealers WHERE id = ?").get(id) as any;
+  const dealer = getDealerById(id);
 
   if (!dealer) {
     redirect("/dashboard/dealers");

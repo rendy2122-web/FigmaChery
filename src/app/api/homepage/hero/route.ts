@@ -1,26 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import db from "@/lib/db";
+import { getHeroSlides, updateHeroSlides } from "@/lib/data/homepage";
 
 export const runtime = "nodejs";
 
 // GET hero slides - with caching
-export const revalidate = 3600; // ISR: 1 hour
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const hero = db.prepare("SELECT * FROM homepage_sections WHERE section = 'hero'").get() as any;
-    
-    let slides = [];
-    if (hero?.metadata) {
-      try {
-        slides = JSON.parse(hero.metadata);
-      } catch {}
-    }
+    const slides = getHeroSlides();
 
     return NextResponse.json(slides, {
       headers: {
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=59',
+        'Cache-Control': 'no-store, max-age=0, must-revalidate',
       },
     });
   } catch (error) {
@@ -38,18 +31,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const slides = await request.json();
-    const metadata = JSON.stringify(slides);
-    const now = new Date().toISOString();
-
-    // Upsert
-    const existing = db.prepare("SELECT * FROM homepage_sections WHERE section = 'hero'").get();
-    
-    if (existing) {
-      db.prepare("UPDATE homepage_sections SET metadata = ?, updated_at = ? WHERE section = 'hero'").run(metadata, now);
-    } else {
-      const id = Date.now().toString();
-      db.prepare("INSERT INTO homepage_sections (id, section, metadata, is_active, created_at, updated_at) VALUES (?, 'hero', ?, 1, ?, ?)").run(id, metadata, now, now);
-    }
+    updateHeroSlides(slides);
 
     return NextResponse.json({ message: "Hero slides updated successfully" });
   } catch (error) {

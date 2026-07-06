@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { ArticleForm } from "@/components/cms/article-form";
-import db from "@/lib/db";
+import { getArticleById, getCategories } from "@/lib/data/articles";
 
 export default async function EditArticlePage({
   params,
@@ -17,8 +17,8 @@ export default async function EditArticlePage({
   const { id } = await params;
 
   // Get article and categories data
-  const article = db.prepare("SELECT * FROM articles WHERE id = ?").get(id) as any;
-  const categories = db.prepare("SELECT * FROM categories ORDER BY name").all();
+  const article = getArticleById(id);
+  const categories = getCategories();
 
   if (!article) {
     redirect("/dashboard/articles");
