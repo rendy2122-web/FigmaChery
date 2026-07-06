@@ -208,6 +208,30 @@ try {
   // column already exists — ignore
 }
 
+try {
+  db.exec(`ALTER TABLE cars ADD COLUMN type TEXT DEFAULT 'ICE'`);
+} catch {
+  // column already exists — ignore
+}
+
+try {
+  db.exec(`ALTER TABLE cars ADD COLUMN deleted_at DATETIME`);
+} catch {
+  // column already exists — ignore
+}
+
+try {
+  db.exec(`ALTER TABLE articles ADD COLUMN deleted_at DATETIME`);
+} catch {
+  // column already exists — ignore
+}
+
+try {
+  db.exec(`ALTER TABLE dealers ADD COLUMN deleted_at DATETIME`);
+} catch {
+  // column already exists — ignore
+}
+
 db.exec(`
   CREATE TABLE IF NOT EXISTS settings (
     id TEXT PRIMARY KEY,
