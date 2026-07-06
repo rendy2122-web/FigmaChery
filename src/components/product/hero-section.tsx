@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { Zap, ShieldCheck, Flame, Cpu, Compass, Sliders, Palette, CreditCard } from "lucide-react";
 
@@ -159,10 +160,12 @@ export default function HeroSection({ car, onOpenBooking }: HeroSectionProps) {
                   transition={{ duration: 0.5, ease: "easeOut" }}
                   className="w-full h-48 sm:h-64 lg:h-80 flex items-center justify-center z-10 select-none relative"
                 >
-                  <img
+                  <Image
                     src={displayImage}
                     alt={hasColorOptions ? `${car.name} - ${colors[selectedColor]?.name}` : car.name}
-                    className="max-h-full object-contain filter drop-shadow-[0_15px_25px_rgba(0,0,0,0.18)] transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                    fill
+                    sizes="(max-width: 640px) 100vw, 50vw"
+                    className="object-contain filter drop-shadow-[0_15px_25px_rgba(0,0,0,0.18)] transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                     referrerPolicy="no-referrer"
                   />
                 </motion.div>

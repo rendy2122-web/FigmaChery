@@ -9,10 +9,8 @@ import {
   CarIcon,
   FileTextIcon,
   ImageIcon,
-  TagIcon,
   StoreIcon,
   HelpCircleIcon,
-  SettingsIcon,
   LogOutIcon,
   ImageDownIcon,
   StarIcon,
@@ -26,11 +24,9 @@ const menuItems = [
   { href: "/dashboard/articles", label: "Artikel", icon: FileTextIcon },
   { href: "/dashboard/testimonials", label: "Ulasan", icon: StarIcon },
   { href: "/dashboard/media", label: "Media", icon: ImageIcon },
-  { href: "/dashboard/promotions", label: "Promosi", icon: TagIcon },
   { href: "/dashboard/dealers", label: "Dealer", icon: StoreIcon },
   { href: "/dashboard/faqs", label: "FAQ", icon: HelpCircleIcon },
   { href: "/dashboard/seo", label: "SEO", icon: SearchIcon },
-  { href: "/dashboard/settings", label: "Pengaturan", icon: SettingsIcon },
 ];
 
 export function DashboardSidebar() {

@@ -14,7 +14,7 @@ const News = lazy(() => import("@/components/sections/news").then(m => ({ defaul
 const FAQ = lazy(() => import("@/components/sections/faq").then(m => ({ default: m.FAQ })));
 const CTA = lazy(() => import("@/components/sections/cta").then(m => ({ default: m.CTA })));
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const DEFAULT_TITLE = "Dealer Resmi Chery Indonesia — Tiggo, Omoda, E5 & Lini Hybrid/EV";
 const DEFAULT_DESCRIPTION =

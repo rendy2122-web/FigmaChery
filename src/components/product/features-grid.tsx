@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Zap, ShieldCheck, Tv, Compass, Flame, Layers, Volume2, Volume, Sparkles, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface CarData {
@@ -138,11 +139,13 @@ export default function FeaturesGrid({ car }: FeaturesGridProps) {
             style={{ animationDelay: "750ms", animationFillMode: 'forwards' }}
           >
             <div className="relative h-64 sm:h-72 overflow-hidden bg-slate-100">
-              <img 
-                src={comfortSlides[comfortIdx]} 
-                alt="Luxury Cabin Slideshow" 
-                className="w-full h-full object-cover transition-all duration-1000 ease-in-out" 
-                referrerPolicy="no-referrer" 
+              <Image
+                src={comfortSlides[comfortIdx]}
+                alt="Luxury Cabin Slideshow"
+                fill
+                sizes="(max-width: 1024px) 100vw, 42vw"
+                className="object-cover transition-all duration-1000 ease-in-out"
+                referrerPolicy="no-referrer"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
               
@@ -211,11 +214,13 @@ export default function FeaturesGrid({ car }: FeaturesGridProps) {
 
           {/* Tech Slideshow */}
           <div className="relative rounded-sm overflow-hidden group border border-slate-100 shadow-sm bg-slate-100 aspect-video">
-            <img 
-              src={techSlides[techIdx]} 
-              alt="Safety Tech Slideshow" 
-              className="w-full h-full object-cover transition-all duration-1000 ease-in-out" 
-              referrerPolicy="no-referrer" 
+            <Image
+              src={techSlides[techIdx]}
+              alt="Safety Tech Slideshow"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover transition-all duration-1000 ease-in-out"
+              referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
 

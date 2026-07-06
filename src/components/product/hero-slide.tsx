@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronLeft, ChevronRight, Play, Pause } from "lucide-react";
 
@@ -109,11 +110,13 @@ export default function HeroSlide({ slug, heroImage }: HeroSlideProps) {
               className="h-full w-full object-cover"
             />
           ) : (
-            <img
+            <Image
               src={slides[currentIndex]?.src}
               alt={`Hero slide ${currentIndex + 1}`}
-              className="h-full w-full object-cover"
-              loading={currentIndex === 0 ? "eager" : "lazy"}
+              fill
+              sizes="100vw"
+              className="object-cover"
+              priority={currentIndex === 0}
             />
           )}
 

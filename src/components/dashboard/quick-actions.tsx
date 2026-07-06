@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, CarIcon, FileTextIcon, TagIcon } from "lucide-react";
+import { PlusIcon, CarIcon, FileTextIcon } from "lucide-react";
 
 export function QuickActions() {
   const actions = [
@@ -17,12 +17,6 @@ export function QuickActions() {
       icon: FileTextIcon,
       description: "Buat artikel atau berita",
     },
-    {
-      href: "/dashboard/promotions/new",
-      label: "Buat Promosi",
-      icon: TagIcon,
-      description: "Tambah campaign promosi",
-    },
   ];
 
   return (
@@ -31,7 +25,7 @@ export function QuickActions() {
         Aksi Cepat
       </h2>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2">
         {actions.map((action) => {
           const Icon = action.icon;
           return (
