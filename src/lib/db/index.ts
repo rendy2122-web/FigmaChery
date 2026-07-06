@@ -232,6 +232,18 @@ try {
   // column already exists — ignore
 }
 
+try {
+  db.exec(`ALTER TABLE car_images ADD COLUMN color_name TEXT`);
+} catch {
+  // column already exists — ignore
+}
+
+try {
+  db.exec(`ALTER TABLE car_images ADD COLUMN color_hex TEXT`);
+} catch {
+  // column already exists — ignore
+}
+
 db.exec(`
   CREATE TABLE IF NOT EXISTS settings (
     id TEXT PRIMARY KEY,
