@@ -3,6 +3,18 @@ import db from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
+interface CarDbRow {
+  id: string;
+  name: string;
+  slug: string;
+  subtitle: string | null;
+  description: string | null;
+  price_from: string | null;
+  type: string;
+  status: string;
+  sort_order: number;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { messages } = await request.json();
@@ -10,7 +22,7 @@ export async function POST(request: NextRequest) {
     const query = lastMessage.toLowerCase();
 
     // Fetch all active cars from the database
-    const cars = db.prepare("SELECT * FROM cars WHERE deleted_at IS NULL AND status = 'published'").all() as any[];
+    const cars = db.prepare("SELECT * FROM cars WHERE deleted_at IS NULL AND status = 'published'").all() as CarDbRow[];
 
     let reply = "";
 
@@ -25,7 +37,7 @@ export async function POST(request: NextRequest) {
         const carA = matchedCars[0];
         const carB = matchedCars[1];
         
-        const formatPrice = (val: string) => {
+        const formatPrice = (val: string | null) => {
           if (!val) return "-";
           return val.includes(".") ? `Rp ${val}` : `Rp ${parseInt(val).toLocaleString("id-ID")}`;
         };
@@ -42,7 +54,7 @@ export async function POST(request: NextRequest) {
         const omodaE5 = cars.find(c => c.name.toLowerCase().includes("e5")) || cars[1] || cars[0];
         const cheryQ = cars.find(c => c.name.toLowerCase().includes("q")) || cars[0];
         
-        const formatPrice = (val: string) => {
+        const formatPrice = (val: string | null) => {
           if (!val) return "-";
           return val.includes(".") ? `Rp ${val}` : `Rp ${parseInt(val).toLocaleString("id-ID")}`;
         };
@@ -55,7 +67,7 @@ export async function POST(request: NextRequest) {
     } 
     // 2. Price query (e.g. harga, price, berapa, otr)
     else if (query.includes("harga") || query.includes("price") || query.includes("berapa") || query.includes("otr")) {
-      const formatPrice = (val: string) => {
+      const formatPrice = (val: string | null) => {
         if (!val) return "-";
         return val.includes(".") ? `Rp ${val}` : `Rp ${parseInt(val).toLocaleString("id-ID")}`;
       };

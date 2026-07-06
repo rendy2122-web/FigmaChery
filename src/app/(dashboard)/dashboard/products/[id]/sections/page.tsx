@@ -42,10 +42,6 @@ export default function ProductSectionsPage({
   const [error, setError] = useState("");
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
 
-  useEffect(() => {
-    fetchSections();
-  }, []);
-
   const fetchSections = async () => {
     try {
       const res = await fetch(`/api/products/${id}/sections`);
@@ -59,6 +55,10 @@ export default function ProductSectionsPage({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchSections();
+  }, []);
 
   const addSection = () => {
     setSections([
@@ -81,7 +81,7 @@ export default function ProductSectionsPage({
     setSections(sections.filter((_, i) => i !== index));
   };
 
-  const updateSection = (index: number, field: keyof Section, value: any) => {
+  const updateSection = (index: number, field: keyof Section, value: Section[keyof Section]) => {
     setSections(sections.map((s, i) => (i === index ? { ...s, [field]: value } : s)));
   };
 

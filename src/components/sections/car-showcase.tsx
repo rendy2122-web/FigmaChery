@@ -69,6 +69,21 @@ const defaultModels: Model[] = [
   },
 ];
 
+interface ApiCarSpec {
+  label: string;
+  value: string;
+}
+
+interface ApiCar {
+  id: string;
+  name: string;
+  subtitle: string | null;
+  thumbnail: string | null;
+  type: string;
+  slug: string;
+  specs?: ApiCarSpec[];
+}
+
 export function CarShowcase() {
   const [models, setModels] = useState<Model[]>(defaultModels);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -82,7 +97,7 @@ export function CarShowcase() {
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
           // Map cars API response to Model type (specs are now included in the response)
-          const mapped = data.map((car: any) => ({
+          const mapped = (data as ApiCar[]).map((car: ApiCar) => ({
             id: car.id,
             name: car.name.toUpperCase(),
             subtitle: car.subtitle || "CSH",
@@ -90,7 +105,7 @@ export function CarShowcase() {
             image: car.thumbnail || "/figma/car-q.png",
             type: car.type || "ICE",
             slug: car.slug,
-            specs: (car.specs || []).map((spec: any) => ({
+            specs: (car.specs || []).map((spec: ApiCarSpec) => ({
               label: spec.label,
               value: spec.value,
             })),

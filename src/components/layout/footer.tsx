@@ -13,7 +13,7 @@ import { getSettingsMap } from "@/lib/data/settings";
 export function Footer() {
   const year = new Date().getFullYear();
 
-  let cars: any[] = [];
+  let cars: ReturnType<typeof getPublishedCars> = [];
   try {
     const res = getPublishedCars();
     if (Array.isArray(res)) {

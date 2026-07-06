@@ -29,7 +29,7 @@ interface BookingFormProps {
 }
 
 export default function BookingForm({ isOpen, onClose, type, cars, activeCar }: BookingFormProps) {
-  const [formData, setFormData] = useState<BookingData>({
+  const [formData, setFormData] = useState<BookingData>(() => ({
     fullName: "",
     email: "",
     phone: "",
@@ -38,23 +38,11 @@ export default function BookingForm({ isOpen, onClose, type, cars, activeCar }: 
     preferredDate: "",
     preferredTime: "09:00 - 12:00",
     testDriveRequired: type === "test"
-  });
+  }));
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [ticketId, setTicketId] = useState("");
-
-  useEffect(() => {
-    if (isOpen) {
-      setFormData((prev) => ({
-        ...prev,
-        carModel: activeCar.id,
-        testDriveRequired: type === "test"
-      }));
-      setIsSuccess(false);
-      setIsLoading(false);
-    }
-  }, [isOpen, activeCar.id, type]);
 
   if (!isOpen) return null;
 

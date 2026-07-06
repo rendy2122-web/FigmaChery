@@ -25,10 +25,6 @@ export default function HeroSlidesPage() {
   const [error, setError] = useState("");
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
-  useEffect(() => {
-    fetchSlides();
-  }, []);
-
   const fetchSlides = async () => {
     try {
       const res = await fetch("/api/homepage/hero");
@@ -42,6 +38,10 @@ export default function HeroSlidesPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchSlides();
+  }, []);
 
   const addSlide = () => {
     setSlides([

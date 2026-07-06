@@ -53,13 +53,15 @@ export function ProductDetailClient({
       <CustomerReviews car={car} allCars={allCars} initialTestimonials={testimonials} />
       <OtherProductsCarousel currentCarId={car.id} cars={allCars} />
 
-      <BookingForm
-        isOpen={isBookingOpen}
-        onClose={() => setIsBookingOpen(false)}
-        type={bookingType}
-        cars={allCars}
-        activeCar={car}
-      />
+      {isBookingOpen && (
+        <BookingForm
+          isOpen={isBookingOpen}
+          onClose={() => setIsBookingOpen(false)}
+          type={bookingType}
+          cars={allCars}
+          activeCar={car}
+        />
+      )}
     </div>
   );
 }

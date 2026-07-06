@@ -18,8 +18,15 @@ interface SpecComparisonProps {
 }
 
 export default function SpecComparison({ cars, currentCarId }: SpecComparisonProps) {
-  const [modelAId, setModelAId] = useState<string>("");
-  const [modelBId, setModelBId] = useState<string>("");
+  const [modelAId, setModelAId] = useState<string>(() => {
+    if (!cars || cars.length === 0) return "";
+    return currentCarId ? (cars.find(c => c.id === currentCarId)?.id || cars[0].id) : cars[0].id;
+  });
+  const [modelBId, setModelBId] = useState<string>(() => {
+    if (!cars || cars.length === 0) return "";
+    const defaultA = currentCarId ? (cars.find(c => c.id === currentCarId)?.id || cars[0].id) : cars[0].id;
+    return cars.find(c => c.id !== defaultA)?.id || cars[1]?.id || cars[0].id;
+  });
   
   // Accordion state with Ringkasan Utama & Performa Mesin open by default
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -29,18 +36,6 @@ export default function SpecComparison({ cars, currentCarId }: SpecComparisonPro
     "Suspensi & Roda": false,
     "Teknologi & Keamanan": false,
   });
-
-  useEffect(() => {
-    if (cars.length > 0) {
-      // Set Vehicle A to the current car if provided, otherwise default to cars[0]
-      const defaultA = currentCarId ? (cars.find(c => c.id === currentCarId)?.id || cars[0].id) : cars[0].id;
-      setModelAId(defaultA);
-
-      // Set Vehicle B to another car (different from Vehicle A)
-      const defaultB = cars.find(c => c.id !== defaultA)?.id || cars[1]?.id || cars[0].id;
-      setModelBId(defaultB);
-    }
-  }, [cars, currentCarId]);
 
   const modelA = cars.find((m) => m.id === modelAId) || cars[0];
   const modelB = cars.find((m) => m.id === modelBId) || cars[1];

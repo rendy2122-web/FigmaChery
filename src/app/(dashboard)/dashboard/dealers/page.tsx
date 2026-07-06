@@ -25,10 +25,6 @@ export default function DealersPage() {
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchDealers();
-  }, []);
-
   const fetchDealers = async () => {
     try {
       const res = await fetch("/api/dealers");
@@ -42,6 +38,10 @@ export default function DealersPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchDealers();
+  }, []);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Apakah Anda yakin ingin menghapus dealer ini?")) {
