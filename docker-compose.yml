@@ -10,6 +10,7 @@ services:
       - DATABASE_URL=file:/app/prisma/data/prod.db
       - AUTH_SECRET=${AUTH_SECRET}
       - AUTH_URL=${AUTH_URL}
+      - NEXT_PUBLIC_APP_URL=${AUTH_URL}
     volumes:
       - sqlite_data:/app/prisma/data
       - uploads:/app/public/uploads
