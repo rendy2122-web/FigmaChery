@@ -4,6 +4,7 @@ import { Hero } from "@/components/sections";
 import { LoadingSection } from "@/components/ui/skeleton";
 import { getSeoMetadata } from "@/lib/data/seo";
 import { getPublishedCars } from "@/lib/data/cars";
+import { getHeroSlides } from "@/lib/data/homepage";
 
 // Dynamic imports for below-fold sections to reduce initial bundle
 const CarShowcase = lazy(() => import("@/components/sections/car-showcase").then(m => ({ default: m.CarShowcase })));
@@ -43,12 +44,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Home() {
   // Fetched server-side so the initial render already has real data — avoids
-  // the client-side placeholder-then-swap flash CarShowcase used to have.
+  // the client-side placeholder-then-swap flash CarShowcase and Hero used to have.
   const initialCars = getPublishedCars("BEV");
+  const initialSlides = getHeroSlides();
 
   return (
     <>
-      <Hero />
+      <Hero initialSlides={initialSlides} />
       <Suspense fallback={<LoadingSection />}>
         <CarShowcase initialCars={initialCars} />
       </Suspense>

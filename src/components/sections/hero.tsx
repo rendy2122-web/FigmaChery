@@ -30,10 +30,25 @@ const defaultSlides: Slide[] = [
   },
 ];
 
-export function Hero() {
-  const [slides, setSlides] = useState<Slide[]>(defaultSlides);
+interface HeroProps {
+  /** Server-fetched slides — avoids a client-side placeholder-then-swap flash
+   *  on first paint (the old defaultModels price didn't match the real one). */
+  initialSlides?: Slide[];
+}
+
+export function Hero({ initialSlides }: HeroProps) {
+  const [slides, setSlides] = useState<Slide[]>(
+    initialSlides && initialSlides.length > 0 ? initialSlides : defaultSlides
+  );
   const [activeSlide, setActiveSlide] = useState(0);
+
   useEffect(() => {
+    // The initial slides already came from the server, so only fall back to
+    // a client-side fetch if the server genuinely had none (empty DB).
+    if (initialSlides && initialSlides.length > 0) {
+      return;
+    }
+
     fetch("/api/homepage/hero?t=" + Date.now())
       .then(res => res.json())
       .then(data => {
@@ -42,7 +57,7 @@ export function Hero() {
         }
       })
       .catch(console.error);
-  }, []);
+  }, [initialSlides]);
 
   const slide = slides[activeSlide] || slides[0];
 
