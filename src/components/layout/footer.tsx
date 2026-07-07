@@ -8,7 +8,9 @@ import {
   YoutubeIcon,
 } from "@/components/ui/social-icons";
 import { getPublishedCars } from "@/lib/data/cars";
+import { getActiveDealers } from "@/lib/data/dealers";
 import { getSettingsMap } from "@/lib/data/settings";
+import { dealerSlug } from "@/lib/dealer-slug";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -26,6 +28,16 @@ export function Footer() {
   const bevModels = cars.filter((c) => c.type === "BEV");
   const cshModels = cars.filter((c) => c.type === "CSH");
   const iceModels = cars.filter((c) => c.type === "ICE");
+
+  let dealers: ReturnType<typeof getActiveDealers> = [];
+  try {
+    const res = getActiveDealers();
+    if (Array.isArray(res)) {
+      dealers = res;
+    }
+  } catch (error) {
+    console.error("Error loading dealers in footer:", error);
+  }
 
   const settings = getSettingsMap();
   const contactPhone = settings.contact_phone || "+62 895 2707 2446";
@@ -46,7 +58,7 @@ export function Footer() {
   return (
     <footer className="border-t border-white/10 bg-[#0a0a0a] text-white">
       <Container className="py-section-y-sm">
-        <div className="grid gap-12 lg:grid-cols-[1.5fr_2.5fr_1.2fr_1fr]">
+        <div className="grid gap-12 lg:grid-cols-[1.5fr_2.2fr_1fr_1.2fr_1fr]">
           <div className="flex flex-col gap-4">
             <Logo variant="light" />
             <p className="max-w-xs text-sm text-white/60">
@@ -117,6 +129,24 @@ export function Footer() {
                 </ul>
               </div>
             </div>
+          </nav>
+
+          <nav aria-label="Dealer">
+            <h2 className="mb-4 font-heading text-lg font-semibold text-white">
+              Dealer
+            </h2>
+            <ul className="flex flex-col gap-2.5">
+              {dealers.map((dealer) => (
+                <li key={dealer.id}>
+                  <Link
+                    href={`/dealers/${dealerSlug(dealer.name)}`}
+                    className="text-xs text-white/60 transition-colors hover:text-[#DA291C]"
+                  >
+                    {dealer.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </nav>
 
           <nav aria-label="Kontak Sales">
