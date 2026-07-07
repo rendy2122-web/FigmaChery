@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import db from "@/lib/db";
+import { getCarImagePaths } from "@/lib/car-asset-paths";
 
 /**
  * Input shape accepted by createCar/updateCar. Deliberately a plain interface,
@@ -128,26 +129,6 @@ export function getCarWithDetailsById(id: string) {
   return { ...car, images, specs, features };
 }
 
-const FOLDER_NAME_BY_SLUG: Record<string, string> = {
-  "chery-q": "chery q",
-  "chery-e5": "chery e5",
-  "chery-j6": "J6",
-  "chery-c5-csh": "chery c5 csh",
-  "chery-c5": "chery c5",
-  "omoda-5-gt": "Omoda 5 GT",
-  "tiggo-9-csh": "tiggo 9 csh",
-  "tiggo-cross-csh": "tiggo cross csh",
-  "tiggo-8-csh": "tiggo 8 csh",
-  "tiggo-cross-sport": "tiggo cross sport",
-  "tiggo-cross": "tiggo cross",
-  "tiggo-8": "tiggo 8",
-  "tiggo-8-pro-max": "tiggo 8 pro max",
-};
-
-function getFolderName(slug: string): string {
-  return FOLDER_NAME_BY_SLUG[slug] ?? slug.replace(/-/g, " ");
-}
-
 /** Rich car detail for the public product page, keyed by slug. */
 export function getCarBySlugForPublic(slug: string) {
   const car = db.prepare("SELECT * FROM cars WHERE slug = ? AND deleted_at IS NULL").get(slug) as
@@ -155,11 +136,11 @@ export function getCarBySlugForPublic(slug: string) {
     | undefined;
   if (!car) return null;
 
-  const folderName = getFolderName(slug);
-  const heroImage = car.thumbnail || `/figma/${folderName}/hero.png`;
-  const interiorImage = `/figma/${folderName}/interior.png`;
-  const techImage = `/figma/${folderName}/feature.png`;
-  const videoUrl = `/figma/${folderName}/video.mp4`;
+  const paths = getCarImagePaths(slug);
+  const heroImage = car.thumbnail || paths.hero;
+  const interiorImage = paths.interior;
+  const techImage = paths.feature;
+  const videoUrl = paths.video;
 
   const dbImages = db
     .prepare(

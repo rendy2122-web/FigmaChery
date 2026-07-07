@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Zap, ShieldCheck, Tv, Compass, Flame, Layers, Volume2, Volume, Sparkles, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { getCarImagePaths } from "@/lib/car-asset-paths";
 
 interface CarData {
   slug: string;
@@ -15,36 +16,33 @@ interface FeaturesGridProps {
   car: CarData;
 }
 
-const getFolderName = (slug: string): string => {
-  switch (slug) {
-    case "chery-q": return "chery q";
-    case "chery-e5": return "chery e5";
-    case "chery-j6": return "J6";
-    case "chery-c5-csh": return "chery c5 csh";
-    case "chery-c5": return "chery c5";
-    case "omoda-5-gt": return "Omoda 5 GT";
-    case "tiggo-9-csh": return "tiggo 9 csh";
-    case "tiggo-cross-csh": return "tiggo cross csh";
-    case "tiggo-8-csh": return "tiggo 8 csh";
-    case "tiggo-cross-sport": return "tiggo cross sport";
-    case "tiggo-cross": return "tiggo cross";
-    case "tiggo-8": return "tiggo 8";
-    case "tiggo-8-pro-max": return "tiggo 8 pro max";
-    default: return slug.replace(/-/g, " ");
-  }
-};
-
 export default function FeaturesGrid({ car }: FeaturesGridProps) {
-  const folderName = getFolderName(car.slug || "");
+  const paths = getCarImagePaths(car.slug || "");
 
+  // Each slide's caption describes what that specific photo actually shows,
+  // so the text stays accurate as the carousel rotates instead of one static
+  // caption (originally written for the interior shot) sitting under an
+  // exterior or dashboard photo.
   const comfortSlides = [
-    car.interiorImage || `/figma/${folderName}/interior.png`,
-    `/figma/${folderName}/exterior.png`,
-    `/figma/${folderName}/car.png`,
+    {
+      src: car.interiorImage || paths.interior,
+      title: "Kenyamanan & Teknologi Kabin",
+      description: "Interior dirancang dengan jok ergonomis bertekstur premium super lembut, dynamic LED ambient lighting, serta layar infotainment modern untuk perjalanan yang superior.",
+    },
+    {
+      src: paths.exterior,
+      title: "Desain Eksterior yang Memikat",
+      description: "Lekuk bodi aerodinamis dan detail eksterior premium menghadirkan siluet yang elegan sekaligus sporty dari setiap sudut.",
+    },
+    {
+      src: paths.car,
+      title: "Karakter Tangguh di Setiap Perjalanan",
+      description: "Front fascia yang tegas dan proporsi bodi yang seimbang mencerminkan karakter kendaraan yang percaya diri di jalan.",
+    },
   ];
 
   const techSlides = [
-    car.techImage || `/figma/${folderName}/feature.png`,
+    car.techImage || paths.feature,
     "/figma/pdp/dinamika-safety-image.png",
     "/figma/pdp/silent-start-banner.png",
   ];
@@ -140,8 +138,8 @@ export default function FeaturesGrid({ car }: FeaturesGridProps) {
           >
             <div className="relative h-64 sm:h-72 overflow-hidden bg-slate-100">
               <Image
-                src={comfortSlides[comfortIdx]}
-                alt="Luxury Cabin Slideshow"
+                src={comfortSlides[comfortIdx].src}
+                alt={comfortSlides[comfortIdx].title}
                 fill
                 sizes="(max-width: 1024px) 100vw, 42vw"
                 className="object-cover transition-all duration-1000 ease-in-out"
@@ -182,9 +180,9 @@ export default function FeaturesGrid({ car }: FeaturesGridProps) {
                 ))}
               </div>
             </div>
-            <div className="p-8 font-sans flex-1 flex flex-col justify-center">
-              <h3 className="text-lg font-bold text-slate-900 tracking-tight mb-2">Kenyamanan Kabin Kelas VIP</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">Manjakan perjalanan Anda dengan jok ergonomis bertekstur premium super lembut, dynamic LED ambient lighting, serta tingkat kesenyapan ruang kabin yang superior.</p>
+            <div key={comfortIdx} className="p-8 font-sans flex-1 flex flex-col justify-center opacity-0 animate-fade-up" style={{ animationDuration: "400ms", animationFillMode: "forwards" }}>
+              <h3 className="text-lg font-bold text-slate-900 tracking-tight mb-2">{comfortSlides[comfortIdx].title}</h3>
+              <p className="text-xs text-slate-500 leading-relaxed">{comfortSlides[comfortIdx].description}</p>
             </div>
           </div>
         </div>
