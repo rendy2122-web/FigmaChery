@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef, use } from "react";
+import { useState, useEffect, useCallback, use } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlusIcon, TrashIcon, Upload } from "lucide-react";
@@ -42,7 +43,7 @@ export default function ProductSectionsPage({
   const [error, setError] = useState("");
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
 
-  const fetchSections = async () => {
+  const fetchSections = useCallback(async () => {
     try {
       const res = await fetch(`/api/products/${id}/sections`);
       const data = await res.json();
@@ -54,11 +55,13 @@ export default function ProductSectionsPage({
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
+    // fetchSections only sets state after its internal await resolves, not synchronously.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchSections();
-  }, []);
+  }, [fetchSections]);
 
   const addSection = () => {
     setSections([
@@ -105,7 +108,7 @@ export default function ProductSectionsPage({
       } else {
         alert("Gagal upload gambar");
       }
-    } catch (err) {
+    } catch {
       alert("Terjadi kesalahan saat upload");
     } finally {
       setUploadingIndex(null);
@@ -129,7 +132,7 @@ export default function ProductSectionsPage({
       } else {
         setError("Gagal menyimpan");
       }
-    } catch (err) {
+    } catch {
       setError("Terjadi kesalahan");
     } finally {
       setSaving(false);
@@ -245,7 +248,9 @@ export default function ProductSectionsPage({
                   </label>
                 </div>
                 {section.image && (
-                  <img src={section.image} alt="" className="h-24 object-cover rounded mt-1" />
+                  <div className="relative h-24 w-48 mt-1">
+                    <Image src={section.image} alt="" fill sizes="192px" className="object-cover rounded" />
+                  </div>
                 )}
               </div>
 

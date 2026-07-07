@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
-import { Zap, ShieldCheck, Flame, Cpu, Compass, Sliders, Palette, CreditCard } from "lucide-react";
+import { Zap, ShieldCheck, Flame, Cpu, Sliders, Palette, CreditCard } from "lucide-react";
 
 interface CarData {
   id: string;

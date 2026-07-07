@@ -337,5 +337,11 @@ db.exec(`CREATE INDEX IF NOT EXISTS idx_promotions_status ON promotions(status)`
 db.exec(`CREATE INDEX IF NOT EXISTS idx_dealers_status ON dealers(status)`);
 db.exec(`CREATE INDEX IF NOT EXISTS idx_product_sections_car ON product_sections(car_id)`);
 db.exec(`CREATE INDEX IF NOT EXISTS idx_product_sections_type ON product_sections(section_type)`);
+db.exec(`CREATE INDEX IF NOT EXISTS idx_cars_slug ON cars(slug)`);
+db.exec(`CREATE INDEX IF NOT EXISTS idx_cars_status_featured ON cars(status, featured)`);
+db.exec(`CREATE INDEX IF NOT EXISTS idx_cars_sort_order ON cars(sort_order)`);
+db.exec(`CREATE INDEX IF NOT EXISTS idx_articles_slug ON articles(slug)`);
+db.exec(`CREATE INDEX IF NOT EXISTS idx_articles_status_published ON articles(status, published_at)`);
+db.exec(`CREATE INDEX IF NOT EXISTS idx_dealers_status_sort ON dealers(status, sort_order)`);
 
 export default db;

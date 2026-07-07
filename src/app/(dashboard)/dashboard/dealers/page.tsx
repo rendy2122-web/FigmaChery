@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlusIcon, TrashIcon, PencilIcon } from "lucide-react";
@@ -40,6 +41,8 @@ export default function DealersPage() {
   };
 
   useEffect(() => {
+    // fetchDealers only sets state after its internal await resolves, not synchronously.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchDealers();
   }, []);
 
@@ -60,7 +63,7 @@ export default function DealersPage() {
       } else {
         alert("Gagal menghapus dealer");
       }
-    } catch (error) {
+    } catch {
       alert("Terjadi kesalahan");
     } finally {
       setDeletingId(null);
@@ -95,11 +98,15 @@ export default function DealersPage() {
           {dealers.map((dealer) => (
             <Card key={dealer.id} className="overflow-hidden">
               {dealer.image && (
-                <img
-                  src={dealer.image}
-                  alt={dealer.name}
-                  className="w-full h-48 object-cover"
-                />
+                <div className="relative h-48 w-full">
+                  <Image
+                    src={dealer.image}
+                    alt={dealer.name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover"
+                  />
+                </div>
               )}
               <div className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900">{dealer.name}</h3>

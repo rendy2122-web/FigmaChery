@@ -4,6 +4,19 @@ import db from "@/lib/db";
 
 export const runtime = "nodejs";
 
+interface ProductSectionInput {
+  id?: string;
+  section_type: string;
+  title?: string | null;
+  subtitle?: string | null;
+  content?: string | null;
+  image?: string | null;
+  icon?: string | null;
+  features?: unknown;
+  sort_order?: number;
+  is_active?: boolean;
+}
+
 // GET product sections
 export async function GET(
   request: NextRequest,
@@ -36,7 +49,7 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const sections = await request.json();
+    const sections = (await request.json()) as ProductSectionInput[];
     const now = new Date().toISOString();
 
     // Delete existing sections
@@ -48,7 +61,7 @@ export async function PUT(
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
-    sections.forEach((section: any, index: number) => {
+    sections.forEach((section, index) => {
       const sectionId = section.id || `ps-${Date.now()}-${index}`;
       stmt.run(
         sectionId,

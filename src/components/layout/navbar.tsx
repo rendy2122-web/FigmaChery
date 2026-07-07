@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { ChevronRightIcon, ChevronDownIcon, MenuIcon, CalculatorIcon } from "lucide-react";
+import { ChevronDownIcon, MenuIcon, CalculatorIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,

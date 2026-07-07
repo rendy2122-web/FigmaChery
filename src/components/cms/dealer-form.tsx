@@ -2,9 +2,11 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
+import type { Dealer } from "@/lib/data/dealers";
 
 interface DealerFormData {
   name: string;
@@ -20,7 +22,7 @@ interface DealerFormData {
 }
 
 interface DealerFormProps {
-  dealer?: any;
+  dealer?: Dealer;
   onSuccess?: () => void;
 }
 
@@ -71,7 +73,7 @@ export function DealerForm({ dealer, onSuccess }: DealerFormProps) {
         const data = await response.json();
         setError(data.error || "Gagal menyimpan dealer");
       }
-    } catch (error) {
+    } catch {
       setError("Terjadi kesalahan. Silakan coba lagi.");
     } finally {
       setLoading(false);
@@ -101,7 +103,7 @@ export function DealerForm({ dealer, onSuccess }: DealerFormProps) {
       } else {
         alert("Gagal upload gambar");
       }
-    } catch (err) {
+    } catch {
       alert("Terjadi kesalahan saat upload");
     } finally {
       setUploading(false);
@@ -140,8 +142,8 @@ export function DealerForm({ dealer, onSuccess }: DealerFormProps) {
             </div>
           </div>
           {preview && (
-            <div className="mt-2">
-              <img src={preview} alt="Preview" className="h-48 object-cover rounded-lg border-2 border-gray-200" />
+            <div className="relative mt-2 h-48 w-full">
+              <Image src={preview} alt="Preview" fill sizes="600px" className="object-cover rounded-lg border-2 border-gray-200" />
             </div>
           )}
         </div>

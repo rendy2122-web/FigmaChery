@@ -14,11 +14,13 @@ interface MediaItem {
   size: number;
   url: string;
   folder: string;
-  alt?: string;
-  width?: number;
-  height?: number;
+  alt?: string | null;
+  width?: number | null;
+  height?: number | null;
   created_at: string;
 }
+
+export type { MediaItem };
 
 interface MediaTableProps {
   media: MediaItem[];
@@ -44,7 +46,7 @@ export function MediaTable({ media }: MediaTableProps) {
       } else {
         alert("Gagal menghapus media");
       }
-    } catch (error) {
+    } catch {
       alert("Terjadi kesalahan");
     } finally {
       setDeletingId(null);

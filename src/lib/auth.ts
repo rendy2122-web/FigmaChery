@@ -4,6 +4,14 @@ import bcrypt from "bcryptjs";
 import db from "@/lib/db";
 import { authConfig } from "@/lib/auth.config";
 
+interface UserRow {
+  id: string;
+  email: string;
+  name: string;
+  password: string;
+  role: string;
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
   providers: [
@@ -18,7 +26,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        const user = db.prepare("SELECT * FROM users WHERE email = ?").get(credentials.email) as any;
+        const user = db.prepare("SELECT * FROM users WHERE email = ?").get(credentials.email) as
+          | UserRow
+          | undefined;
 
         if (!user) {
           return null;

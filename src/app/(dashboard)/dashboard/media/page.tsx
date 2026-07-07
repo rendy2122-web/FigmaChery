@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import db from "@/lib/db";
-import { MediaTable } from "@/components/cms/media-table";
+import { MediaTable, type MediaItem } from "@/components/cms/media-table";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { PlusIcon } from "lucide-react";
@@ -16,7 +16,7 @@ export default async function MediaPage() {
   // Get all media
   const media = db.prepare(`
     SELECT * FROM media ORDER BY created_at DESC
-  `).all() as any[];
+  `).all() as MediaItem[];
 
   return (
     <div className="space-y-6">

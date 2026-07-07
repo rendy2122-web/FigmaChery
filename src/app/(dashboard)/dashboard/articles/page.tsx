@@ -14,7 +14,7 @@ export default async function ArticlesPage() {
   }
 
   // Get all articles with category
-  const articles = getAllArticlesForAdmin() as any[];
+  const articles = getAllArticlesForAdmin();
 
   return (
     <div className="space-y-6">

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { PlusIcon, CarIcon, FileTextIcon } from "lucide-react";
+import { CarIcon, FileTextIcon } from "lucide-react";
 
 export function QuickActions() {
   const actions = [

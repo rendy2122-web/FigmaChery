@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { X, Calendar, Clock, User, Mail, Phone, MapPin, Loader2, Check, ShieldCheck, Ticket } from "lucide-react";
 
 interface CarData {

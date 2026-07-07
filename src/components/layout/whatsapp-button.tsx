@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { XIcon, SendIcon, MessageCircleIcon } from "lucide-react";
-import { siteConfig } from "@/lib/site-config";
 import "./whatsapp-button.css";
 
 type Step = "greeting" | "name" | "phone" | "dealer" | "complete";
@@ -82,7 +81,7 @@ export function WhatsAppButton() {
     }
   };
 
-  const handleDealerSelect = (dealerName: string, dealerPhone: string) => {
+  const handleDealerSelect = (dealerName: string) => {
     setUserData((prev) => ({ ...prev, dealer: dealerName }));
     setStep("complete");
   };
@@ -158,7 +157,7 @@ export function WhatsAppButton() {
           {dealers.map((dealer) => (
             <button
               key={dealer.name}
-              onClick={() => handleDealerSelect(dealer.name, dealer.phone)}
+              onClick={() => handleDealerSelect(dealer.name)}
               className="dealer-button"
             >
               {dealer.name}

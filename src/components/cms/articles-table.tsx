@@ -11,7 +11,7 @@ interface Article {
   title: string;
   slug: string;
   status: string;
-  category_name?: string;
+  category_name?: string | null;
   views: number;
   created_at: string;
 }
@@ -40,7 +40,7 @@ export function ArticlesTable({ articles }: ArticlesTableProps) {
       } else {
         alert("Gagal menghapus artikel");
       }
-    } catch (error) {
+    } catch {
       alert("Terjadi kesalahan");
     } finally {
       setDeletingId(null);

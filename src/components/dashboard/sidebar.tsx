@@ -12,7 +12,6 @@ import {
   StoreIcon,
   HelpCircleIcon,
   LogOutIcon,
-  ImageDownIcon,
   StarIcon,
   SearchIcon,
 } from "lucide-react";

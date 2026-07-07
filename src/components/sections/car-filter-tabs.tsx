@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 type CarType = "BEV" | "CSH" | "ICE";
 
 interface CarFilterTabsProps {

@@ -52,8 +52,6 @@ export async function POST(request: NextRequest) {
     let height: number | undefined;
 
     if (file.type.startsWith("image/")) {
-      // Simple dimension check - in production use a proper image library
-      const size = file.size;
       // Approximate dimensions based on file size (rough estimate)
       width = 1920;
       height = 1080;

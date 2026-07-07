@@ -43,6 +43,10 @@ export interface PublicArticleRow extends Article {
   category_slug: string | null;
 }
 
+export interface AdminArticleRow extends Article {
+  category_name: string | null;
+}
+
 export interface Category {
   id: string;
   name: string;
@@ -84,7 +88,7 @@ export function getArticleById(id: string): Article | undefined {
 }
 
 /** Admin list — every non-deleted article regardless of status. */
-export function getAllArticlesForAdmin() {
+export function getAllArticlesForAdmin(): AdminArticleRow[] {
   return db
     .prepare(
       `SELECT a.*, c.name as category_name
@@ -93,7 +97,7 @@ export function getAllArticlesForAdmin() {
        WHERE a.deleted_at IS NULL
        ORDER BY a.created_at DESC`
     )
-    .all();
+    .all() as AdminArticleRow[];
 }
 
 export function getCategories(): Category[] {

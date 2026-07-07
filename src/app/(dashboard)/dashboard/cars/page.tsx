@@ -14,7 +14,7 @@ export default async function CarsPage() {
   }
 
   // Get all cars
-  const cars = getAllCarsForAdmin() as any[];
+  const cars = getAllCarsForAdmin();
 
   return (
     <div className="space-y-6">

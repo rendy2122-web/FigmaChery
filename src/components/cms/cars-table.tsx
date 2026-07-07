@@ -11,7 +11,7 @@ interface Car {
   name: string;
   slug: string;
   status: string;
-  featured: boolean;
+  featured: number;
   image_count: number;
   thumbnail: string | null;
   created_at: string;
@@ -41,7 +41,7 @@ export function CarsTable({ cars }: CarsTableProps) {
       } else {
         alert("Gagal menghapus mobil");
       }
-    } catch (error) {
+    } catch {
       alert("Terjadi kesalahan");
     } finally {
       setDeletingId(null);

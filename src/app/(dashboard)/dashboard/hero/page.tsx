@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Upload, PlusIcon, TrashIcon } from "lucide-react";
@@ -23,7 +24,6 @@ export default function HeroSlidesPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const fetchSlides = async () => {
     try {
@@ -40,6 +40,8 @@ export default function HeroSlidesPage() {
   };
 
   useEffect(() => {
+    // fetchSlides only sets state after its internal await resolves, not synchronously.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchSlides();
   }, []);
 
@@ -87,7 +89,7 @@ export default function HeroSlidesPage() {
       } else {
         alert("Gagal upload file");
       }
-    } catch (err) {
+    } catch {
       alert("Terjadi kesalahan saat upload");
     }
   };
@@ -109,7 +111,7 @@ export default function HeroSlidesPage() {
       } else {
         setError("Gagal menyimpan");
       }
-    } catch (err) {
+    } catch {
       setError("Terjadi kesalahan");
     } finally {
       setSaving(false);
@@ -187,7 +189,9 @@ export default function HeroSlidesPage() {
                   </label>
                 </div>
                 {slide.banner && (
-                  <img src={slide.banner} alt="" className="h-24 object-cover rounded mt-1 w-full" />
+                  <div className="relative h-24 w-full mt-1">
+                    <Image src={slide.banner} alt="" fill sizes="400px" className="object-cover rounded" />
+                  </div>
                 )}
               </div>
 
@@ -216,7 +220,9 @@ export default function HeroSlidesPage() {
                   </label>
                 </div>
                 {slide.modelLogo && (
-                  <img src={slide.modelLogo} alt="" className="h-12 object-contain rounded mt-1" />
+                  <div className="relative h-12 w-32 mt-1">
+                    <Image src={slide.modelLogo} alt="" fill sizes="128px" className="object-contain rounded" />
+                  </div>
                 )}
               </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Sliders, Check, HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
+import { HelpCircle, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 interface Car {

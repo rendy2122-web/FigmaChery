@@ -33,8 +33,6 @@ const defaultSlides: Slide[] = [
 export function Hero() {
   const [slides, setSlides] = useState<Slide[]>(defaultSlides);
   const [activeSlide, setActiveSlide] = useState(0);
-  const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     fetch("/api/homepage/hero?t=" + Date.now())
       .then(res => res.json())
@@ -43,8 +41,7 @@ export function Hero() {
           setSlides(data);
         }
       })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+      .catch(console.error);
   }, []);
 
   const slide = slides[activeSlide] || slides[0];

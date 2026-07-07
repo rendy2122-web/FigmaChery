@@ -37,6 +37,10 @@ export interface Car {
   deleted_at: string | null;
 }
 
+export interface AdminCarRow extends Car {
+  image_count: number;
+}
+
 export interface CarSpec {
   id: string;
   car_id: string;
@@ -197,7 +201,7 @@ export function getCarBySlugForPublic(slug: string) {
 }
 
 /** Admin list — every non-deleted car regardless of status (draft/published). */
-export function getAllCarsForAdmin() {
+export function getAllCarsForAdmin(): AdminCarRow[] {
   return db
     .prepare(
       `SELECT c.*,
@@ -207,7 +211,7 @@ export function getAllCarsForAdmin() {
        WHERE c.deleted_at IS NULL
        ORDER BY c.sort_order ASC, c.created_at DESC`
     )
-    .all();
+    .all() as AdminCarRow[];
 }
 
 export function createCar(input: CarWriteInput) {

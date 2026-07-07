@@ -1,6 +1,0 @@
-{
-  "name": "Chery Interactive Showroom",
-  "description": "Premium interactive product detail and specification comparison page for Chery SUVs, featuring OMODA E5, OMODA 5, and TIGGO 8 Pro Max with an AI Consulting Assistant.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import type { MediaItem } from "@/components/cms/media-table";
 
 export const runtime = "nodejs";
 
@@ -12,7 +13,7 @@ export async function GET(
     const { id } = await params;
     const { default: db } = await import("@/lib/db");
 
-    const media = db.prepare("SELECT * FROM media WHERE id = ?").get(id) as any;
+    const media = db.prepare("SELECT * FROM media WHERE id = ?").get(id) as MediaItem | undefined;
 
     if (!media) {
       return NextResponse.json({ error: "Media not found" }, { status: 404 });
@@ -42,7 +43,7 @@ export async function DELETE(
     const path = (await import("path")).default;
     
     // Get media info
-    const media = db.prepare("SELECT * FROM media WHERE id = ?").get(id) as any;
+    const media = db.prepare("SELECT * FROM media WHERE id = ?").get(id) as MediaItem | undefined;
 
     if (!media) {
       return NextResponse.json({ error: "Media not found" }, { status: 404 });

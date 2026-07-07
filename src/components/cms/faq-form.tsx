@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import type { Faq } from "@/lib/data/faqs";
 
 interface FaqFormData {
   question: string;
@@ -14,7 +15,7 @@ interface FaqFormData {
 }
 
 interface FaqFormProps {
-  faq?: any;
+  faq?: Faq;
   onSuccess?: () => void;
 }
 

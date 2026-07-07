@@ -55,7 +55,7 @@ export default function UploadMediaPage() {
         const data = await response.json();
         setError(data.error || "Gagal upload media");
       }
-    } catch (error) {
+    } catch {
       setError("Terjadi kesalahan. Silakan coba lagi.");
     } finally {
       setLoading(false);
@@ -99,6 +99,9 @@ export default function UploadMediaPage() {
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">Preview</label>
               <div className="relative aspect-video rounded-lg overflow-hidden border-2 border-gray-200">
+                {/* preview is a base64 data: URL from FileReader (pre-upload, never hits the network),
+                    so next/image's optimizer doesn't apply here. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={preview}
                   alt="Preview"
