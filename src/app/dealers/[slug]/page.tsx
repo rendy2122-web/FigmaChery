@@ -139,7 +139,10 @@ export default async function DealerPage({
             </div>
 
             <div className="flex flex-col gap-3 pt-2 sm:flex-row">
-              <TestDriveButton className="h-11 rounded px-6 text-base font-bold bg-brand-deep text-white hover:bg-brand-deep/90">
+              <TestDriveButton
+                className="h-11 rounded px-6 text-base font-bold bg-brand-deep text-white hover:bg-brand-deep/90"
+                dealerId={dealer.id}
+              >
                 Jadwalkan Test Drive
               </TestDriveButton>
               <Button

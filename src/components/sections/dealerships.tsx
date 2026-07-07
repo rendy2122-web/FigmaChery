@@ -93,7 +93,7 @@ export function Dealerships() {
               <div className="flex flex-col gap-2.5">
                 <Button
                   className="w-full bg-[#DA291C] hover:bg-slate-950 text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-sm transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center"
-                  onClick={() => openBookingModal("test")}
+                  onClick={() => openBookingModal("test", undefined, dealer.id)}
                 >
                   Jadwalkan Test Drive
                 </Button>

@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import HeroSection from "@/components/product/hero-section";
 import HeroSlide from "@/components/product/hero-slide";
 import FeaturesGrid from "@/components/product/features-grid";
 import SpecComparison from "@/components/product/spec-comparison";
 import CustomerReviews from "@/components/product/customer-reviews";
 import OtherProductsCarousel from "@/components/product/other-products-carousel";
-import BookingForm from "@/components/product/booking-form";
+import { useBookingModal } from "@/components/product/booking-modal-provider";
 import type { TestimonialWithCar } from "@/lib/data/testimonials";
 
 export interface CarData {
@@ -36,12 +35,10 @@ export function ProductDetailClient({
   allCars: CarData[];
   testimonials: TestimonialWithCar[];
 }) {
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [bookingType, setBookingType] = useState<"test" | "prebook">("test");
+  const { openBookingModal } = useBookingModal();
 
   const handleOpenBooking = (type: "test" | "prebook") => {
-    setBookingType(type);
-    setIsBookingOpen(true);
+    openBookingModal(type, car.id);
   };
 
   return (
@@ -52,16 +49,6 @@ export function ProductDetailClient({
       <SpecComparison cars={allCars} currentCarId={car.id} />
       <CustomerReviews car={car} allCars={allCars} initialTestimonials={testimonials} />
       <OtherProductsCarousel currentCarId={car.id} cars={allCars} />
-
-      {isBookingOpen && (
-        <BookingForm
-          isOpen={isBookingOpen}
-          onClose={() => setIsBookingOpen(false)}
-          type={bookingType}
-          cars={allCars}
-          activeCar={car}
-        />
-      )}
     </div>
   );
 }

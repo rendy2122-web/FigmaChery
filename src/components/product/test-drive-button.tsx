@@ -9,6 +9,9 @@ interface TestDriveButtonProps {
   variant?: "default" | "outline" | "secondary" | "ghost" | "destructive" | "link";
   type?: "test" | "prebook";
   carId?: string;
+  /** Pass the dealer's id when this button lives on that dealer's own page —
+   *  the popup then pre-fills it instead of asking, since it's already implied. */
+  dealerId?: string;
   children: ReactNode;
 }
 
@@ -19,12 +22,13 @@ export function TestDriveButton({
   variant,
   type = "test",
   carId,
+  dealerId,
   children,
 }: TestDriveButtonProps) {
   const { openBookingModal } = useBookingModal();
 
   return (
-    <Button className={className} variant={variant} onClick={() => openBookingModal(type, carId)}>
+    <Button className={className} variant={variant} onClick={() => openBookingModal(type, carId, dealerId)}>
       {children}
     </Button>
   );

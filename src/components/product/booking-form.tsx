@@ -1,12 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { X, Calendar, Clock, User, Mail, Phone, MapPin, Loader2, Check, ShieldCheck, Ticket } from "lucide-react";
+import { X, Calendar, Clock, User, Mail, Phone, MapPin, Building2, Loader2, Check, ShieldCheck, Ticket } from "lucide-react";
 
 interface CarData {
   id: string;
   name: string;
   basePrice?: string;
+}
+
+interface DealerData {
+  id: string;
+  name: string;
+  city: string;
 }
 
 interface BookingData {
@@ -15,6 +21,7 @@ interface BookingData {
   phone: string;
   city: string;
   carModel: string;
+  dealerId: string;
   preferredDate: string;
   preferredTime: string;
   testDriveRequired: boolean;
@@ -26,19 +33,39 @@ interface BookingFormProps {
   type: "test" | "prebook";
   cars: CarData[];
   activeCar: CarData;
+  dealers: DealerData[];
+  /** Pre-selected when opened from that dealer's own page — there the dealer
+   *  is already implied by context, so we don't need to ask. Everywhere else
+   *  this is left unset and the field starts empty, requiring an active pick. */
+  presetDealerId?: string;
 }
 
-export default function BookingForm({ isOpen, onClose, type, cars, activeCar }: BookingFormProps) {
-  const [formData, setFormData] = useState<BookingData>(() => ({
+function emptyBookingData(
+  type: "test" | "prebook",
+  activeCarId: string,
+  presetDealerId?: string
+): BookingData {
+  return {
     fullName: "",
     email: "",
     phone: "",
     city: "",
-    carModel: activeCar.id,
+    carModel: activeCarId,
+    dealerId: presetDealerId ?? "",
     preferredDate: "",
     preferredTime: "09:00 - 12:00",
-    testDriveRequired: type === "test"
-  }));
+    testDriveRequired: type === "test",
+  };
+}
+
+export default function BookingForm({ isOpen, onClose, type, cars, activeCar, dealers, presetDealerId }: BookingFormProps) {
+  // The parent remounts this component (via a changing `key`) each time the
+  // popup opens, so this lazy initializer — which picks up the current car/
+  // dealer preset — reliably runs fresh per open instead of reusing state
+  // left over from a previous, possibly different, car or dealer.
+  const [formData, setFormData] = useState<BookingData>(() =>
+    emptyBookingData(type, activeCar.id, presetDealerId)
+  );
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -65,6 +92,7 @@ export default function BookingForm({ isOpen, onClose, type, cars, activeCar }: 
   };
 
   const selectedCar = cars.find((m) => m.id === formData.carModel) || activeCar;
+  const selectedDealer = dealers.find((d) => d.id === formData.dealerId);
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
@@ -115,6 +143,12 @@ export default function BookingForm({ isOpen, onClose, type, cars, activeCar }: 
                   <span className="block text-[9px] text-slate-400 uppercase">Kontak</span>
                   <span className="font-semibold text-slate-700 block">{formData.phone}</span>
                 </div>
+                {selectedDealer && (
+                  <div className="col-span-2">
+                    <span className="block text-[9px] text-slate-400 uppercase">Dealer Pilihan</span>
+                    <span className="font-semibold text-slate-700 block">{selectedDealer.name} — {selectedDealer.city}</span>
+                  </div>
+                )}
                 {type === "test" && (
                   <>
                     <div>
@@ -160,6 +194,19 @@ export default function BookingForm({ isOpen, onClose, type, cars, activeCar }: 
                   {cars.map((m) => (<option key={m.id} value={m.id}>{m.name}</option>))}
                 </select>
               </div>
+
+              {dealers.length > 0 && (
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">Dealer Pilihan</label>
+                  <div className="relative">
+                    <Building2 className="w-4 h-4 text-slate-400 absolute left-4.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <select name="dealerId" required value={formData.dealerId} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-sm pl-12 pr-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-[#DA291C] font-sans">
+                      <option value="" disabled>Pilih dealer terdekat</option>
+                      {dealers.map((d) => (<option key={d.id} value={d.id}>{d.name} — {d.city}</option>))}
+                    </select>
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">

@@ -7,6 +7,7 @@ import { SkipToContent } from "@/components/layout/skip-to-content";
 import CheryAssistant from "@/components/product/chery-assistant";
 import { BookingModalProvider } from "@/components/product/booking-modal-provider";
 import { getPublishedCars } from "@/lib/data/cars";
+import { getActiveDealers } from "@/lib/data/dealers";
 import { siteConfig } from "@/lib/site-config";
 
 // Applies as the revalidate ceiling for every static page that doesn't set
@@ -87,6 +88,11 @@ export default function RootLayout({
     name: c.name,
     basePrice: c.price_from ?? undefined,
   }));
+  const bookingDealers = getActiveDealers().map((d) => ({
+    id: d.id,
+    name: d.name,
+    city: d.city,
+  }));
 
   return (
     <html
@@ -94,7 +100,7 @@ export default function RootLayout({
       className={`${inter.variable} ${geistMono.variable} ${jakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <BookingModalProvider cars={bookingCars}>
+        <BookingModalProvider cars={bookingCars} dealers={bookingDealers}>
           <SkipToContent />
           <Navbar />
           <main id="main-content" className="flex-1">
