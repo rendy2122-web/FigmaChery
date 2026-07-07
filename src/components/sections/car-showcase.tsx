@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
@@ -84,38 +84,59 @@ interface ApiCar {
   specs?: ApiCarSpec[];
 }
 
-export function CarShowcase() {
-  const [models, setModels] = useState<Model[]>(defaultModels);
+function mapApiCarsToModels(data: ApiCar[]): Model[] {
+  return data.map((car) => ({
+    id: car.id,
+    name: car.name.toUpperCase(),
+    subtitle: car.subtitle || "CSH",
+    watermark: car.name.toUpperCase(),
+    image: car.thumbnail || "/figma/car-q.png",
+    type: car.type || "ICE",
+    slug: car.slug,
+    specs: (car.specs || []).map((spec: ApiCarSpec) => ({
+      label: spec.label,
+      value: spec.value,
+    })),
+  }));
+}
+
+interface CarShowcaseProps {
+  /** Server-fetched cars for the default (BEV) filter — avoids a client-side
+   *  placeholder-then-swap flash on first paint. */
+  initialCars?: ApiCar[];
+}
+
+export function CarShowcase({ initialCars }: CarShowcaseProps) {
+  const initialModels =
+    initialCars && initialCars.length > 0 ? mapApiCarsToModels(initialCars) : defaultModels;
+
+  const [models, setModels] = useState<Model[]>(initialModels);
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeFilter, setActiveFilter] = useState<CarType>("BEV");
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
+    // The initial BEV data already came from the server, so skip the redundant
+    // client-side refetch on mount — only fetch when the filter actually changes.
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      if (activeFilter === "BEV" && initialCars && initialCars.length > 0) {
+        return;
+      }
+    }
+
     const url = `/api/cars?type=${activeFilter}&t=${Date.now()}`;
 
     fetch(url)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
-          // Map cars API response to Model type (specs are now included in the response)
-          const mapped = (data as ApiCar[]).map((car: ApiCar) => ({
-            id: car.id,
-            name: car.name.toUpperCase(),
-            subtitle: car.subtitle || "CSH",
-            watermark: car.name.toUpperCase(),
-            image: car.thumbnail || "/figma/car-q.png",
-            type: car.type || "ICE",
-            slug: car.slug,
-            specs: (car.specs || []).map((spec: ApiCarSpec) => ({
-              label: spec.label,
-              value: spec.value,
-            })),
-          }));
-          setModels(mapped);
+          setModels(mapApiCarsToModels(data as ApiCar[]));
           setActiveIndex(0); // Reset to first car when filter changes
         }
       })
       .catch(console.error);
-  }, [activeFilter]);
+  }, [activeFilter, initialCars]);
 
   const model = models[activeIndex];
 
