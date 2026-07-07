@@ -8,6 +8,7 @@ import { dealerSlug } from "@/lib/dealer-slug";
 import { ProductBreadcrumb } from "@/components/product/breadcrumb";
 import { Section } from "@/components/layout/section";
 import { Button } from "@/components/ui/button";
+import { TestDriveButton } from "@/components/product/test-drive-button";
 import { DealerBookingForm } from "@/components/booking/dealer-booking-form";
 
 function getDealers() {
@@ -138,12 +139,9 @@ export default async function DealerPage({
             </div>
 
             <div className="flex flex-col gap-3 pt-2 sm:flex-row">
-              <Button
-                className="h-11 rounded px-6 text-base font-bold bg-brand-deep text-white hover:bg-brand-deep/90"
-                render={<Link href="/booking" />}
-              >
+              <TestDriveButton className="h-11 rounded px-6 text-base font-bold bg-brand-deep text-white hover:bg-brand-deep/90">
                 Jadwalkan Test Drive
-              </Button>
+              </TestDriveButton>
               <Button
                 variant="outline"
                 className="h-11 rounded px-6 text-base font-bold border-brand-deep text-brand-deep hover:bg-brand-deep/5"

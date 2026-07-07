@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useBookingModal } from "@/components/product/booking-modal-provider";
 
 type Slide = {
   id: string;
@@ -41,6 +42,7 @@ export function Hero({ initialSlides }: HeroProps) {
     initialSlides && initialSlides.length > 0 ? initialSlides : defaultSlides
   );
   const [activeSlide, setActiveSlide] = useState(0);
+  const { openBookingModal } = useBookingModal();
 
   useEffect(() => {
     // The initial slides already came from the server, so only fall back to
@@ -97,12 +99,21 @@ export function Hero({ initialSlides }: HeroProps) {
               </h1>
             </div>
             <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
-              <Button
-                className="h-11 rounded px-5 text-base font-bold bg-white text-foreground hover:bg-white/90"
-                render={<Link href={slide.ctaLink || "/booking"} />}
-              >
-                {slide.ctaText || "Jadwalkan Test Drive"}
-              </Button>
+              {!slide.ctaLink || slide.ctaLink === "/booking" ? (
+                <Button
+                  className="h-11 rounded px-5 text-base font-bold bg-white text-foreground hover:bg-white/90"
+                  onClick={() => openBookingModal("test")}
+                >
+                  {slide.ctaText || "Jadwalkan Test Drive"}
+                </Button>
+              ) : (
+                <Button
+                  className="h-11 rounded px-5 text-base font-bold bg-white text-foreground hover:bg-white/90"
+                  render={<Link href={slide.ctaLink} />}
+                >
+                  {slide.ctaText || "Jadwalkan Test Drive"}
+                </Button>
+              )}
               <Button
                 variant="outline"
                 className="h-11 rounded px-5 text-base font-bold border-white/80 bg-transparent text-white hover:bg-white/10 hover:text-white"

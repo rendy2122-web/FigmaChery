@@ -1,17 +1,18 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { motion } from "motion/react";
 import { LandmarkIcon, SparkleIcon } from "lucide-react";
 import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { calculateMurabaha, formatRupiah } from "@/lib/murabaha";
 import { AnimatedRupiah } from "@/components/finance/animated-rupiah";
+import { useBookingModal } from "@/components/product/booking-modal-provider";
 
 type CarOption = {
   id: string;
@@ -51,6 +52,7 @@ export function MurabahaCalculator() {
   const [downPaymentPercent, setDownPaymentPercent] = useState(20);
   const [marginRatePercent, setMarginRatePercent] = useState(5);
   const [tenorMonths, setTenorMonths] = useState(36);
+  const { openBookingModal } = useBookingModal();
 
   useEffect(() => {
     fetch("/api/cars")
@@ -245,19 +247,31 @@ export function MurabahaCalculator() {
         </motion.p>
 
         <motion.div variants={fieldVariants} className="flex flex-col gap-2 sm:flex-row">
-          <Button
-            className="h-12 flex-1 rounded-full text-sm font-bold bg-brand-deep text-white hover:bg-brand-deep/90"
-            render={<Link href="/booking" />}
+          <DialogClose
+            render={
+              <Button
+                className="h-12 flex-1 rounded-full text-sm font-bold bg-brand-deep text-white hover:bg-brand-deep/90"
+                onClick={() =>
+                  openBookingModal("prebook", selectedCarId !== "custom" ? selectedCarId : undefined)
+                }
+              />
+            }
           >
             Ajukan Pembiayaan
-          </Button>
-          <Button
-            variant="outline"
-            className="h-12 flex-1 rounded-full text-sm font-semibold"
-            render={<Link href="/booking" />}
+          </DialogClose>
+          <DialogClose
+            render={
+              <Button
+                variant="outline"
+                className="h-12 flex-1 rounded-full text-sm font-semibold"
+                onClick={() =>
+                  openBookingModal("test", selectedCarId !== "custom" ? selectedCarId : undefined)
+                }
+              />
+            }
           >
             Jadwalkan Test Drive
-          </Button>
+          </DialogClose>
         </motion.div>
       </motion.div>
     </>

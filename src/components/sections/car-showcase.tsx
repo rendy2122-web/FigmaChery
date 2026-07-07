@@ -7,6 +7,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/layout/container";
 import { CarFilterTabs } from "@/components/sections/car-filter-tabs";
+import { useBookingModal } from "@/components/product/booking-modal-provider";
 
 type CarType = "BEV" | "CSH" | "ICE";
 
@@ -114,6 +115,7 @@ export function CarShowcase({ initialCars }: CarShowcaseProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeFilter, setActiveFilter] = useState<CarType>("BEV");
   const isFirstRender = useRef(true);
+  const { openBookingModal } = useBookingModal();
 
   useEffect(() => {
     // The initial BEV data already came from the server, so skip the redundant
@@ -299,7 +301,7 @@ export function CarShowcase({ initialCars }: CarShowcaseProps) {
         <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
           <Button
             className="h-11 rounded px-5 text-base font-bold bg-brand-deep text-white hover:bg-brand-deep/90"
-            render={<Link href="/booking" />}
+            onClick={() => openBookingModal("test", model.id)}
           >
             Book Test Drive
           </Button>

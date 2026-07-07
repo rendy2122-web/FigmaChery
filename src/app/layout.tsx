@@ -5,6 +5,8 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { SkipToContent } from "@/components/layout/skip-to-content";
 import CheryAssistant from "@/components/product/chery-assistant";
+import { BookingModalProvider } from "@/components/product/booking-modal-provider";
+import { getPublishedCars } from "@/lib/data/cars";
 import { siteConfig } from "@/lib/site-config";
 
 // Applies as the revalidate ceiling for every static page that doesn't set
@@ -77,19 +79,30 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Fetched once here so every "Book Test Drive" trigger site-wide (navbar,
+  // hero, dealer pages, credit calculator, etc.) can open the same booking
+  // popup via useBookingModal() instead of navigating to a separate page.
+  const bookingCars = getPublishedCars().map((c) => ({
+    id: c.id,
+    name: c.name,
+    basePrice: c.price_from ?? undefined,
+  }));
+
   return (
     <html
       lang="en"
       className={`${inter.variable} ${geistMono.variable} ${jakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <SkipToContent />
-        <Navbar />
-        <main id="main-content" className="flex-1">
-          {children}
-        </main>
-        <Footer />
-        <CheryAssistant />
+        <BookingModalProvider cars={bookingCars}>
+          <SkipToContent />
+          <Navbar />
+          <main id="main-content" className="flex-1">
+            {children}
+          </main>
+          <Footer />
+          <CheryAssistant />
+        </BookingModalProvider>
       </body>
     </html>
   );

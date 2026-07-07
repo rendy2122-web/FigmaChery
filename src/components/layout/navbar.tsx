@@ -23,11 +23,13 @@ import { siteConfig } from "@/lib/site-config";
 import { ModelMegaMenu } from "@/components/layout/model-mega-menu";
 import { MobileModelMenu } from "@/components/layout/mobile-model-menu";
 import { MurabahaCalculator } from "@/components/finance/murabaha-calculator";
+import { useBookingModal } from "@/components/product/booking-modal-provider";
 
 export function Navbar() {
   const [isModelOpen, setIsModelOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
+  const { openBookingModal } = useBookingModal();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -143,7 +145,7 @@ export function Navbar() {
           </Dialog>
           <Button
             className="h-10 rounded-sm px-5 text-xs font-bold uppercase tracking-wider bg-[#DA291C] text-white hover:bg-slate-950 transition-all duration-300 shadow-md hover:shadow-lg"
-            render={<Link href="/booking" />}
+            onClick={() => openBookingModal("test")}
           >
             Book Test Drive
           </Button>
@@ -208,12 +210,16 @@ export function Navbar() {
                     <MurabahaCalculator />
                   </DialogContent>
                 </Dialog>
-                <Button
-                  className="h-11 w-full rounded-sm text-xs font-bold uppercase tracking-wider bg-[#DA291C] text-white hover:bg-slate-950 transition-all duration-300 shadow-md"
-                  render={<Link href="/booking" />}
+                <SheetClose
+                  render={
+                    <Button
+                      className="h-11 w-full rounded-sm text-xs font-bold uppercase tracking-wider bg-[#DA291C] text-white hover:bg-slate-950 transition-all duration-300 shadow-md"
+                      onClick={() => openBookingModal("test")}
+                    />
+                  }
                 >
                   Book Test Drive
-                </Button>
+                </SheetClose>
               </div>
             </nav>
           </SheetContent>

@@ -1,15 +1,12 @@
-import Link from "next/link";
 import { ClockIcon, StoreIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Section } from "@/components/layout/section";
+import { TestDriveButton } from "@/components/product/test-drive-button";
 import { getCtaSection } from "@/lib/data/homepage-sections";
 import { getSettingsMap } from "@/lib/data/settings";
 
 export function CTA() {
   const { header } = getCtaSection();
   const settings = getSettingsMap();
-  const phone = settings.contact_phone || "+62 895 2707 2446";
-  const phoneHref = `tel:${phone.replace(/[^0-9+]/g, "")}`;
   const operatingHours = settings.operating_hours || "Senin - Sabtu, 08.00 - 17.00";
   const showroomAddress = settings.showroom_address || "";
 
@@ -38,19 +35,9 @@ export function CTA() {
             {header.heading}
           </h2>
           <div className="flex flex-col gap-3 sm:flex-row mt-2">
-            <Button
-              className="h-12 px-6 rounded-sm text-xs font-bold uppercase tracking-wider bg-white text-slate-950 hover:bg-slate-950 hover:text-white transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center"
-              render={<Link href={phoneHref} />}
-            >
+            <TestDriveButton className="h-12 px-6 rounded-sm text-xs font-bold uppercase tracking-wider bg-white text-slate-950 hover:bg-slate-950 hover:text-white transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center">
               Jadwalkan Test Drive
-            </Button>
-            <Button
-              variant="outline"
-              className="h-12 px-6 rounded-sm text-xs font-bold uppercase tracking-wider border border-white/20 bg-transparent text-white hover:bg-white/10 transition-all duration-300 flex items-center justify-center"
-              render={<Link href={phoneHref} />}
-            >
-              {phone}
-            </Button>
+            </TestDriveButton>
           </div>
         </div>
 

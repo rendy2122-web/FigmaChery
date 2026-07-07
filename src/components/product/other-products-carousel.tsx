@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight, Download } from "lucide-react";
+import { useBookingModal } from "@/components/product/booking-modal-provider";
 
 interface Spec {
   label: string;
@@ -39,6 +40,7 @@ export default function OtherProductsCarousel({
   const trackRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const { openBookingModal } = useBookingModal();
 
   useEffect(() => {
     const track = trackRef.current;
@@ -177,12 +179,13 @@ export default function OtherProductsCarousel({
 
                     <div className="mt-5 flex flex-col gap-3 border-t border-neutral-100 pt-4">
                       <div className="flex items-center gap-2">
-                        <Link
-                          href="/booking"
+                        <button
+                          type="button"
+                          onClick={() => openBookingModal("test", car.id)}
                           className="flex h-10 flex-1 items-center justify-center rounded-full border border-neutral-300 text-xs font-semibold text-[#1a1a1a] transition-colors duration-300 hover:border-[#1a1a1a]"
                         >
                           Test Drive
-                        </Link>
+                        </button>
                         <Link
                           href={`/models/${car.slug}`}
                           className="flex h-10 flex-1 items-center justify-center rounded-full bg-[#111111] text-xs font-semibold text-white transition-colors duration-300 hover:bg-black"

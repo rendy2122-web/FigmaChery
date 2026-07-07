@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/layout/section";
 import { dealerSlug } from "@/lib/dealer-slug";
+import { useBookingModal } from "@/components/product/booking-modal-provider";
 
 type Dealer = {
   id: string;
@@ -27,6 +28,7 @@ const defaultDealers: Dealer[] = [
 
 export function Dealerships() {
   const [dealers, setDealers] = useState<Dealer[]>(defaultDealers);
+  const { openBookingModal } = useBookingModal();
 
   useEffect(() => {
     fetch("/api/dealers?t=" + Date.now())
@@ -91,7 +93,7 @@ export function Dealerships() {
               <div className="flex flex-col gap-2.5">
                 <Button
                   className="w-full bg-[#DA291C] hover:bg-slate-950 text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-sm transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center"
-                  render={<Link href="/booking" />}
+                  onClick={() => openBookingModal("test")}
                 >
                   Jadwalkan Test Drive
                 </Button>
