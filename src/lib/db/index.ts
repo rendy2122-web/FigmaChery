@@ -325,8 +325,24 @@ db.exec(`
   )
 `);
 
+// Leads captured by CHIVA's proactive contact-capture flow (formerly the
+// separate WhatsApp floating widget's greeting -> name -> phone -> dealer flow).
+db.exec(`
+  CREATE TABLE IF NOT EXISTS leads (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    dealer_id TEXT,
+    car_interest TEXT,
+    source TEXT DEFAULT 'chiva',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (dealer_id) REFERENCES dealers(id) ON DELETE SET NULL
+  )
+`);
+
 // Create indexes
 db.exec(`CREATE INDEX IF NOT EXISTS idx_testimonials_car ON testimonials(car_id)`);
+db.exec(`CREATE INDEX IF NOT EXISTS idx_leads_dealer ON leads(dealer_id)`);
 db.exec(`CREATE INDEX IF NOT EXISTS idx_testimonials_status ON testimonials(status)`);
 db.exec(`CREATE INDEX IF NOT EXISTS idx_cars_status ON cars(status)`);
 db.exec(`CREATE INDEX IF NOT EXISTS idx_cars_featured ON cars(featured)`);

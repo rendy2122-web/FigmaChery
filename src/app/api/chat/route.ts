@@ -75,6 +75,10 @@ export async function POST(request: NextRequest) {
       .all() as CarDbRow[];
 
     let reply = "";
+    // High buying-intent replies (dealer, single-car detail, price, test drive)
+    // set this so the client can proactively offer to connect the user to sales.
+    let suggestLead = false;
+    let carInterest: string | null = null;
     const matchedCars = findMentionedCars(cars, query);
     const isComparisonQuery =
       query.includes("banding") || query.includes("vs") || query.includes("komparasi");
@@ -117,6 +121,7 @@ export async function POST(request: NextRequest) {
           .map((d) => `• **${d.name}** (${d.city})\n  ${d.address}\n  Telp/WA: ${d.phone}`)
           .join("\n\n");
         reply = `Berikut daftar dealer resmi Chery Indonesia yang tersedia saat ini:\n\n${dealerLines}\n\nAnda dapat langsung mengunjungi salah satu dealer terdekat atau menjadwalkan test drive melalui tombol **Book Test Drive**!`;
+        suggestLead = true;
       } else {
         reply = `Saat ini informasi dealer sedang diperbarui. Silakan hubungi tim sales kami melalui tombol WhatsApp untuk info dealer terdekat.`;
       }
@@ -125,6 +130,8 @@ export async function POST(request: NextRequest) {
     else if (matchedCars.length === 1) {
       const car = matchedCars[0];
       const details = getCarWithDetailsById(car.id);
+      suggestLead = true;
+      carInterest = car.name;
 
       if (details) {
         const keySpecs = details.specs.slice(0, 5);
@@ -166,6 +173,7 @@ export async function POST(request: NextRequest) {
         .join("\n");
 
       reply = `Berikut adalah daftar lengkap harga OTR spesial lineup kendaraan Chery ter-update di database kami:\n\n${carLines}\n\n*Harga OTR dapat berubah sewaktu-waktu. Anda juga bisa mengklik tombol **Simulasi Kredit** di bagian navbar atas untuk menghitung simulasi angsuran cicilan bulanan!*`;
+      suggestLead = true;
     }
     // 5. Test Drive booking query
     else if (
@@ -176,6 +184,7 @@ export async function POST(request: NextRequest) {
       query.includes("pesan")
     ) {
       reply = `Tentu! Untuk menjadwalkan **Test Drive** secara gratis untuk mobil Chery pilihan Anda, silakan klik tombol merah **Book Test Drive** di bagian atas navbar, atau isi formulir di bagian bawah halaman detail produk. Tim sales kami akan segera menghubungi Anda untuk konfirmasi jadwal!`;
+      suggestLead = true;
     }
     // 6. EV / Battery / LFP / CSH query
     else if (
@@ -204,7 +213,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ content: reply });
+    return NextResponse.json({ content: reply, suggestLead, carInterest });
   } catch (error) {
     console.error("Error in chat API:", error);
     return NextResponse.json({ error: "Failed to generate chat response" }, { status: 500 });
