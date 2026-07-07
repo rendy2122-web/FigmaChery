@@ -6,6 +6,8 @@ import { Section } from "@/components/layout/section";
 import { getAllArticles, getCategories } from "@/lib/news-data";
 import { getSeoMetadata } from "@/lib/data/seo";
 
+export const revalidate = 60;
+
 const DEFAULT_TITLE = "Berita & Artikel";
 const DEFAULT_DESCRIPTION =
   "Ikuti berita, wawasan teknologi, dan tips perawatan kendaraan terbaru dari Chery Indonesia.";
