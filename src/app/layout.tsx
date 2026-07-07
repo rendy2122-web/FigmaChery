@@ -8,6 +8,12 @@ import { WhatsAppButton } from "@/components/layout/whatsapp-button";
 import CheryAssistant from "@/components/product/chery-assistant";
 import { siteConfig } from "@/lib/site-config";
 
+// Applies as the revalidate ceiling for every static page that doesn't set
+// its own (dashboard pages are already dynamic via auth). Without this, a
+// fully static page — including the Footer's DB-backed car list rendered
+// here — gets frozen at Docker build time, before the database is seeded.
+export const revalidate = 60;
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
