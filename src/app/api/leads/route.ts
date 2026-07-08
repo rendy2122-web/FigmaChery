@@ -1,9 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 import { validateOrigin } from "@/lib/security";
 import { rateLimit } from "@/lib/rate-limit";
-import { createLead } from "@/lib/data/leads";
+import { createLead, getAllLeads } from "@/lib/data/leads";
 
 export const dynamic = "force-dynamic";
+
+// GET all leads (admin only) — for the dashboard's Leads page.
+export async function GET() {
+  try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const leads = getAllLeads();
+
+    return NextResponse.json(leads, {
+      headers: {
+        "Cache-Control": "no-store, max-age=0, must-revalidate",
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching leads:", error);
+    return NextResponse.json({ error: "Failed to fetch leads" }, { status: 500 });
+  }
+}
 
 // POST create a lead — open to any visitor, captured by CHIVA's proactive
 // contact flow, so it's rate-limited and validated instead of auth-gated.

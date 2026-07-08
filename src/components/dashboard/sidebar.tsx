@@ -14,6 +14,9 @@ import {
   LogOutIcon,
   StarIcon,
   SearchIcon,
+  UsersIcon,
+  TagIcon,
+  SettingsIcon,
 } from "lucide-react";
 
 const menuItems = [
@@ -21,11 +24,14 @@ const menuItems = [
   { href: "/dashboard/hero", label: "Hero Slides", icon: ImageIcon },
   { href: "/dashboard/cars", label: "Mobil", icon: CarIcon },
   { href: "/dashboard/articles", label: "Artikel", icon: FileTextIcon },
+  { href: "/dashboard/categories", label: "Kategori Artikel", icon: TagIcon },
   { href: "/dashboard/testimonials", label: "Ulasan", icon: StarIcon },
+  { href: "/dashboard/leads", label: "Leads", icon: UsersIcon },
   { href: "/dashboard/media", label: "Media", icon: ImageIcon },
   { href: "/dashboard/dealers", label: "Dealer", icon: StoreIcon },
   { href: "/dashboard/faqs", label: "FAQ", icon: HelpCircleIcon },
   { href: "/dashboard/seo", label: "SEO", icon: SearchIcon },
+  { href: "/dashboard/settings", label: "Pengaturan", icon: SettingsIcon },
 ];
 
 export function DashboardSidebar() {

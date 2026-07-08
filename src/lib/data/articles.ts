@@ -104,6 +104,44 @@ export function getCategories(): Category[] {
   return db.prepare("SELECT * FROM categories ORDER BY name").all() as Category[];
 }
 
+export interface CategoryWriteInput {
+  name: string;
+  slug: string;
+  description?: string | null;
+}
+
+export function createCategory(input: CategoryWriteInput): string {
+  const id = randomUUID();
+
+  db.prepare(
+    `INSERT INTO categories (id, name, slug, description) VALUES (?, ?, ?, ?)`
+  ).run(id, input.name, input.slug, input.description || null);
+
+  return id;
+}
+
+export function updateCategory(id: string, input: CategoryWriteInput): boolean {
+  const result = db
+    .prepare(`UPDATE categories SET name = ?, slug = ?, description = ? WHERE id = ?`)
+    .run(input.name, input.slug, input.description || null, id);
+
+  return result.changes > 0;
+}
+
+/** Returns null on success, or an error message if the category is still in use by articles. */
+export function deleteCategory(id: string): string | null {
+  const { count } = db
+    .prepare("SELECT COUNT(*) as count FROM articles WHERE category_id = ? AND deleted_at IS NULL")
+    .get(id) as { count: number };
+
+  if (count > 0) {
+    return `Kategori masih dipakai oleh ${count} artikel. Pindahkan artikel tersebut ke kategori lain dulu.`;
+  }
+
+  db.prepare("DELETE FROM categories WHERE id = ?").run(id);
+  return null;
+}
+
 export function createArticle(input: ArticleWriteInput) {
   const id = randomUUID();
   const now = new Date().toISOString();
