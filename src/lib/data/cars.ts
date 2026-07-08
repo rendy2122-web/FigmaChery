@@ -36,6 +36,10 @@ export interface Car {
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
+  interior_image: string | null;
+  exterior_image: string | null;
+  car_image: string | null;
+  feature_image: string | null;
 }
 
 export interface AdminCarRow extends Car {
@@ -138,8 +142,10 @@ export function getCarBySlugForPublic(slug: string) {
 
   const paths = getCarImagePaths(slug);
   const heroImage = car.thumbnail || paths.hero;
-  const interiorImage = paths.interior;
-  const techImage = paths.feature;
+  const interiorImage = car.interior_image || paths.interior;
+  const exteriorImage = car.exterior_image || paths.exterior;
+  const carImage = car.car_image || paths.car;
+  const techImage = car.feature_image || paths.feature;
   const videoUrl = paths.video;
 
   const dbImages = db
@@ -176,6 +182,8 @@ export function getCarBySlugForPublic(slug: string) {
     features,
     highlights,
     interiorImage,
+    exteriorImage,
+    carImage,
     techImage,
     videoUrl,
   };
@@ -306,4 +314,85 @@ export function replaceCarFeatures(carId: string, features: FeatureWriteInput[])
     });
   });
   replace(features);
+}
+
+export interface CarMediaOverrides {
+  interiorImage: string | null;
+  exteriorImage: string | null;
+  carImage: string | null;
+  featureImage: string | null;
+}
+
+/** Current overrides (nullable — null means "falls back to the default
+ *  /figma/<folder>/<type>.<ext> resolver"), for the dashboard media editor. */
+export function getCarMediaOverrides(carId: string): CarMediaOverrides | undefined {
+  const row = db
+    .prepare(
+      "SELECT interior_image, exterior_image, car_image, feature_image FROM cars WHERE id = ? AND deleted_at IS NULL"
+    )
+    .get(carId) as
+    | { interior_image: string | null; exterior_image: string | null; car_image: string | null; feature_image: string | null }
+    | undefined;
+
+  if (!row) return undefined;
+
+  return {
+    interiorImage: row.interior_image,
+    exteriorImage: row.exterior_image,
+    carImage: row.car_image,
+    featureImage: row.feature_image,
+  };
+}
+
+export function updateCarMediaOverrides(carId: string, input: CarMediaOverrides): boolean {
+  const now = new Date().toISOString();
+  const result = db
+    .prepare(
+      `UPDATE cars SET interior_image = ?, exterior_image = ?, car_image = ?, feature_image = ?, updated_at = ?
+       WHERE id = ? AND deleted_at IS NULL`
+    )
+    .run(
+      input.interiorImage || null,
+      input.exteriorImage || null,
+      input.carImage || null,
+      input.featureImage || null,
+      now,
+      carId
+    );
+  return result.changes > 0;
+}
+
+/** Color variant images for a car (car_images rows with color_name set) —
+ *  used by the dashboard's color-variant manager. */
+export function getCarColorImages(carId: string): CarImage[] {
+  return db
+    .prepare(
+      "SELECT * FROM car_images WHERE car_id = ? AND color_name IS NOT NULL ORDER BY sort_order"
+    )
+    .all(carId) as CarImage[];
+}
+
+export interface ColorImageWriteInput {
+  url: string;
+  colorName: string;
+  colorHex: string;
+}
+
+export function addCarColorImage(carId: string, input: ColorImageWriteInput): string {
+  const id = randomUUID();
+  const maxSort = db
+    .prepare("SELECT COALESCE(MAX(sort_order), -1) as maxSort FROM car_images WHERE car_id = ?")
+    .get(carId) as { maxSort: number };
+
+  db.prepare(
+    `INSERT INTO car_images (id, car_id, url, alt, sort_order, color_name, color_hex)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`
+  ).run(id, carId, input.url, input.colorName, maxSort.maxSort + 1, input.colorName, input.colorHex);
+
+  return id;
+}
+
+export function deleteCarImage(imageId: string): boolean {
+  const result = db.prepare("DELETE FROM car_images WHERE id = ?").run(imageId);
+  return result.changes > 0;
 }

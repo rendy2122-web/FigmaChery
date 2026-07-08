@@ -9,6 +9,8 @@ interface CarData {
   slug: string;
   highlights: { title: string; description: string; iconName: string }[];
   interiorImage?: string;
+  exteriorImage?: string;
+  carImage?: string;
   techImage?: string;
 }
 
@@ -30,12 +32,12 @@ export default function FeaturesGrid({ car }: FeaturesGridProps) {
       description: "Interior dirancang dengan jok ergonomis bertekstur premium super lembut, dynamic LED ambient lighting, serta layar infotainment modern untuk perjalanan yang superior.",
     },
     {
-      src: paths.exterior,
+      src: car.exteriorImage || paths.exterior,
       title: "Desain Eksterior yang Memikat",
       description: "Lekuk bodi aerodinamis dan detail eksterior premium menghadirkan siluet yang elegan sekaligus sporty dari setiap sudut.",
     },
     {
-      src: paths.car,
+      src: car.carImage || paths.car,
       title: "Karakter Tangguh di Setiap Perjalanan",
       description: "Front fascia yang tegas dan proporsi bodi yang seimbang mencerminkan karakter kendaraan yang percaya diri di jalan.",
     },

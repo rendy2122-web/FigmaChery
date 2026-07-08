@@ -23,6 +23,8 @@ export interface CarData {
   specs: { label: string; value: string }[];
   highlights: { title: string; description: string; iconName: string }[];
   interiorImage?: string;
+  exteriorImage?: string;
+  carImage?: string;
   techImage?: string;
 }
 

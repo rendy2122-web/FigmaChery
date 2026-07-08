@@ -244,6 +244,18 @@ try {
   // column already exists — ignore
 }
 
+// Optional per-car overrides for the interior/exterior/front-3-quarter/feature
+// photos used on the product page — previously these could only ever come
+// from the hardcoded /figma/<folder>/<type>.<ext> path resolver, with no way
+// to change them without a code change. NULL falls back to that resolver.
+for (const column of ["interior_image", "exterior_image", "car_image", "feature_image"]) {
+  try {
+    db.exec(`ALTER TABLE cars ADD COLUMN ${column} TEXT`);
+  } catch {
+    // column already exists — ignore
+  }
+}
+
 db.exec(`
   CREATE TABLE IF NOT EXISTS settings (
     id TEXT PRIMARY KEY,
