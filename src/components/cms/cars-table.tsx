@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PencilIcon, TrashIcon, EyeIcon, SettingsIcon } from "lucide-react";
+import { PencilIcon, TrashIcon, EyeIcon, SettingsIcon, ListIcon } from "lucide-react";
 
 interface Car {
   id: string;
@@ -123,6 +123,11 @@ export function CarsTable({ cars }: CarsTableProps) {
                   <Link href={`/dashboard/cars/${car.id}/edit`}>
                     <Button variant="ghost" size="icon">
                       <PencilIcon className="size-4" />
+                    </Button>
+                  </Link>
+                  <Link href={`/dashboard/cars/${car.id}/content`}>
+                    <Button variant="ghost" size="icon" title="Kelola Spesifikasi & Fitur">
+                      <ListIcon className="size-4 text-emerald-600" />
                     </Button>
                   </Link>
                   <Link href={`/dashboard/products/${car.id}/sections`}>

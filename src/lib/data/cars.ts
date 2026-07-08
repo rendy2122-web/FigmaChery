@@ -255,3 +255,55 @@ export function softDeleteCar(id: string) {
     .run(now, now, id);
   return result.changes > 0;
 }
+
+export function getCarSpecs(carId: string): CarSpec[] {
+  return db
+    .prepare("SELECT * FROM car_specs WHERE car_id = ? ORDER BY sort_order")
+    .all(carId) as CarSpec[];
+}
+
+export interface SpecWriteInput {
+  label: string;
+  value: string;
+}
+
+/** Replaces every spec row for a car in one transaction — matches the
+ *  "edit the whole list, save" UX of the dashboard specs editor. */
+export function replaceCarSpecs(carId: string, specs: SpecWriteInput[]): void {
+  const replace = db.transaction((rows: SpecWriteInput[]) => {
+    db.prepare("DELETE FROM car_specs WHERE car_id = ?").run(carId);
+    const stmt = db.prepare(
+      "INSERT INTO car_specs (id, car_id, label, value, sort_order) VALUES (?, ?, ?, ?, ?)"
+    );
+    rows.forEach((spec, index) => {
+      stmt.run(randomUUID(), carId, spec.label, spec.value, index);
+    });
+  });
+  replace(specs);
+}
+
+export function getCarFeatures(carId: string): CarFeature[] {
+  return db
+    .prepare("SELECT * FROM car_features WHERE car_id = ? ORDER BY sort_order")
+    .all(carId) as CarFeature[];
+}
+
+export interface FeatureWriteInput {
+  title: string;
+  description?: string | null;
+  icon?: string | null;
+}
+
+/** Replaces every feature row for a car in one transaction. */
+export function replaceCarFeatures(carId: string, features: FeatureWriteInput[]): void {
+  const replace = db.transaction((rows: FeatureWriteInput[]) => {
+    db.prepare("DELETE FROM car_features WHERE car_id = ?").run(carId);
+    const stmt = db.prepare(
+      "INSERT INTO car_features (id, car_id, title, description, icon, sort_order) VALUES (?, ?, ?, ?, ?, ?)"
+    );
+    rows.forEach((feature, index) => {
+      stmt.run(randomUUID(), carId, feature.title, feature.description || null, feature.icon || null, index);
+    });
+  });
+  replace(features);
+}
