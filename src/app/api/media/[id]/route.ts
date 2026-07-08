@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { validateOrigin } from "@/lib/security";
 import type { MediaItem } from "@/components/cms/media-table";
 
 export const runtime = "nodejs";
@@ -33,6 +34,11 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
+
+    if (!validateOrigin(request)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

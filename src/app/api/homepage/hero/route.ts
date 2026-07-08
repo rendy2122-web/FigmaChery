@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { validateOrigin } from "@/lib/security";
 import { getHeroSlides, updateHeroSlides } from "@/lib/data/homepage";
 
 export const runtime = "nodejs";
@@ -25,6 +26,10 @@ export async function GET() {
 // PUT update hero slides (admin only)
 export async function PUT(request: NextRequest) {
   try {
+    if (!validateOrigin(request)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

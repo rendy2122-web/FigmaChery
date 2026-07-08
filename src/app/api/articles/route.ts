@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { validateOrigin } from "@/lib/security";
 import { getPublishedArticles, createArticle } from "@/lib/data/articles";
 
 // GET all articles - with caching
@@ -23,6 +24,10 @@ export async function GET() {
 // POST create new article
 export async function POST(request: NextRequest) {
   try {
+    if (!validateOrigin(request)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

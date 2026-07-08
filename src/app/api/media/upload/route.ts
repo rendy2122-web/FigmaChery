@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { writeFileSync, mkdirSync } from "fs";
 import path from "path";
-import { validateUpload, validateOrigin } from "@/lib/security";
+import { validateUpload, validateOrigin, sanitizeUploadFolder, extensionForMimeType } from "@/lib/security";
 
 export const runtime = "nodejs";
 
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const file = formData.get("file") as File;
     const alt = formData.get("alt") as string;
-    const folder = formData.get("folder") as string;
+    const folder = sanitizeUploadFolder(formData.get("folder"));
 
     if (!file) {
       return NextResponse.json({ error: "File is required" }, { status: 400 });
@@ -37,9 +37,10 @@ export async function POST(request: NextRequest) {
     const uploadsDir = path.join(process.cwd(), "public", "uploads", folder);
     mkdirSync(uploadsDir, { recursive: true });
 
-    // Generate unique filename
+    // Generate unique filename — extension comes from the validated MIME
+    // type, not the client-supplied original filename (see extensionForMimeType).
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.name);
+    const ext = extensionForMimeType(file.type);
     const filename = `${uniqueSuffix}${ext}`;
     const filepath = path.join(uploadsDir, filename);
 

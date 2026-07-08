@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { validateOrigin } from "@/lib/security";
 import db from "@/lib/db";
 
 export const runtime = "nodejs";
@@ -44,6 +45,11 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
+
+    if (!validateOrigin(request)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
