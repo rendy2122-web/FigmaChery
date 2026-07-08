@@ -131,7 +131,7 @@ export function CarsTable({ cars }: CarsTableProps) {
                     </Button>
                   </Link>
                   <Link href={`/dashboard/products/${car.id}/sections`}>
-                    <Button variant="ghost" size="icon" title="Kelola Product Sections">
+                    <Button variant="ghost" size="icon" title="Kelola Section Tambahan">
                       <SettingsIcon className="size-4 text-blue-600" />
                     </Button>
                   </Link>

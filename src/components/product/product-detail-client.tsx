@@ -3,11 +3,23 @@
 import HeroSection from "@/components/product/hero-section";
 import HeroSlide from "@/components/product/hero-slide";
 import FeaturesGrid from "@/components/product/features-grid";
+import CustomProductSections from "@/components/product/custom-product-sections";
 import SpecComparison from "@/components/product/spec-comparison";
 import CustomerReviews from "@/components/product/customer-reviews";
 import OtherProductsCarousel from "@/components/product/other-products-carousel";
 import { useBookingModal } from "@/components/product/booking-modal-provider";
 import type { TestimonialWithCar } from "@/lib/data/testimonials";
+
+export interface ProductSectionData {
+  id: string;
+  section_type: string;
+  title: string | null;
+  subtitle: string | null;
+  content: string | null;
+  image: string | null;
+  icon: string | null;
+  features: string[];
+}
 
 export interface CarData {
   id: string;
@@ -26,6 +38,7 @@ export interface CarData {
   exteriorImage?: string;
   carImage?: string;
   techImage?: string;
+  productSections?: ProductSectionData[];
 }
 
 export function ProductDetailClient({
@@ -48,6 +61,7 @@ export function ProductDetailClient({
       <HeroSlide slug={car.slug} heroImage={car.images?.[0]?.url} />
       <HeroSection car={car} onOpenBooking={handleOpenBooking} />
       <FeaturesGrid car={car} />
+      <CustomProductSections sections={car.productSections} />
       <SpecComparison cars={allCars} currentCarId={car.id} />
       <CustomerReviews car={car} allCars={allCars} initialTestimonials={testimonials} />
       <OtherProductsCarousel currentCarId={car.id} cars={allCars} />

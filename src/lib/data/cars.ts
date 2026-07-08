@@ -174,6 +174,8 @@ export function getCarBySlugForPublic(slug: string) {
     iconName: f.icon || "CheckCircle",
   }));
 
+  const productSections = getActiveProductSections(car.id);
+
   return {
     ...car,
     images,
@@ -186,7 +188,35 @@ export function getCarBySlugForPublic(slug: string) {
     carImage,
     techImage,
     videoUrl,
+    productSections,
   };
+}
+
+export interface ProductSection {
+  id: string;
+  section_type: string;
+  title: string | null;
+  subtitle: string | null;
+  content: string | null;
+  image: string | null;
+  icon: string | null;
+  features: string[];
+  sort_order: number;
+}
+
+/** Active, ordered custom content blocks for a car's product page — an
+ *  admin-authored complement to the fixed sections (hero, specs, gallery). */
+export function getActiveProductSections(carId: string): ProductSection[] {
+  const rows = db
+    .prepare(
+      "SELECT * FROM product_sections WHERE car_id = ? AND is_active = 1 ORDER BY sort_order"
+    )
+    .all(carId) as Array<Omit<ProductSection, "features"> & { features: string | null }>;
+
+  return rows.map((row) => ({
+    ...row,
+    features: row.features ? (JSON.parse(row.features) as string[]) : [],
+  }));
 }
 
 /** Admin list — every non-deleted car regardless of status (draft/published). */

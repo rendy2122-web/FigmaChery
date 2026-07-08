@@ -58,6 +58,7 @@ function toDetailCarData(row: NonNullable<ReturnType<typeof getCarBySlugForPubli
     exteriorImage: row.exteriorImage,
     carImage: row.carImage,
     techImage: row.techImage,
+    productSections: row.productSections,
   };
 }
 

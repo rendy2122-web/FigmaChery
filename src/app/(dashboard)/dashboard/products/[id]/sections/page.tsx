@@ -145,9 +145,9 @@ export default function ProductSectionsPage({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Product Sections</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Section Tambahan</h1>
           <p className="mt-1 text-sm text-gray-600">
-            Kelola section-section untuk halaman produk
+            Section custom yang tampil di halaman produk publik, di antara Fitur Utama dan Komparasi Spesifikasi
           </p>
         </div>
         <Button onClick={addSection}>
