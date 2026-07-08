@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Inter, Plus_Jakarta_Sans } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
+import { fontVariables } from "../fonts";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { SkipToContent } from "@/components/layout/skip-to-content";
@@ -11,26 +11,10 @@ import { getActiveDealers } from "@/lib/data/dealers";
 import { siteConfig } from "@/lib/site-config";
 
 // Applies as the revalidate ceiling for every static page that doesn't set
-// its own (dashboard pages are already dynamic via auth). Without this, a
-// fully static page — including the Footer's DB-backed car list rendered
-// here — gets frozen at Docker build time, before the database is seeded.
+// its own. Without this, a fully static page — including the Footer's
+// DB-backed car list rendered here — gets frozen at Docker build time,
+// before the database is seeded.
 export const revalidate = 60;
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -75,7 +59,7 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default function MarketingLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -95,10 +79,7 @@ export default function RootLayout({
   }));
 
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${geistMono.variable} ${jakarta.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${fontVariables} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <BookingModalProvider cars={bookingCars} dealers={bookingDealers}>
           <SkipToContent />
