@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { createDealerSchema, updateDealerSchema } from "@/lib/api-validation";
+import { updateDealerSchema } from "@/lib/api-validation";
 import { validateOrigin } from "@/lib/security";
-import { getDealerById, createDealer, updateDealer, softDeleteDealer } from "@/lib/data/dealers";
+import { getDealerById, updateDealer, softDeleteDealer } from "@/lib/data/dealers";
 
 // GET single dealer
 export async function GET(
@@ -21,37 +21,6 @@ export async function GET(
   } catch (error) {
     console.error("Error fetching dealer:", error);
     return NextResponse.json({ error: "Failed to fetch dealer" }, { status: 500 });
-  }
-}
-
-// POST create new dealer
-export async function POST(request: NextRequest) {
-  try {
-    if (!validateOrigin(request)) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await request.json();
-
-    const parsed = createDealerSchema.safeParse(body);
-    if (!parsed.success) {
-      return NextResponse.json({
-        error: "Validation failed",
-        details: parsed.error.flatten().fieldErrors
-      }, { status: 400 });
-    }
-
-    const id = createDealer(parsed.data);
-
-    return NextResponse.json({ id, message: "Dealer created successfully" }, { status: 201 });
-  } catch (error) {
-    console.error("Error creating dealer:", error);
-    return NextResponse.json({ error: "Failed to create dealer" }, { status: 500 });
   }
 }
 
